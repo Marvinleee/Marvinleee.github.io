@@ -1,0 +1,15 @@
+# 站点基本配置
+title: Marvin Lee
+description: 记录思考、学习与生活的个人博客
+author: Marvin Lee
+url: "https://marvinlee.cn"
+baseurl: ""
+
+# 构建设置
+markdown: kramdown
+permalink: /journal/:year/:month/:day/:title.html
+encoding: utf-8
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
