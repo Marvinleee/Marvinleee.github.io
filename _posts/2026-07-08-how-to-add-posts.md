@@ -60,6 +60,18 @@ tags: [教程]
 
 Bilibili 在视频页点「分享 → 嵌入代码」复制类似内容粘进来即可。
 
+### 真实示例
+
+下面放了一个真实可播放的示例（图片点击可放大，视频可直接播放），推上线后你就能看到实际效果：
+
+![示例图片](/assets/img/sample.svg)
+
+<video controls style="max-width:100%" src="/assets/video/sample.mp4">
+  你的浏览器不支持 video 标签，请换用现代浏览器。
+</video>
+
+> 说明：示例图是 `assets/img/sample.svg`（矢量图，可无限放大不糊）；示例视频 `sample.mp4` 是自托管文件，放在 `assets/video/` 下，完全不依赖 YouTube 等被墙平台，在国内也能正常播放。换成你自己的素材时，把文件替换掉、路径保持一致即可。
+
 ### 写完别忘了推送
 
 保存文件后，在 `my-website` 目录执行：
