@@ -1,0 +1,13 @@
+---
+---
+
+@import 'jekyll-theme-chirpy';
+
+/* 修复头像填充：Bootstrap 的 img 默认有 height:auto，会保留原图比例，
+   导致非正方形图片在圆形框下方露出深色背景。
+   这里强制图片 100% 填充，并切掉多余部分，确保完整覆盖圆形。 */
+#sidebar #avatar img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
