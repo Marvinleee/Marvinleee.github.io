@@ -1,20 +1,4 @@
 ---
-layout: default
-title: 首页
+layout: home
+# Index page
 ---
-<section class="hero">
-  <h1>你好，我是 Marvin 👋</h1>
-  <p class="lead">{{ site.description }}</p>
-</section>
-
-<section class="post-list">
-  <h2 class="section-title">最新文章</h2>
-  <ul>
-    {% for post in site.posts %}
-    <li>
-      <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y-%m-%d" }}</time>
-      <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
-    </li>
-    {% endfor %}
-  </ul>
-</section>
