@@ -3,6 +3,7 @@ layout: post
 title: 如何在这个站点写新文章
 date: 2026-07-11
 tags: [教程]
+description: "本站写作指南：文件命名规则、Front Matter 写法，以及如何在文章中插入图片与自托管视频。"
 ---
 写新文章很简单，只需在 `_posts/` 目录下新建一个 Markdown 文件。
 
