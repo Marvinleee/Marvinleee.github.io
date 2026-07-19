@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Why You Should Be Watching Optical Test Right Now — 光测试赛道的投资逻辑与五大瓶颈"
-date: 2026-07-19
+date: 2026-07-19 16:23:00
 categories: [半导体投资]
 tags: [半导体, CPO, Wafer level Test]
 description: "整理自 Damnang 的 CPO 投资分析：拆解光测试价值链条的 5 大瓶颈，解析不同渗透情景下哪些设备公司最先兑现收益。英文原文 + 中文解读。"
