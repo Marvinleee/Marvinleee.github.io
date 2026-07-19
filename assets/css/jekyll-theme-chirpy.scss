@@ -1,7 +1,18 @@
 ---
 ---
 
-@import 'jekyll-theme-chirpy';
+@use 'abstracts/variables' with (
+  $theme: '{{ site.theme_mode }}'
+);
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
 
 /* 修复头像填充：Bootstrap 的 img 默认有 height:auto，会保留原图比例，
    导致非正方形图片在圆形框下方露出深色背景。
