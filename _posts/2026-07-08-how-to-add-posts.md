@@ -28,19 +28,19 @@ tags: [教程]
 1. 把图片文件放进 `assets/img/` 目录（没有就新建）。例如 `assets/img/cat.jpg`。
 2. 在文章里用 Markdown 插入：
 
-       ![一只猫](/assets/img/cat.jpg)
+       ![一只猫](/assets/img/sample.svg)
 
    图片会按原始尺寸显示。
 
 3. 想控制大小、居中，可用 HTML：
 
        <p style="text-align:center">
-         <img src="/assets/img/cat.jpg" alt="一只猫" width="400">
+         <img src="/assets/img/sample.svg" alt="一只猫" width="400">
        </p>
 
    把 `width="400"` 改成你想要的像素宽度即可。
 
-> 提示：图片路径以 `/` 开头表示从网站根目录算起，`assets/img/cat.jpg` 对应网址 `https://marvinlee.cn/assets/img/cat.jpg`。
+> 提示：图片路径以 `/` 开头表示从网站根目录算起，`assets/img/cat.jpg` 对应网址 `https://marvinlee.cn/assets/img/sample.svg`。
 
 ### 添加视频
 
@@ -48,10 +48,10 @@ tags: [教程]
 1. 把视频（如 `.mp4`）放进 `assets/video/` 目录。
 2. 用 HTML5 视频标签插入：
 
-       <video controls width="640" src="/assets/video/clip.mp4"></video>
+       <video controls width="640" src="/assets/video/sample.mp4"></video>
 
    `controls` 让用户能播放/暂停；想自适应手机宽度，可写成
-   `<video controls style="max-width:100%" src="/assets/video/clip.mp4"></video>`。
+   `<video controls style="max-width:100%" src="/assets/video/sample.mp4"></video>`。
 
 **方式二：嵌入 YouTube / Bilibili 等平台视频**
 直接粘贴平台提供的嵌入代码（`<iframe>`）。以 YouTube 为例：

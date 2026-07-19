@@ -16,7 +16,7 @@ tags: [教程, 媒体]
 ### 2. 插入图片（Markdown）
 在正文中写：
 
-    ![一只猫](/assets/img/cat.jpg)
+    ![一只猫](/assets/img/sample.svg)
 
 `!` 后面方括号是替代文字（无障碍/加载失败时显示），圆括号是路径。图片会按原始尺寸显示，并自动适配手机宽度。
 
@@ -24,7 +24,7 @@ tags: [教程, 媒体]
 想固定宽度、居中，可用 HTML：
 
     <p style="text-align:center">
-      <img src="/assets/img/cat.jpg" alt="一只猫" width="400">
+      <img src="/assets/img/sample.svg" alt="一只猫" width="400">
     </p>
 
 把 `width="400"` 改成你想要的像素宽度即可。`width` 也可用百分比，如 `width="80%"`。
@@ -41,7 +41,7 @@ tags: [教程, 媒体]
 ### 方式一：自托管视频（推荐，国内可用）
 把 `.mp4` 文件放进 `assets/video/` 目录，再用 HTML5 标签插入：
 
-    <video controls style="max-width:100%" src="/assets/video/clip.mp4"></video>
+    <video controls style="max-width:100%" src="/assets/video/sample.mp4"></video>
 
 - `controls`：显示播放/暂停/进度条
 - `style="max-width:100%"`：自适应手机宽度
