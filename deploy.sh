@@ -31,4 +31,8 @@ echo "→ 推送到 GitHub..."
 git push
 
 echo ""
-echo "✅ 已推送。稍等 1-2 分钟，浏览器用 Cmd+Shift+R 强刷即可看到更新。"
+echo "✅ 已推送。GitHub Actions 将自动构建并部署（约 1-3 分钟）。"
+echo "   浏览器用 Cmd+Shift+R 强刷即可看到更新。"
+echo ""
+echo "⚠️ 首次部署前，请到 GitHub 仓库 Settings → Pages → Source"
+echo "   改为 'GitHub Actions'（不再是 Deploy from a branch）。"
