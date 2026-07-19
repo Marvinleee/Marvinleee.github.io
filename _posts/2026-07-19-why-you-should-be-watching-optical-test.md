@@ -16,6 +16,8 @@ tags: [半导体, CPO, Wafer level Test]
 
 ### Who Makes Money First Across 5 Bottlenecks
 
+![Why You Should Be Watching Optical Test Right Now](https://substack-post-media.s3.amazonaws.com/public/images/1ff9e68d-0f45-4d6d-8642-01492c1c1833_2880x1472.png)
+
 来源：[Damnang (Substack)](https://damnang2.substack.com/p/why-you-should-be-watching-optical) · 2026-05-03
 
 Since publishing the Optical Investment Map, I've heard from a lot of readers. The common thread: the optical theme has already run up significantly, and it was hard to know which names to look at or how to approach them. The investment map helped by laying out the full value chain and the competitive dynamics at each layer. What I found most rewarding was hearing that people used it not just to pick individual stocks, but to build their own investment strategy and portfolio.
@@ -36,6 +38,10 @@ To do this, I break the optical test value chain into 5 bottlenecks and evaluate
 
 > This article is based on publicly available information and general industry knowledge. It does not contain any NDA-protected or confidential information from any company, and is not a buy or sell recommendation.
 
+> 本文所引用的母图（Optical Investment Map v1.0，7 层价值链，Test = Layer 7）：
+
+![Optical Investment Map v1.0](https://substack-post-media.s3.amazonaws.com/public/images/7727a653-4c8e-4a78-9476-b17f503b1bb3_2848x1504.png)
+
 ### Why CPO Test Matters Right Now
 
 The direction of optical interconnects is already set. The path goes from pluggable to NPO, and ultimately to CPO. The closer the optical engine moves to the ASIC, the better the power efficiency and bandwidth density.
@@ -47,6 +53,8 @@ As of 2026, 800G pluggables are in high volume and 1.6T is ramping. Up through t
 When the PIC moves inside the ASIC package, the economics of test change. With pluggables, if you get a bad optical module, you pull it out and swap it. But in CPO, the PIC, EIC, and switch ASIC are bonded together inside a single package. If a PIC defect is discovered late, you may have to scrap the entire expensive ASIC package. That's why securing Known Good Die from the PIC before packaging becomes a critical prerequisite for CPO mass production.
 
 This shift matters for test equipment companies for **three reasons**.
+
+![CPO Test — Three Reasons Why Test Economics Change](https://substack-post-media.s3.amazonaws.com/public/images/f83c37a8-8dcc-479c-9ba6-dd9d183ab57f_2816x1536.png)
 
 **First, test insertions increase.** With pluggables, you could separate the flow into ASIC wafer sort and package test, plus a separate module test. CPO requires PIC wafer test, EIC wafer test, KGD screening, and package-level opto-electric co-test.
 
@@ -81,6 +89,8 @@ That's why I don't view optical test as a small subcategory of the existing ATE 
 I'm re-dividing Layer 7 of the Optical Investment Map into 5 bottlenecks. This is not a simple equipment classification. The more important questions are:
 
 Where does yield get stuck in the CPO production process? Where does test cost escalate? And which companies can convert that cost increase into revenue?
+
+![5 Bottlenecks in CPO Test Value Chain](https://substack-post-media.s3.amazonaws.com/public/images/ac0975a8-4a8a-4ee8-b823-3a9cf032e21d_2752x1536.png)
 
 #### Bottleneck 1: Test Platform
 
@@ -154,7 +164,19 @@ But knowing the bottlenecks and picking stocks are two different things. Even wi
 
 So saying "CPO test is heating up" is not enough. What matters is which bottleneck opens first under the CPO adoption timeline you believe in, and which company can actually convert the economics of that bottleneck into revenue.
 
+From here, I evaluate the 14 stocks across 6 investment Factors: optical theme exposure, CPO cost-of-test leverage, technical advantages, real orders and catalysts, financial quality, and valuation risk.
+
+![14 Stocks × 6 Factors Evaluation (Part 1)](https://substack-post-media.s3.amazonaws.com/public/images/d254acc8-235d-4109-9ffa-beaf23d57e1f_1672x941.png)
+
+![14 Stocks × 6 Factors Evaluation (Part 2)](https://substack-post-media.s3.amazonaws.com/public/images/cca01cad-2a09-4cd1-8950-65164232e23b_1672x941.png)
+
 > ⚠️ 以上为公开免费部分。后续「14 只个股 × 6 因子」的逐一评估、评分矩阵与情景选股为付费内容，未包含。
+
+> 本文引用的母图 —— Damnang《Optical Investment Map v1.0》（7 层价值链，Test = Layer 7）已单独整理。
+
+**关联文章：**
+
+![Why AEHR Matters Right Now](https://substack-post-media.s3.amazonaws.com/public/images/155c5a21-9a35-4ae7-af5f-6aac70058ee2_2848x1504.png)
 
 ---
 
