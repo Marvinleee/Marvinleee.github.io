@@ -326,9 +326,9 @@ Type II PLL 的闭环特性是一个**二阶低通系统**：
 
 ## 四、与本站其他文章的连接
 
-- **信号完整性**：SerDes 中时钟恢复（CDR）的核心就是 PLL，抖动分析直接决定 BER。参见[信号完整性入门](https://marvinlee.cn/2026/07/20/signal-integrity-a-primer/)。
-- **光通信**：光模块中的 SerDes 和 DSP 都需要 PLL 提供低抖动时钟，PLL 的相位噪声直接影响光通信的链路预算。参见[光通信入门](https://marvinlee.cn/2026/07/20/high-speed-optical-communications/)。
-- **光投资地图**：硅光芯片中的调制驱动、高速 ADC/DAC 都依赖高性能 PLL。参见[光投资地图 v1.0](https://marvinlee.cn/2026/07/19/optical-investment-map-v1-0/)。
+- **信号完整性**：SerDes 中时钟恢复（CDR）的核心就是 PLL，抖动分析直接决定 BER。参见[信号完整性入门](https://marvinlee.cn/posts/signal-integrity-a-primer/)。
+- **光通信**：光模块中的 SerDes 和 DSP 都需要 PLL 提供低抖动时钟，PLL 的相位噪声直接影响光通信的链路预算。参见[光通信入门](https://marvinlee.cn/posts/high-speed-optical-communications/)。
+- **光投资地图**：硅光芯片中的调制驱动、高速 ADC/DAC 都依赖高性能 PLL。参见[光投资地图 v1.0](https://marvinlee.cn/posts/optical-investment-map-v1-0/)。
 
 ## 五、推荐阅读
 
