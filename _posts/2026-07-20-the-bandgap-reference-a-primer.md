@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "The Bandgap Reference: A Primer — 带隙基准源入门：PTAT/CTAT 抵消、Brokaw 结构与温度无关的基准电压"
-date: 2026-02-05 00:32:12 +0800
+date: 2026-07-20 23:33:00 +0800
 categories: [半导体投资]
 tags: [半导体, 模拟电路, Bandgap, 基准电压源, 模拟IC, 信号完整性]
 description: "整理自 Chad Wallace（Silicon Co-Design, Substack）的技术科普：从 PTAT 与 CTAT 电压的一阶温度抵消出发，拆解 Brokaw 带隙基准的推导、SPICE 仿真（温漂/线性调整率/PSRR/失配）、曲率校正与启动电路，并附一段工程师带隙设计竞赛的趣事。英文原文 + 中文深度解读。全文免费。"
