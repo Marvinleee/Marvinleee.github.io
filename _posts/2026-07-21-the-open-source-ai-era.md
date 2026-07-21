@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "The Open-Source AI Era: Will Hyperscalers Keep Buying Chips? — 开源 AI 时代：云巨头还会继续买芯片吗？"
-date: 2026-07-21 08:30:00 +0800
+date: 2026-07-21 08:05:00 +0800
 categories: [半导体投资]
 tags: [半导体, AI, 开源模型, Hyperscaler, HBM, 算力]
 description: "整理自 Damnang：开源模型（DeepSeek/Qwen/Kimi K3）正快速吞噬中端 AI 工作量份额，市场担忧 hyperscaler 不再买芯片。文章用 OpenRouter 数据 + 前后端毛利拆解证明：企业切到自托管开源模型后，hyerscaler 的单位价格从 $25/M token 崩到 <$1，但净影响取决于『复用率』——真实证据显示预算被一个季度烧光、token 用量年增 5–7 倍，hyerscaler 实则受益。英文原文（免费公开部分）+ 中文深度解读。"
