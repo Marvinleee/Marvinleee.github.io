@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "CPO's Biggest Bottleneck Is Not Optics—It Is High-Volume Testing — CPO 的最大瓶颈不是光学，是量产测试"
-date: 2026-07-28 21:10:00 +0800
+date: 2026-07-28 20:30:00 +0800
 categories: [半导体投资]
 tags: [半导体, CPO, 硅光, 测试, Advantest, 先进封装, 光测试]
 description: "TSPA Semiconductor 深度分析：当 CPO 从实验室走向量产，真正的瓶颈不是光子芯片设计、不是封装，而是能否建立可重复、自动化、标准化、经济可行的光电混合测试体系。Advantest 在 SEMICON Taiwan 2025 的演讲指出了硅光/CPO 量产测试的四大关键方向与三大缺口。英文原文 + 中文深度解读。"
