@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "MicroZed Chronicles: Looking Beyond the FFT — 越过 FFT 之后：用瀑布图给频谱加上时间维度"
-date: 2026-07-29 23:15:00 +0800
+date: 2026-07-29 22:30:00 +0800
 categories: [技术翻译]
 tags: [FPGA, DSP, FFT, 瀑布图, 信号处理, Adam Taylor, Adiuvo]
 description: "翻译并转载自 Adiuvo Engineering（Adam Taylor）的 MicroZed Chronicles 系列：单帧 FFT 只是频域的瞬时快照，不含历史；用瀑布图（waterfall）补上时间维，才能区分谐波/镜像/跳频/突发等行为。英文原文 + 中文翻译对照。"
