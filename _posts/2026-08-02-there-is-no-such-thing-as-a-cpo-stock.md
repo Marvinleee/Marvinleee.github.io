@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "There Is No Such Thing as a 'CPO Stock': How the Market Misread SemiAnalysis — 世上没有"纯 CPO 股"这回事"
+title: "There Is No Such Thing as a 'CPO Stock': How the Market Misread SemiAnalysis — 世上没有「纯 CPO 股」这回事"
 date: 2026-08-02 19:20:00 +0800
 categories: [半导体投资]
 tags: [半导体, CPO, 投资, LITE, COHR, AVGO, 光通信]
