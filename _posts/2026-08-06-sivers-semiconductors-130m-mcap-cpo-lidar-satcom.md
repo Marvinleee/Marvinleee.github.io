@@ -9,6 +9,7 @@ description: "对 Silicon Matter（原 Semis and Stocks）关于瑞典 Sivers Se
 
 > **原文**：Silicon Matter（Substack，曾用名 *Semis and Stocks*，handle: siliconmatter），发布于 2026-03-13。
 > 本文为「英文原文 + 中文深度解读」对照版。原作者持有 Sivers Semiconductors 股票，文中内容为个人观点，**不构成投资建议**。
+> *译注：本译文发布于 2026-08-06；原文数据截至 2026-03-13，部分融资、订单与股价信息可能已有变化，请以最新公开披露为准。*
 
 ---
 
