@@ -247,7 +247,7 @@ After the pay wall I'll describe the clocking architecture in more detail.
 
 ## 与本站其他文章的连接
 
-本站已有大量 **CPO（共封装光学）/ 高速光通信** 系列文章。本篇 SerDes 拆解正好补上「铜链路侧」的技术底座：当单线铜互连撞上边缘密度与功耗墙，**CPO 用光替代铜**来继续 scaling 带宽——SerDes 的物理极限，正是 CPO 叙事的需求源头。可将本篇视为 CPO 系列在「电侧」的前置技术背景。相关阅读：本站 CPO 专题（如 *CPO Fully Dissected*、*There Is No Such Thing As A CPO Stock*、*CPO Biggest Bottleneck: High Volume Testing* 等）。
+本站已有大量 **CPO（共封装光学）/ 高速光通信** 系列文章。本篇 SerDes 拆解正好补上「铜链路侧」的技术底座：当单线铜互连撞上边缘密度与功耗墙，**CPO 用光替代铜**来继续 scaling 带宽——SerDes 的物理极限，正是 CPO 叙事的需求源头。可将本篇视为 CPO 系列在「电侧」的前置技术背景。相关阅读：本站 CPO 专题——[CPO Fully Dissected](/posts/cpo-fully-dissected-cpo-special-part/)、[There Is No Such Thing As A CPO Stock](/posts/there-is-no-such-thing-as-a-cpo-stock/)、[CPO Biggest Bottleneck: High Volume Testing](/posts/cpo-biggest-bottleneck-high-volume-testing/) 等。
 
 ## 风险提示
 
