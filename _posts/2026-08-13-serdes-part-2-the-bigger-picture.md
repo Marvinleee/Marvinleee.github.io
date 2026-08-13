@@ -15,7 +15,7 @@ description: "Nutty 的 SerDes 系列第二篇：铜与光的战争远未尘埃�
 
 *An analysis of industry and technology structure, not investment advice · The author may hold positions in securities mentioned*
 
-> 作者站内交叉引用（已发布于本站）：[SerDes Part 1：读懂 CPO 之前你必须知道的 SerDes 技术](/posts/serdes-part-1-the-technology-you-should-know-before-cpo/)；相关延伸：[玻璃基板](/posts/)、[康宁在 AI 基础设施中的角色](/posts/)。
+> 作者站内交叉引用（已发布于本站）：[SerDes Part 1：读懂 CPO 之前你必须知道的 SerDes 技术](/posts/serdes-part-1-the-technology-you-should-know-before-cpo/)；作者在原文中还交叉引用了其「Substrate 投资手册」与「康宁在 AI 基础设施中的角色」两篇（均在其 Substack，未在本站发布）。
 
 ---
 
