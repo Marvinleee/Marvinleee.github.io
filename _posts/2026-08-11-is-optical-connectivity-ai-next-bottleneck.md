@@ -7,7 +7,7 @@ tags: [半导体, CPO, 光通信, 先进封装, NVIDIA, 供应链]
 description: "整理自 Third Bridge（桥知集团）TMT Perspectives：基于多位全球光通信专家访谈，拆解从可插拔光模块到 CPO 的演进节奏、NPO 过渡定位、NVIDIA 与 Broadcom 的生态卡位，以及 200G EML / 高功率 CW 激光器短缺下的中国替代窗口。英文原文 + 中文深度解读。"
 ---
 
-> 本文整理自 Third Bridge（桥知集团）官方 Perspectives 栏目，原文发布于 **2026-06-17**，署名 **Venis Zhu, Analyst（TMT）**。
+> 本文整理自 Third Bridge（桥知集团）官方 Perspectives 栏目：[Is optical connectivity the next bottleneck in AI data centers?](https://www.thirdbridge.com/en-us/about-us/media/perspectives/is-optical-connectivity-ais-next-bottleneck)，原文发布于 **2026-06-17**，署名 **Venis Zhu, Analyst（TMT）**。
 > 标题原文：*Is optical connectivity the next bottleneck in AI data centers?*。
 > 结构为 **正文（英文原文）+ 解析（中文深度解读）**，方便中英对照阅读。
 > 说明：该文为公开 Perspectives 内容（无付费墙），全文基于 Third Bridge 专家访谈整理；文中引述的专家观点均来自其访谈库（forum.thirdbridge.com），本站仅作整理与解读，不构成投资建议。
