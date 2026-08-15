@@ -16,6 +16,7 @@
 #   - 遍历暂存文件用 while read 逐行读取（正确处理含空格文件名；本站文件名不含换行，换行分隔足够；NUL 需 bash>=4）
 
 set -euo pipefail
+SCAN_TMP=""
 
 # 无论在哪里运行，都切到脚本所在目录（即 my-website）
 cd "$(dirname "$0")"
@@ -47,7 +48,7 @@ done
 # 遍历时用 while read 逐行读取，可正确处理含空格的文件名（NUL 需 bash>=4，本站文件名不含换行，换行足够）。
 # 注意：不再使用 --diff-filter=ACMR，以纳入“删除(D)”操作，避免删除非白名单文件绕过白名单检查。
 STAGE_LIST=$(mktemp)
-trap 'rm -f "$STAGE_LIST" 2>/dev/null' EXIT
+trap 'rm -f "$STAGE_LIST" "$SCAN_TMP" 2>/dev/null' EXIT
 if git rev-parse --verify HEAD >/dev/null 2>&1; then
   git diff --cached --name-only > "$STAGE_LIST"
 else
@@ -83,6 +84,12 @@ FORBIDDEN_BASENAMES=(
 )
 PATH_PATTERNS="*.pem *.key *.p12 *.pfx *.keystore *.jks .env .env.* *.secret credentials.* y y.pub id_rsa id_ed25519 id_dsa id_ecdsa id_ecdsa_sk id_ed25519_sk"
 BAD=""
+# 内容签名扫描用临时文件：先把暂存区 blob 前 4096 字节落盘，再对文件 grep。
+# 原因：脚本启用了 set -o pipefail；若用 `git cat-file :f | head -c 4096 | grep -q`，
+# grep -q 命中后提前退出会让上游 head 收到 SIGPIPE，使整条 pipeline 返回非零，
+# 反而把“命中”误判为“未命中”，导致大于约 4KB 的私钥文件绕过检测。落盘后单独
+# grep 文件可彻底规避 pipefail 陷阱。
+SCAN_TMP=$(mktemp "${TMPDIR:-/tmp}/deploy-scan.XXXXXX") || { echo "❌ 无法创建临时文件，已中止。"; exit 1; }
 while IFS= read -r f; do
   bname=$(basename "$f")
   # 1) 完整路径模式匹配
@@ -101,11 +108,13 @@ while IFS= read -r f; do
   done
   # 3) 私钥内容签名扫描：读取“暂存区 blob”(git cat-file :<file>) 而非工作区文件，
   #    避免“先暂存含密钥文件、再把工作区替换为安全内容”绕过检测。
-  if git cat-file -p ":$f" 2>/dev/null | head -c 4096 | grep -E -q -e '-----BEGIN [A-Z ]+PRIVATE KEY-----'; then
+  git cat-file -p ":$f" 2>/dev/null | head -c 4096 > "$SCAN_TMP"
+  if grep -E -q -e '-----BEGIN [A-Z ]+PRIVATE KEY-----' "$SCAN_TMP"; then
     BAD="${BAD}
   - ${f}  (检测到私钥内容签名)"
   fi
 done < "$STAGE_LIST"
+rm -f "$SCAN_TMP"
 if [ -n "$BAD" ]; then
   echo "❌ 检测到疑似密钥/敏感文件，已中止提交："
   printf "%s\n" "$BAD"
