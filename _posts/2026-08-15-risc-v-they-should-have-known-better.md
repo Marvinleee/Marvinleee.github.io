@@ -9,11 +9,25 @@ description: "整理并评析 Dmitry Grinberg 对 RISC-V 的长篇批评：从�
 
 > **来源**：Dmitry Grinberg，[RISC-V: They Should Have Known Better](https://dmitry.gr/?r=06.%20Thoughts&proj=12.%20RV)（原网页未标示发布日期，本站访问于 2026-08-15）。
 >
-> **阅读说明**：本文采用 **正文（原文内容整理）+ 解析（中文深度解读）** 的结构。第一部分忠实梳理作者的完整论证，不作逐字转载；第二部分再进行事实核查、技术评析与产业延伸。原文措辞尖锐，本文尽量把修辞与可验证的技术论点分开。
+> **阅读说明**：本文采用 **正文（英文原文）+ 解析（中文深度解读）** 的结构。第一部分直接嵌入 Dmitry.GR 的英文原文页面；第二部分进行结构化整理、事实核查、技术评析与产业延伸。原文措辞尖锐，本文尽量把修辞与可验证的技术论点分开。
 
 ---
 
-# 第一部分：正文（原文内容整理）
+# 第一部分：正文（Original Article）
+
+以下为 Dmitry.GR 的英文原文页面。若嵌入内容未正常显示，请[前往原站阅读全文](https://dmitry.gr/?r=06.%20Thoughts&proj=12.%20RV)。
+
+<iframe
+  src="https://dmitry.gr/?r=06.%20Thoughts&amp;proj=12.%20RV"
+  title="RISC-V: They Should Have Known Better — Original Article"
+  loading="lazy"
+  referrerpolicy="strict-origin-when-cross-origin"
+  style="width: 100%; height: 80vh; min-height: 900px; border: 1px solid var(--main-border-color); border-radius: 0.5rem; background: #fff;"
+></iframe>
+
+> 英文原文由 Dmitry.GR 源站提供，著作权归原作者所有；本站未复制或修改原文内容。
+
+# 第二部分：解析（中文深度解读）
 
 ## 原文主旨
 
@@ -100,8 +114,6 @@ RISC-V 通过 Profiles 为应用处理器规定共同基线。官方 [RVA23 Prof
 - **高端桌面与通用计算**：作者不看好 RISC-V 击败成熟的 AArch64 实现，因为开放规范不会自动生成高性能乱序核心，也不会免费带来软件生态。
 
 这是全文最值得保留的判断框架：**RISC-V 的胜负不是一场覆盖所有计算市场的总决赛，而是在不同工作负载中，开放性、授权成本、芯片面积、软件兼容和绝对性能之间分别结算。**
-
-# 第二部分：解析（中文深度解读）
 
 ## 争议点核查表
 
