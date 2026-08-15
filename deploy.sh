@@ -5,12 +5,15 @@
 #
 # 安全设计（吸取误提交 SSH 私钥 y/y.pub 的教训）：
 #   - 仅白名单暂存 _posts/ 与 assets/，杜绝 git add -A 误提交密钥
-#   - 提交前校验暂存区：凡 _posts/ assets/ 之外的已暂存文件一律拒绝（即便手动 git add 过）
-#   - 提交前扫描暂存区：密钥文件名（完整路径 + basename）及私钥内容签名（-----BEGIN ... PRIVATE KEY-----）命中即拒绝
+#   - git add 任一步失败（索引锁/权限等）立即中止，不再用 2>/dev/null 隐藏导致“暂存失败却提示没有改动”
+#   - 提交前校验暂存区：凡 _posts/ assets/ 之外的已暂存文件（含“删除”操作）一律拒绝（即便手动 git add 过）
+#   - 提交前扫描暂存区：密钥文件名（完整路径 + basename，覆盖子目录无扩展名密钥）及私钥内容签名命中即拒绝；
+#     内容签名读取“暂存区 blob”(git cat-file :<file>) 而非工作区文件，避免“暂存后改工作区”绕过
 #   - 大文件（>5MB）告警
 #   - 无改动时正常退出（不再因 set -e + git commit 失败而中断）
 #   - 提交前可选本地构建/链接检查（Ruby >= 3.4 时启用，与 CI 一致）
 #   - 推送前检查远端 main 是否有本地没有的新提交（fetch 失败则中止，除非 SKIP_REMOTE_CHECK=1）
+#   - 遍历暂存文件用 while read 逐行读取（正确处理含空格文件名；本站文件名不含换行，换行分隔足够；NUL 需 bash>=4）
 
 set -euo pipefail
 
@@ -26,28 +29,42 @@ fi
 
 # ---------- 仅白名单暂存文章与资源（放弃 git add -A）----------
 echo "→ 仅暂存文章与资源（白名单：_posts/ assets/）..."
-git add _posts/ assets/ 2>/dev/null || true
+# 只 add 真实存在的目录；任一步 git add 失败（索引锁、权限等）立即中止，
+# 不再用 2>/dev/null || true 隐藏，以免“暂存失败却提示没有改动”。
+for d in _posts assets; do
+  if [ -d "$d" ]; then
+    if ! git add -- "$d"; then
+      echo "❌ git add $d 失败，已中止。" >&2
+      exit 1
+    fi
+  fi
+done
 # 如需纳入其他约定目录，按需在此补充，例如：
-# git add _data/ pages/ 2>/dev/null || true
+#   [ -d _data ] && git add -- _data
+#   [ -d pages ] && git add -- pages
 
-# 取出即将进入提交的文件清单（自检用）
+# 取出即将进入提交的文件清单（自检用），换行分隔写入临时文件；
+# 遍历时用 while read 逐行读取，可正确处理含空格的文件名（NUL 需 bash>=4，本站文件名不含换行，换行足够）。
+# 注意：不再使用 --diff-filter=ACMR，以纳入“删除(D)”操作，避免删除非白名单文件绕过白名单检查。
+STAGE_LIST=$(mktemp)
+trap 'rm -f "$STAGE_LIST" 2>/dev/null' EXIT
 if git rev-parse --verify HEAD >/dev/null 2>&1; then
-  CANDIDATE_FILES=$(git diff --cached --name-only --diff-filter=ACMR)
+  git diff --cached --name-only > "$STAGE_LIST"
 else
-  CANDIDATE_FILES=$(git ls-files)
+  git ls-files > "$STAGE_LIST"
 fi
 
 # ---------- 安全守卫 0：暂存区必须只含白名单目录 ----------
 # 即便用户手动 git add 了 _config.yml / 脚本等，也必须拦截，
 # 否则后面的无路径限定 git commit 会把它们一并提交（“仅白名单提交”才名副其实）。
 NON_WHITELIST=""
-for f in $CANDIDATE_FILES; do
+while IFS= read -r f; do
   case "$f" in
     _posts/*|assets/*) ;;          # 允许
     *) NON_WHITELIST="${NON_WHITELIST}
   - ${f}";;
   esac
-done
+done < "$STAGE_LIST"
 if [ -n "$NON_WHITELIST" ]; then
   echo "❌ 暂存区含有白名单之外的文件，已中止提交："
   printf "%s\n" "$NON_WHITELIST"
@@ -66,7 +83,7 @@ FORBIDDEN_BASENAMES=(
 )
 PATH_PATTERNS="*.pem *.key *.p12 *.pfx *.keystore *.jks .env .env.* *.secret credentials.* y y.pub id_rsa id_ed25519 id_dsa id_ecdsa id_ecdsa_sk id_ed25519_sk"
 BAD=""
-for f in $CANDIDATE_FILES; do
+while IFS= read -r f; do
   bname=$(basename "$f")
   # 1) 完整路径模式匹配
   for pat in $PATH_PATTERNS; do
@@ -82,12 +99,13 @@ for f in $CANDIDATE_FILES; do
   - ${f}  (basename 匹配: ${nb})"
     fi
   done
-  # 3) 私钥内容签名扫描（即便文件名绕过了上面的规则）
-  if [ -f "$f" ] && head -c 4096 "$f" 2>/dev/null | grep -E -q -e '-----BEGIN [A-Z ]+PRIVATE KEY-----'; then
+  # 3) 私钥内容签名扫描：读取“暂存区 blob”(git cat-file :<file>) 而非工作区文件，
+  #    避免“先暂存含密钥文件、再把工作区替换为安全内容”绕过检测。
+  if git cat-file -p ":$f" 2>/dev/null | head -c 4096 | grep -E -q -e '-----BEGIN [A-Z ]+PRIVATE KEY-----'; then
     BAD="${BAD}
   - ${f}  (检测到私钥内容签名)"
   fi
-done
+done < "$STAGE_LIST"
 if [ -n "$BAD" ]; then
   echo "❌ 检测到疑似密钥/敏感文件，已中止提交："
   printf "%s\n" "$BAD"
@@ -103,14 +121,14 @@ human() {
   else printf "%sB" "$b"; fi
 }
 MAX_BYTES=$((5*1024*1024))
-for f in $CANDIDATE_FILES; do
+while IFS= read -r f; do
   if [ -f "$f" ]; then
     sz=$(wc -c < "$f" 2>/dev/null || echo 0)
     if [ "$sz" -gt "$MAX_BYTES" ]; then
       echo "⚠️  大文件告警：${f} ($(human "$sz"))，请确认是否确需入仓。"
     fi
   fi
-done
+done < "$STAGE_LIST"
 
 # ---------- 无改动时正常退出（修复 set -e 中断陷阱）----------
 if git diff --cached --quiet; then
