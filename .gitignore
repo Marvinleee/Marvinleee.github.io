@@ -1,7 +1,6 @@
-# Bundler cache
+# Bundler 本地安装缓存（Gemfile.lock 现纳入版本控制以保证可复现）
 .bundle
 vendor
-Gemfile.lock
 
 # Jekyll cache
 .jekyll-cache
