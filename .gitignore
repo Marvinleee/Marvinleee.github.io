@@ -30,3 +30,25 @@ assets/js/dist
 *~
 .DS_Store
 Thumbs.db
+
+# Secrets / private keys —— 绝不可提交
+# （曾误将 SSH 私钥 y / y.pub 提交进公开历史，教训深刻）
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_ed25519
+id_dsa
+id_ecdsa
+id_ecdsa_sk
+id_ed25519_sk
+y
+y.pub
+.env
+.env.*
+*.secret
+credentials
+credentials.*
