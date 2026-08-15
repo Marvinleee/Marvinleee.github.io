@@ -2,8 +2,8 @@
 layout: post
 title: "The 100-Second Bottleneck Behind NVIDIA CPO — CPO 测试瓶颈与四阶段测试栈"
 date: 2026-07-19 16:59:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, Wafer level Test]
+categories: [半导体产业]
+tags: [CPO, 光测试, 晶圆级测试, 测试设备, NVIDIA]
 description: "整理自 PhotonCap：CPO 量产的真正瓶颈已从制造转向测试——单颗 PIC 全检超 100 秒。拆解 4 阶段测试栈，梳理 FormFactor、Teradyne、Keysight 等 7 家公司的卡位。"
 ---
 

@@ -2,8 +2,8 @@
 layout: post
 title: "The AI Hardware Primer — AI 硬件入门：被忽视的真正瓶颈在硬件层"
 date: 2026-08-10 20:00:00 +0800
-categories: [半导体投资]
-tags: [半导体, AI硬件, 台积电, CoWoS, HBM, 英伟达, 供应链, 关键矿物]
+categories: [AI硬件]
+tags: [AI加速器, CoWoS, HBM, 台积电, 供应链]
 description: 整理 William David (The Chokepoint) 的 AI 硬件入门：拆解 AI 投资叙事里被忽视的硬件约束——台积电代工垄断、CoWoS 先进封装产能 fully allocated、HBM 切换需 18 个月重新设计、以及最底层的材料（钨/镓/磷化铟）约束。英文原文 + 中文深度解读。
 ---
 

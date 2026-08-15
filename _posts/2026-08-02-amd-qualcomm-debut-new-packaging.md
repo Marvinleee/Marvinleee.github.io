@@ -2,8 +2,8 @@
 layout: post
 title: "AMD, Qualcomm Debut New Packaging Technologies — AMD 与 Qualcomm 首发新一代先进封装"
 date: 2026-08-02 18:45:00 +0800
-categories: [半导体投资]
-tags: [半导体, 先进封装, AMD, Qualcomm, CPO, chiplet]
+categories: [半导体产业]
+tags: [先进封装, AMD, Qualcomm, Chiplet, MoP, HBC]
 description: "整理自 Mark LaPedus（Substack）：AMD 与 Qualcomm 同时发布绕开 HBM/CoWoS 瓶颈的新一代内存封装——AMD Versal Premium Gen2 MoP 与 Qualcomm HBC。附英文原文 + 中文深度解读，拆解两条技术路径、关键概念与投资意义。"
 ---
 

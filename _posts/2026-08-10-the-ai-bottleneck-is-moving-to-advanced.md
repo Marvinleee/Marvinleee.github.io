@@ -3,7 +3,7 @@ layout: post
 title: "The AI Bottleneck Is Moving to Advanced Packaging, Three Japanese Companies Hold the Keys — AI 瓶颈正移向先进封装，三家日本公司掌握钥匙"
 date: 2026-08-10 20:00:00 +0800
 categories: [半导体投资]
-tags: [半导体, 先进封装, CoWoS, EMIB, 日本, 玻璃布, 铜箔, 耗材, 供应链, 地缘政治]
+tags: [先进封装, 半导体材料, 供应链, 日本, CoWoS, 投资]
 description: 整理 Asia Next (X-RAY #3) 的长文：从 NVIDIA 预付 Amkor 15 亿美元切入，论证 AI 瓶颈正从设计/制造移向先进封装与更底层的材料（玻璃布、铜箔、微钻），并点出六道锁定中由日本公司把持的耗材钥匙。英文原文（免费框架全本）+ 中文深度解读；公司具体标的在付费墙后，未转载。
 ---
 

@@ -2,9 +2,11 @@
 layout: post
 title: 这是我的第一篇博客
 date: 2026-06-14
-tags: [随笔]
+categories: [站务]
+tags: [站务, 博客]
 description: "用 GitHub Pages 搭建的第一篇博客，开启技术、生活与零碎想法的记录。"
 ---
+
 欢迎来到我的个人博客！
 
 这是用 GitHub Pages 搭建的第一篇文章。从这里开始，我会陆续记录技术、生活和一些零碎的想法。

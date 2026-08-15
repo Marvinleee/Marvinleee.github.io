@@ -3,7 +3,7 @@ layout: post
 title: "China WFE Exposure, MKS Cover-Up, On-Chip Cooling & All Things Substrates — 中国 WFE 曝光、MKS 的掩盖、片上冷却与基板全景"
 date: 2026-08-02 18:40:00 +0800
 categories: [半导体投资]
-tags: [半导体, 设备, WFE, 中国半导体, MKS, 投资]
+tags: [半导体设备, WFE, MKS, 中国半导体, 片上液冷, ABF基板]
 description: "整理自 Chips & Wafers（Substack）的每周更新，英文原文涵盖中国 WFE 需求退烧、MKS 对中国营收披露的「掩盖」、AI 芯片片上液冷路线图与 ABF 基板（CoWoS 之「基」）复苏信号；本页保留完整英文原文并附中文深度解读。"
 ---
 

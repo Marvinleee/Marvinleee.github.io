@@ -3,7 +3,7 @@ layout: post
 title: "Semiconductor Test: A Compelling Investment Theme — 半导体测试——一个被低估的投资机会"
 date: 2026-08-02 18:50:00 +0800
 categories: [半导体投资]
-tags: [半导体, 测试, 设备, 投资, Advantest]
+tags: [半导体测试, 测试设备, Advantest, ATE, 投资]
 description: "英文原文《Semiconductor Test: A Compelling Investment Theme》系统梳理了 AI 时代半导体测试产业链（ATE、探针卡、晶圆探针台、老化测试、OSAT）的结构性投资逻辑；本文附完整英文原文与中文深度解读，覆盖测试强度、先进封装带来的增量测试步骤与成本占比变化。"
 ---
 

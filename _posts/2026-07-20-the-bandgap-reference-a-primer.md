@@ -2,8 +2,8 @@
 layout: post
 title: "The Bandgap Reference: A Primer — 带隙基准源入门：PTAT/CTAT 抵消、Brokaw 结构与温度无关的基准电压"
 date: 2026-07-20 23:33:00 +0800
-categories: [半导体投资]
-tags: [半导体, 模拟电路, Bandgap, 基准电压源, 模拟IC, 信号完整性]
+categories: [电子工程]
+tags: [模拟电路, 带隙基准, 基准电压, 模拟IC]
 description: "整理自 Chad Wallace（Silicon Co-Design, Substack）的技术科普：从 PTAT 与 CTAT 电压的一阶温度抵消出发，拆解 Brokaw 带隙基准的推导、SPICE 仿真（温漂/线性调整率/PSRR/失配）、曲率校正与启动电路，并附一段工程师带隙设计竞赛的趣事。英文原文 + 中文深度解读。全文免费。"
 ---
 
@@ -213,7 +213,7 @@ I feel like designing bandgaps are a really good introduction to analog circuit 
 ## 四、技术趋势与产业视角
 
 - **模拟是「手艺活」**：作者那句「analog is an art」并非客套——曲率校正里「在哪个温度让某个晶体管导通、放在电路何处」这类 trick，靠的是工程师之间的周会分享与试错，很难完全教科书化。
-- **基准源是系统级芯片的隐藏地基**：光通信（光模块 DSP/驱动器偏置）、SerDes（收发器内部 ADC/DAC 参考）、PLL（压控振荡器偏置）全都依赖稳定的带隙基准。本站已发的 [高速光通信入门](https://marvinlee.cn/posts/high-speed-optical-communications/)、[信号完整性入门](https://marvinlee.cn/posts/signal-integrity-a-primer/)、[PLL 入门](https://marvinlee.cn/posts/the-phase-locked-loop-a-primer/)、[SerDes 系统架构拆解](https://marvinlee.cn/posts/a-system-architecture-breakdown-of/) 在物理层/模拟层大量用到这类基础模块——本文正好补上「最底层的参考电压从哪来」这一环。
+- **基准源是系统级芯片的隐藏地基**：光通信（光模块 DSP/驱动器偏置）、SerDes（收发器内部 ADC/DAC 参考）、PLL（压控振荡器偏置）全都依赖稳定的带隙基准。本站已发的 [高速光通信入门](https://marvinlee.cn/posts/high-speed-optical-communications/)、[信号完整性入门](https://marvinlee.cn/posts/signal-integrity-a-primer/)、[PLL 入门](https://marvinlee.cn/posts/the-phase-locked-loop-a-primer/)、[SerDes 系统架构拆解](https://marvinlee.cn/posts/pushing-the-speed-limit-serdes-transceivers-224-448gbps/) 在物理层/模拟层大量用到这类基础模块——本文正好补上「最底层的参考电压从哪来」这一环。
 - **从免费到付费的转折**：作者 6/1/26 的编者按明确说，后续将把最深层的技术拆解改为付费，但**本文保留免费**。这意味着同一个 Substack 里，越往后越难通过公开渠道完整获取，发布时需留意付费墙标注。
 
 ## 五、与本站其他文章的连接
@@ -221,7 +221,7 @@ I feel like designing bandgaps are a really good introduction to analog circuit 
 - [高速光通信入门](https://marvinlee.cn/posts/high-speed-optical-communications/) — 光模块里的模拟前端同样依赖稳定偏置。
 - [信号完整性入门](https://marvinlee.cn/posts/signal-integrity-a-primer/) — 高速链路中的 ADC/DAC 参考电压即来自带隙。
 - [PLL 入门](https://marvinlee.cn/posts/the-phase-locked-loop-a-primer/) — 压控振荡器与电荷泵的偏置都靠基准源。
-- [SerDes 系统架构拆解](https://marvinlee.cn/posts/a-system-architecture-breakdown-of/) — 224/448Gbps 收发器的模拟前端以带隙为地基。
+- [SerDes 系统架构拆解](https://marvinlee.cn/posts/pushing-the-speed-limit-serdes-transceivers-224-448gbps/) — 224/448Gbps 收发器的模拟前端以带隙为地基。
 - [光投资地图 v1.0](https://marvinlee.cn/posts/optical-investment-map-v1-0/) — 模拟/混合信号 IP 是半导体国产化的重要赛道。
 
 ## 六、风险提示

@@ -2,8 +2,8 @@
 layout: post
 title: "TSMC Is Ahead in CPO. Samsung Is Putting a Third Chip Next to HBM — 台积电 CPO 领先，三星把第三颗芯片贴到 HBM 旁"
 date: 2026-07-21 07:55:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, 硅光, 先进封装, 三星, HBM, SK海力士]
+categories: [半导体产业]
+tags: [CPO, 硅光, 先进封装, HBM, 台积电, 三星]
 description: "整理自 PhotonCap 付费专栏：台积电在交换机 CPO 领先（Broadcom TH6-Davisson 送样、NVIDIA Quantum-X Photonics 出货），但赛点正从交换机移向『XPU-HBM 封装内光 I/O』。拆解 10→5→2 pJ/bit 能量阶梯、三星 2.xD 三合一封装、多 die 良率惩罚，以及内存阵营（SK hynix）的三路进军。英文原文（第 1–3 节免费部分）+ 中文深度解读。"
 ---
 

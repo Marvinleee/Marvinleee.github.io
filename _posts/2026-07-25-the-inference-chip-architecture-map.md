@@ -2,8 +2,8 @@
 layout: post
 title: "The Inference Chip Architecture Map: 12 Companies Sorted by Three Bottlenecks — 推理芯片架构地图：12 家公司按三大瓶颈分类"
 date: 2026-07-25 23:15:00 +0800
-categories: [半导体投资]
-tags: [半导体, 推理芯片, AI芯片, HBM, CPO]
+categories: [AI硬件]
+tags: [推理芯片, AI加速器, HBM, 存储带宽, 芯片架构]
 description: "整理自 Damnang：把推理芯片市场拆成三大瓶颈（内存带宽 / 灵活性成本 / 部署与功耗），再用实测规格梳理 12 家创企如何作答，按内存阵营（SRAM 中心 / 低成本 DRAM / 分层 / HBM）深挖，最后看 Nvidia 与超大规模云厂如何上下夹击。英文原文 + 中文解读。"
 ---
 

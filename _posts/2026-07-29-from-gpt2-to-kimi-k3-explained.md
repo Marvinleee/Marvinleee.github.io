@@ -2,8 +2,8 @@
 layout: post
 title: "From GPT-2 to Kimi K3, Explained — 从 GPT-2 到 Kimi K3：注意力架构演进全解（中文翻译 + 模块化解读）"
 date: 2026-07-29 21:00:00 +0800
-categories: [半导体投资]
-tags: [AI, 大模型, Transformer, 注意力机制, Kimi K3, GPT-2, 线性注意力, MoE, 推理效率]
+categories: [AI与机器学习]
+tags: [大模型, 注意力机制, "Kimi K3", GPT-2, 线性注意力, MoE]
 description: "本地文档《From GPT2.0 to Kimi3.0, Explained》技术 worklog 的中文翻译与模块化解读：从 GPT-2 (124M) 到 Kimi K3 (2.8T，22,580×) 的注意力架构演进——线性注意力、DeltaNet、Gated DeltaNet、Kimi Linear(KDA)、MLA/MoE/AttnRes/SiTU。含 23 张架构/公式配图，已全部本地化嵌入，原文与译文均未遗漏。"
 ---
 

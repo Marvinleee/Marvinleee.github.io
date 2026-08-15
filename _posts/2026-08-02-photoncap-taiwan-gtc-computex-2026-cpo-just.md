@@ -2,8 +2,8 @@
 layout: post
 title: "Taiwan GTC (Computex 2026): CPO Just Entered Production, So Why Are Coherent and Lumentum, the Companies It Was Supposed to Kill, Still on the Supplier List? — 台湾、GTC 与 Computex 2026：CPO 已进入量产"
 date: 2026-08-02 19:30:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, NVIDIA, 供应链, 光通信, Computex]
+categories: [半导体产业]
+tags: [CPO, NVIDIA, 光通信, 供应链, Computex]
 description: "整理 PhotonCap 关于 NVIDIA Spectrum-X 光电共封装（CPO）在 Computex 2026 进入量产的英文原文，并附中文深度解读，拆解 CPO 供应链、被吞噬与被新增的光学内容，以及投资含义。"
 ---
 

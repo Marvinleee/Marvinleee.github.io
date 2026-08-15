@@ -2,8 +2,8 @@
 layout: post
 title: "AMD and Cerebras Announce Industry-Leading Ultra-Low-Latency and High Throughput AI Inference Solution — AMD 与 Cerebras 推出行业领先的超低延迟、高吞吐 AI 推理方案"
 date: 2026-07-25 23:42:00 +0800
-categories: [半导体投资]
-tags: [半导体, 推理芯片, 算力, Cerebras, AMD, 分离式推理]
+categories: [AI硬件]
+tags: [AI推理, AMD, Cerebras, 晶圆级芯片, 分离式推理]
 description: "AMD(NASDAQ:AMD) 与 Cerebras(NASDAQ:CBRS) 在 Advancing AI 2026 发布技术合作：以『分离式推理(disaggregated inference)』把 AI 推理拆成高吞吐的 prompt 处理（AMD Helios / Instinct GPU）与超低延迟的 token 生成（Cerebras 晶圆级引擎 WSE）两阶段，跨引擎统一工作流，宣称最高 5x tokens/s/watt。英文原文逐字 + 中文深度解读，并与本站《推理芯片架构地图》互链。"
 ---
 

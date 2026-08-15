@@ -2,8 +2,8 @@
 layout: post
 title: "A Comprehensive Overview of High-Speed Optical Communications — 高速光通信全景：从 IM-DD、VCSEL 到硅光与相干光学"
 date: 2026-07-20 22:28:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, 光通信, Wafer level Test]
+categories: [半导体技术]
+tags: [光通信, 光模块, IM-DD, VCSEL, 硅光, 相干光学]
 description: "整理自 chadw（Silicon Code Design, Substack）的技术科普：从短距主力 IM-DD、VCSEL 激光器、光纤模色散与接收端 PIN/TIA，到底层缩放三轴与四大技术趋势（共封装光学/硅光/外调制/相干光学）。英文原文 + 中文解读。"
 ---
 

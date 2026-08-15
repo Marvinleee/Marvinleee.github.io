@@ -2,8 +2,8 @@
 layout: post
 title: "Optics Primer, Part 3: Co-Packaged Optics (CPO) — 共封装光学 CPO 入门：从 EML/DSP 到硅光与外部 CW 激光"
 date: 2026-07-21 23:08:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, 光通信, 硅光, 共封装光学, 先进封装, 激光]
+categories: [半导体技术]
+tags: [CPO, NPO, 硅光, 光引擎, CW激光器, 光通信]
 description: "整理自 ChipStrat (Substack) 的免费入门系列第 3 篇：从可插拔→LRO/LPO 一路走到 CPO。拆解 NPO 与 CPO 的物理差异、XSR SerDes 省电逻辑、硅光引擎与外部 CW 激光如何取代 EML+DSP、可维护性与可靠性反直觉改善、以及价值链从 InP EML/DSP 向硅光/CW 激光/先进封装的迁移。英文原文（全文免费）+ 中文深度解读。"
 ---
 

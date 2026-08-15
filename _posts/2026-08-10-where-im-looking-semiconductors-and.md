@@ -3,7 +3,7 @@ layout: post
 title: "Where I'm Looking: Semiconductors & AI Hardware — 我的关注清单：半导体与 AI 硬件（10 个被物理约束与估值错位交汇的标的）"
 date: 2026-08-10 20:00:00 +0800
 categories: [半导体投资]
-tags: [半导体, AI硬件, 台积电, ASML, SK海力士, 美光, 材料, 供应链, 投资组合]
+tags: [AI硬件, 台积电, ASML, 存储, 半导体材料, 投资组合]
 description: 整理 William David (The Chokepoint) 的季度关注清单：用「物理约束层 vs 估值错位」框架，列出代工/内存/材料基建三大类共 10 个情形（TSMC、ASML、ONTO、SK 海力士、美光、Entegris、AXT、Coherent、ASM International、Linde），并逐一给出 bear case 与催化剂。英文原文 + 中文深度解读。
 ---
 

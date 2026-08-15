@@ -2,8 +2,8 @@
 layout: post
 title: "CPO, Fully Dissected [CPO Special Part 2] — CPO 全拆解（CPO 专题篇）"
 date: 2026-08-02 19:05:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, 光通信, 封装, 深度]
+categories: [半导体技术]
+tags: [CPO, 光引擎, 硅光, 先进封装, 激光器]
 description: "整理自 Damnang (Substack) 的 CPO 专题第二篇，逐层解剖 CPO 封装的光路、光电引擎（EIC/PIC）、调制器技术路线（MZI/MRR/EAM/TFLN）、外置激光源与封装集成，并附中文深度解读与产业链标的梳理。"
 ---
 

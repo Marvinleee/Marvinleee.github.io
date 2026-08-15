@@ -2,8 +2,8 @@
 layout: post
 title: "Why CPO Is Becoming Inevitable? [CPO Special Part 1] — 为什么 CPO 正变得不可避免"
 date: 2026-08-02 19:10:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, 光通信, 铜互连, 功耗]
+categories: [半导体技术]
+tags: [CPO, 铜互连, 功耗, 光引擎, 数据中心网络]
 description: "本文为 Damnang 关于 CPO（共封装光学）系列第一篇的英文原文，系统梳理数据中心 GPU 互连的距离分层、铜互连的『铜墙』瓶颈，以及交换 ASIC 到前面板光模块之间 15–30cm 电学通道的功耗、空间与可靠性问题，并详解 CPO 如何用『毫米级』封装把电学距离压到极致、省掉 DSP、带来 50–80% 的功耗下降。附中文深度解读。"
 ---
 

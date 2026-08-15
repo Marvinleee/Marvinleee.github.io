@@ -3,7 +3,7 @@ layout: post
 title: "July NPO/CPO Update: Stupidity Singularity — NPO/CPO 七月更新：激光护城河、VCSEL CPO 与 Nvidia 供应链变局"
 date: 2026-07-25 23:38:00 +0800
 categories: [半导体投资]
-tags: [半导体, CPO, NPO, 硅光, 激光器, VCSEL, Nvidia, Lumentum]
+tags: [CPO, NPO, 激光器, VCSEL, Lumentum, 供应链]
 description: "Irrational Analysis 对近期 CPO/NPO 舆论噪音的反击：Nvidia 已将 NPO 方案从 TSMC COUPE 临时迁往 Tower Semi 的 SiPho 平台（根因是 TSMC 的 SiN PDK 拖延与 2D 光栅耦合器翻车）；Lumentum 的 UHP 激光器在 NPO 所需的严苛 RIN/线宽规格下几乎无敌，Coherent 已实质失败并仓促转向 MOPA；Ashkan Seyedi 转投 AMS OSRAM 实为押注其封装/集成能力做 scalable 的 VCSEL CPO。英文原文逐字 + 中文深度解读，并与本站激光/CPO 系列互链。"
 ---
 

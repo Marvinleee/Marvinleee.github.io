@@ -2,8 +2,8 @@
 layout: post
 title: "RISC-V: They Should Have Known Better — 一位嵌入式工程师对 RISC-V 的系统性批评"
 date: 2026-08-15 12:00:00 +0800
-categories: [半导体技术]
-tags: [半导体, RISC-V, CPU架构, 指令集, ISA, 嵌入式, RVA23, ARM]
+categories: [计算机架构]
+tags: [RISC-V, 计算机架构, 指令集, 嵌入式, RVA23, ARM]
 description: "整理并评析 Dmitry Grinberg 对 RISC-V 的长篇批评：从微控制器中断开销、扩展可选性、缺失的位操作、立即数与压缩指令编码，到 RVA23 profiles 和 RISC-V 真正适合的市场；结合官方规范与 Ubuntu 支持策略区分事实、设计取舍和作者观点。"
 ---
 

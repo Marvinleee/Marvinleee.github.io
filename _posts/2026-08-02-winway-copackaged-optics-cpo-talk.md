@@ -2,8 +2,8 @@
 layout: post
 title: "Winway Copackaged Optics (CPO) Talk — WinWay 与共封装光学（CPO）访谈"
 date: 2026-08-02 19:15:00 +0800
-categories: [半导体投资]
-tags: [半导体, CPO, 封装, WinWay, 连接器]
+categories: [半导体产业]
+tags: [CPO, WinWay, 测试接口, 连接器, 先进封装]
 description: "本文整理自 Substack《Elementary, Dear Watson》Jack Huang 对 WinWay（台湾测试设备厂）CPO 投资者宣讲的逐页解读，保留完整英文原文，并附中文深度解读，聚焦 CPO 供应链、PIC/EIC、耦合器、测试瓶颈与投资意义。"
 ---
 

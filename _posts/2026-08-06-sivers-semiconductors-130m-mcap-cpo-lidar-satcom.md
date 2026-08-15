@@ -3,7 +3,7 @@ layout: post
 title: "Sivers Semiconductors：一只被市场忽视的 $130M 市值 CPO / LiDAR / SATCOM 标的"
 date: 2026-08-06 23:00:00 +0800
 categories: [半导体投资]
-tags: [Sivers, CPO, 共封装光学, LiDAR, SATCOM, 光子学, InP, 半导体投资, 瑞典]
+tags: [Sivers, CPO, LiDAR, SATCOM, InP, 公司研究]
 description: "对 Silicon Matter（原 Semis and Stocks）关于瑞典 Sivers Semiconductors 的深度公司剖析的英文原文与中文解读，覆盖 CPO 光器件、LiDAR、SATCOM 三大业务线与估值逻辑。作者持股，非投资建议。"
 ---
 
