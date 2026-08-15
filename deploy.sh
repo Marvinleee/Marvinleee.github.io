@@ -108,10 +108,17 @@ while IFS= read -r f; do
   done
   # 3) 私钥内容签名扫描：读取“暂存区 blob”(git cat-file :<file>) 而非工作区文件，
   #    避免“先暂存含密钥文件、再把工作区替换为安全内容”绕过检测。
-  git cat-file -p ":$f" 2>/dev/null | head -c 4096 > "$SCAN_TMP"
-  if grep -E -q -e '-----BEGIN [A-Z ]+PRIVATE KEY-----' "$SCAN_TMP"; then
-    BAD="${BAD}
+  #    删除项在索引中没有 blob，只做上面的文件名检查；新增/修改项才扫描内容。
+  #    先完整写入临时文件再 grep，避免 pipefail 下 head/grep 提前退出导致 SIGPIPE 误判。
+  if git cat-file -e ":$f" 2>/dev/null; then
+    if ! git cat-file -p ":$f" > "$SCAN_TMP" 2>/dev/null; then
+      echo "❌ 无法读取暂存区文件 ${f}，已中止。" >&2
+      exit 1
+    fi
+    if grep -a -E -q -e '-----BEGIN [A-Z ]+PRIVATE KEY-----' "$SCAN_TMP"; then
+      BAD="${BAD}
   - ${f}  (检测到私钥内容签名)"
+    fi
   fi
 done < "$STAGE_LIST"
 rm -f "$SCAN_TMP"
