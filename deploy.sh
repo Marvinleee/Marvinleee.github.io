@@ -1,10 +1,13 @@
 #!/bin/bash
 # 一键部署脚本：把本地改动提交并推送到 GitHub Pages（仅 main 分支）
-# 用法：./deploy.sh "这次改了什么"
+# 用法：./deploy.sh "这次改了什么" [文件/目录1 文件/目录2 ...]
 # 不写说明时，自动用当天日期作为提交信息。
+# 第二个参数起为“显式要暂存的路径”；传入后只暂存这些路径，
+# 不再白名单扫整个 _posts/，避免把预存在的未跟踪草稿一并提交。
+# 不传显式路径时回退原行为（白名单暂存整个 _posts/ 与 assets/）。
 #
 # 安全设计（吸取误提交 SSH 私钥 y/y.pub 的教训）：
-#   - 仅白名单暂存 _posts/ 与 assets/，杜绝 git add -A 误提交密钥
+#   - 默认白名单暂存 _posts/ 与 assets/；显式模式只暂存调用方指定的路径，杜绝 git add -A 误提交密钥
 #   - git add 任一步失败（索引锁/权限等）立即中止，不再用 2>/dev/null 隐藏导致“暂存失败却提示没有改动”
 #   - 提交前校验暂存区：凡 _posts/ assets/ 之外的已暂存文件（含“删除”操作）一律拒绝（即便手动 git add 过）
 #   - 提交前扫描暂存区：密钥文件名（完整路径 + basename，覆盖子目录无扩展名密钥）及私钥内容签名命中即拒绝；
@@ -28,19 +31,35 @@ if [ "$branch" != "main" ]; then
   exit 1
 fi
 
-# ---------- 仅白名单暂存文章与资源（放弃 git add -A）----------
-echo "→ 仅暂存文章与资源（白名单：_posts/ assets/）..."
-# 只 add 真实存在的目录；任一步 git add 失败（索引锁、权限等）立即中止，
-# 不再用 2>/dev/null || true 隐藏，以免“暂存失败却提示没有改动”。
-for d in _posts assets; do
-  if [ -d "$d" ]; then
-    if ! git add -- "$d"; then
-      echo "❌ git add $d 失败，已中止。" >&2
+# ---------- 暂存：优先显式指定，否则回退白名单 ----------
+# 用法升级： ./deploy.sh "说明" [文件/目录1 文件/目录2 ...]
+#   - 指定了显式路径 → 只暂存这些路径，防止把 _posts/ 里预存在的未跟踪草稿一并扫入
+#   - 未指定         → 回退原行为，白名单暂存整个 _posts/ 与 assets/
+# 无论哪种方式，下方“安全守卫 0”都会再次校验暂存区只含允许的路径。
+EXPLICIT=("${@:2}")
+if [ "${#EXPLICIT[@]}" -gt 0 ]; then
+  echo "→ 仅暂存显式指定的 ${#EXPLICIT[@]} 个路径（防止误扫草稿）..."
+  for p in "${EXPLICIT[@]}"; do
+    if ! git add -- "$p"; then
+      echo "❌ git add $p 失败，已中止。" >&2
       exit 1
     fi
-  fi
-done
-# 如需纳入其他约定目录，按需在此补充，例如：
+  done
+  echo "    （未显式指定的改动不会被暂存。）"
+else
+  echo "→ 白名单暂存文章与资源（_posts/ assets/）..."
+  # 只 add 真实存在的目录；任一步 git add 失败（索引锁、权限等）立即中止，
+  # 不再用 2>/dev/null || true 隐藏，以免“暂存失败却提示没有改动”。
+  for d in _posts assets; do
+    if [ -d "$d" ]; then
+      if ! git add -- "$d"; then
+        echo "❌ git add $d 失败，已中止。" >&2
+        exit 1
+      fi
+    fi
+  done
+fi
+# 如需纳入其他约定目录（仅白名单模式生效），按需在此补充，例如：
 #   [ -d _data ] && git add -- _data
 #   [ -d pages ] && git add -- pages
 
@@ -61,7 +80,7 @@ fi
 NON_WHITELIST=""
 while IFS= read -r f; do
   case "$f" in
-    _posts/*|assets/*) ;;          # 允许
+    _posts/*|assets/*|deploy.sh) ;; # 允许：文章、资源、部署脚本自身
     *) NON_WHITELIST="${NON_WHITELIST}
   - ${f}";;
   esac
