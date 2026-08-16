@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="960" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
+  <title id="title">Meta HCCL 与 MTIA 300 集合通信执行路径</title>
+  <desc id="desc">原创示意图，展示 PyTorch 集合通信如何被主机编译为工作包和子图，经 MTIA 控制核分派到专用消息引擎，再由近存计算和片上 RDMA 网卡完成归约与传输；并比较训练吞吐路径和推理低延迟路径。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8fbff"/><stop offset="1" stop-color="#eef4ff"/></linearGradient>
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0,0 L11,5.5 L0,11 z" fill="#3568d4"/></marker>
+    <marker id="fast" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0,0 L11,5.5 L0,11 z" fill="#e24a35"/></marker>
+    <style>
+      .title { font: 700 36px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#13213c; }
+      .h2 { font: 700 25px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#16233d; }
+      .label { font: 650 21px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#1d2939; }
+      .body { font: 500 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#344054; }
+      .small { font: 500 16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#475467; }
+      .panel { fill:#fff; stroke:#cbd5e1; stroke-width:2; }
+      .flow { fill:none; stroke:#3568d4; stroke-width:5; marker-end:url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1600" height="960" fill="url(#bg)"/>
+  <text x="800" y="55" text-anchor="middle" class="title">Meta HCCL：把集合通信从计算核搬到专用通信引擎</text>
+  <text x="800" y="88" text-anchor="middle" class="body">主机编译通信图，MTIA 300 的 CPU-C、16 个 ME、NMC 与片上 RDMA NIC 协同执行</text>
+
+  <rect x="55" y="120" width="430" height="690" rx="22" class="panel"/>
+  <text x="85" y="165" class="h2">1. 控制面：先编译，再执行</text>
+  <rect x="95" y="205" width="350" height="82" rx="14" fill="#dbeafe" stroke="#6093e8" stroke-width="2"/>
+  <text x="270" y="238" text-anchor="middle" class="label">PyTorch c10d / torchcomms</text>
+  <text x="270" y="265" text-anchor="middle" class="small">AllReduce · AllToAllv · AllGather</text>
+  <path d="M270 287 L270 330" class="flow"/>
+  <rect x="95" y="335" width="350" height="105" rx="14" fill="#ede9fe" stroke="#8b6ed9" stroke-width="2"/>
+  <text x="270" y="371" text-anchor="middle" class="label">主机生成完整通信描述</text>
+  <text x="270" y="400" text-anchor="middle" class="small">算法、地址、QP、依赖关系</text>
+  <text x="270" y="425" text-anchor="middle" class="small">可缓存已编译 work packet</text>
+  <path d="M270 440 L270 483" class="flow"/>
+  <rect x="95" y="488" width="350" height="130" rx="14" fill="#fff7d6" stroke="#d9a514" stroke-width="2"/>
+  <text x="270" y="524" text-anchor="middle" class="label">Work packet</text>
+  <rect x="120" y="548" width="90" height="42" rx="8" fill="#ffe7a3"/><rect x="225" y="548" width="90" height="42" rx="8" fill="#ffe7a3"/><rect x="330" y="548" width="90" height="42" rx="8" fill="#ffe7a3"/>
+  <text x="165" y="575" text-anchor="middle" class="small">子图 A</text><text x="270" y="575" text-anchor="middle" class="small">子图 B</text><text x="375" y="575" text-anchor="middle" class="small">子图 C</text>
+  <text x="270" y="608" text-anchor="middle" class="small">每个子图由顺序 WQE 与依赖组成</text>
+  <rect x="95" y="665" width="350" height="102" rx="14" fill="#f8fafc" stroke="#aab6c5" stroke-width="2"/>
+  <text x="120" y="700" class="label">WQE 三类原语</text>
+  <text x="120" y="730" class="small">RDMA：Send / Recv / Write</text>
+  <text x="120" y="755" class="small">计算：Copy / Sum　协调：Fence / Sync</text>
+
+  <rect x="520" y="120" width="625" height="690" rx="22" class="panel"/>
+  <text x="550" y="165" class="h2">2. 数据面：专用硬件自治执行</text>
+  <rect x="565" y="205" width="535" height="78" rx="14" fill="#e9d5ff" stroke="#8b5fc4" stroke-width="2"/>
+  <text x="832" y="238" text-anchor="middle" class="label">CPU-C：流排序与 work packet 分派</text>
+  <text x="832" y="264" text-anchor="middle" class="small">计算与通信共享 stream 语义</text>
+  <path d="M832 283 L832 328" class="flow"/>
+  <rect x="565" y="333" width="535" height="122" rx="14" fill="#fee2e2" stroke="#df6d6d" stroke-width="2"/>
+  <text x="832" y="370" text-anchor="middle" class="label">16 × Message Engine（CPU-M 为 RISC-V 核）</text>
+  <text x="832" y="400" text-anchor="middle" class="small">展开子图 · 检查依赖 · 生成并投递 WQE</text>
+  <text x="832" y="428" text-anchor="middle" class="small">多个子图并行，计算 PE 阵列不参与训练通信</text>
+  <path d="M705 455 L705 510" class="flow"/><path d="M960 455 L960 510" class="flow"/>
+  <rect x="565" y="515" width="275" height="135" rx="14" fill="#dcfce7" stroke="#4ca66a" stroke-width="2"/>
+  <text x="702" y="553" text-anchor="middle" class="label">NMC 近存计算</text><text x="702" y="583" text-anchor="middle" class="small">Copy / Sum 归约</text><text x="702" y="610" text-anchor="middle" class="small">FP32 运算后重量化</text><text x="702" y="637" text-anchor="middle" class="small">总吞吐约 2.8 TB/s</text>
+  <rect x="870" y="515" width="230" height="135" rx="14" fill="#dbeafe" stroke="#4e83db" stroke-width="2"/>
+  <text x="985" y="553" text-anchor="middle" class="label">片上 RDMA NIC</text><text x="985" y="583" text-anchor="middle" class="small">Express Doorbell</text><text x="985" y="610" text-anchor="middle" class="small">WQE 写入即触发</text><text x="985" y="637" text-anchor="middle" class="small">绕过 Host / PCIe</text>
+  <path d="M985 650 L985 698" class="flow"/>
+  <rect x="565" y="703" width="535" height="64" rx="14" fill="#cde7ff" stroke="#3979b8" stroke-width="2"/>
+  <text x="832" y="743" text-anchor="middle" class="label">非对称网络：Scale-up 800 GB/s + Scale-out 200 GB/s</text>
+
+  <rect x="1180" y="120" width="365" height="690" rx="22" class="panel"/>
+  <text x="1210" y="165" class="h2">3. 两种优化目标</text>
+  <rect x="1215" y="205" width="295" height="230" rx="16" fill="#eef6ff" stroke="#6093e8" stroke-width="2"/>
+  <text x="1245" y="244" class="label">训练：吞吐优先</text><text x="1245" y="277" class="small">• 多 ME / 多环并行</text><text x="1245" y="306" class="small">• 拓扑感知的层次算法</text><text x="1245" y="335" class="small">• 通信与 GEMM 重叠</text><text x="1245" y="379" class="label" fill="#245fc7">单机架最高 940 GB/s</text><text x="1245" y="408" class="small">并发 GEMM 降幅约 0.5%</text>
+  <rect x="1215" y="468" width="295" height="265" rx="16" fill="#fff1ed" stroke="#e16b53" stroke-width="2"/>
+  <text x="1245" y="507" class="label">推理：延迟优先</text><text x="1245" y="540" class="small">• PE 单边 PUT 直达门铃</text><text x="1245" y="569" class="small">• Device-resident 元数据</text><text x="1245" y="598" class="small">• Device-triggered 信号量</text>
+  <path d="M1245 632 L1465 632" stroke="#e24a35" stroke-width="5" marker-end="url(#fast)"/><text x="1245" y="674" class="label" fill="#c43824">小消息集合通信 &lt; 6 μs</text><text x="1245" y="705" class="small">代价：重新占用部分 PE 资源</text>
+  <rect x="1215" y="752" width="295" height="38" rx="10" fill="#fff7d6"/><text x="1362" y="777" text-anchor="middle" class="small">同一库内按负载切换执行路径</text>
+
+  <rect x="55" y="842" width="1490" height="72" rx="16" fill="#fff" stroke="#d0d5dd" stroke-width="2"/>
+  <text x="85" y="873" class="label">关键判断：</text><text x="215" y="873" class="body">HCCL 的优势来自软硬件共同改变“谁来执行通信”，不能只用一个 940 GB/s 数字与 NCCL 横向比较。</text>
+  <text x="85" y="900" class="small">本站原创示意｜依据 arXiv:2608.00358 的文字与公开指标重绘，不复制论文原图，所有尺寸均非按比例。</text>
+</svg>
