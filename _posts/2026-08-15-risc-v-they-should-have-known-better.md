@@ -8,13 +8,13 @@ description: "Dmitry.GR 对 RISC-V 指令集设计的尖锐批判：无限可选
 ---
 
 > **来源**：Dmitry.GR（Dmitry Grinberg）· 个人技术博客 · 原文页面**未标注发布日期**（Dmitry.GR 该文未显式给出）
-> **结构**：正文（英文原文，逐字转载）+ 解析（中文深度解读）
+> **结构**：正文（英文原文，逐字转载）→ 中文翻译（逐段对应）→ 解析（中文深度解读）
 > **配图**：正文 Bat-Signal 配图（rv-BatLight.jpg）已落地本站本地资源；原文末尾的 `progress.gif` 为站点进度/统计元素，非内容图，已省略。
-> **说明**：英文原文为作者原话逐字转载，保留其个人化、带情绪的表达风格（含少量粗口），仅作分析对象，不代表本站立场。
+> **说明**：英文原文与中文翻译均为作者原话逐字转载/翻译，保留其个人化、带情绪的表达风格（含少量粗口），仅作分析对象，不代表本站立场。
 
 ---
 
-# 第一部分：正文（Original Article）
+# 第一部分：英文原文（Original Article）
 
 *RISC-V: They Should Have Known Better*
 
@@ -94,7 +94,7 @@ There are no fewer than 9 (nine!) instruction formats here, and that does not in
 
 When talking about immediate encodings henceforth, I shall use "x" to indicate when the immediate is broken into pieces and there is something else there in the instruction. C.LWSP (which loads a word from the stack) encodes the immediate in this order: 5 x x x x x 4 3 2 7 6, C.SWSP which is its sibling for storing to stack, instead, encodes the immediate as 5 4 3 2 7 6. C.LW (which loads a word from memory addressed by a register) encodes its immediate as: 5 4 3 x x x 2 6, naturally. Its sibling, C.SW uses the same encoding, indicating that the design team missed an opportunity to scramble some bits here. If you wanted to load a byte from memory, you'd use C.LB, whose immediate encoding is, of course, nothing like the above. It uses bit order: 0 1. If you wanted to load a halfword, you'd use C.LHU, whose bit order is just: 1. Because of course it is! I am not even going to touch on CM.PUSH and CM.POP because their encoding is so complex that the spec spends a whole chapter explaining how to decode them. Truly, a sign of a simple and intuitive encoding, if you ask me.
 
-While claiming to make use of all possible encoding space in the 16-bit instruction space, some fruit remain so low-hanging as to require OSHA warnings! A simple example: logical shifts include 6 bits of immediate. The argument is that this is needed for 64-bit instructions, but there are already many encodings in the compressed instruction set that are RV64-only. That is to say that RV64C and RV32C are *already* incompatible. Given that, why the hell are all shift instructions in RV32C carrying an extra zero bit? You cannot shift a 32-bit register by more than 32 bits. The spec says that bit must be zero, and yet no encoding uses the space opened up by that bit being one. Self delusion is telling yourself you are making good use of encoding space while also carrying around the ability to shift 32-bit registers by 61 bits, my friends. RV32E is even more egregious since many of its compressed instructions carry an extra bit to encode registers that do not exist there. As RV32E is ABI-incompatible with RV32I and they would never share code, giving RV32E more useful encodings by using those extra bits that would have encoded registers x16..x31 would have been an excellent idea. That is probably why it was not done.
+While claiming to make use of all possible encoding space in the 16-bit instruction space, some fruit remain so low-hanging as to require OSHA warnings! A simple example: logical shifts include 6 bits of immediate. The argument is that this is needed for 64-bit instructions, but there are already many encodings in the compressed instruction set that are RV64-only. That is to say that RV32C and RV64C are *already* incompatible. Given that, why the hell are all shift instructions in RV32C carrying an extra zero bit? You cannot shift a 32-bit register by more than 32 bits. The spec says that bit must be zero, and yet no encoding uses the space opened up by that bit being one. Self delusion is telling yourself you are making good use of encoding space while also carrying around the ability to shift 32-bit registers by 61 bits, my friends. RV32E is even more egregious since many of its compressed instructions carry an extra bit to encode registers that do not exist there. As RV32E is ABI-incompatible with RV32I and they would never share code, giving RV32E more useful encodings by using those extra bits that would have encoded registers x16..x31 would have been an excellent idea. That is probably why it was not done.
 
 Moving on... C.J's bit order could likely pass the NIST Statistical Test Suite for random number generators: 11 4 9 8 10 6 7 3 2 1 5. What even‽ C.BEQZ/C.BNEZ are also jumps, though conditional, so of course their encodings have almost nothing in common with the previous one, they use: 8 4 3 x x x 7 6 2 1 5. When encoding immediates for C.LI, the bit order is 5 x x x x x 4 3 2 1 0. That almost looks sane, but do not despair, more fun is coming. Let us say you wish to adjust the stack pointer. C.ADDI16SP is here for you, with its immediate encoded as: 9 x x x x 4 6 8 7 5. And if you wanted to get an address of a stack variable, C.ADDI4SPN is there, with its immediate encoded as: 5 4 9 8 7 6 2 3. All very logical, sane, and clear, as promised.
 
@@ -110,7 +110,7 @@ Having this happen means that instead of a clearly-understandable crash you get 
 
 Of all the currently available and recommended at time of publication RISC-V SBCs, approximately none are actually RVA23 compliant. None of them will ever run Ubuntu LTS or future AOSP builds.
 
-Many RISC-V fans will claim that all the optionality is no longer an issue since the RISC-V foundation created "profiles" which is a list of mandatory optional extensions (yes, do read that again) that when implemented together allows one to claim to comply with a profile. Again: the ecosystem has had to invent a second layer of standardization whose entire purpose is to say which parts of the first standard you are actually allowed to assume exist. Really, if you find yourself having to build a second standard whose purpose is to tell everybody which parts of your first standard they must actually implement, perhaps the first standard wasn't quite finished. Only a design-by-committee process could produce this situation. To avoid having to target the lowest common denominator of RISC-V, or the embarrassment of having to build thousands of slightly different builds of every package so as to target every possible extension combination, most vendors who are delusional enough to hope that RISC-V desktops will actually happen are planning to mandate RVA23. Ubuntu, Red Hat, and Android are all in this group. Fun story: of all the currently available and recommended at time of publication RISC-V SBCs, approximately none are actually RVA23 compliant, not StarFive's VisionFive 2, not the Banana Pi BPI-F3, not the Lichee Pi 4A, not the Orange Pi RV2, not even the HiFive Premier P550. None of them will ever run Ubuntu LTS or future AOSP builds. Hilariously, some discussions online have taken to talking about "almost RVA23" cores. Again: the profile designed to solve fragmentation isn't backwards-compatible with much of the hardware that is currently sold as "RISC-V", thus *fragmenting* the RISC-V world into "almost-RVA23" and post-RVA23, with the majority of the current boards being "almost". The fans will call this profile system a win, but I say it is a direct indictment against this crime of infinite optionality and the people who thought it was ever a good idea. Big desktop-type cores do not need the divide instruction, array addressing, and basic SIMD to be optional. And nobody should have needed *TEN YEARS* to realize this. Additionally, a lot of vendors whose chips will not make the RVA23 cut are likely now screwed, as Android and Linux leave them behind, no matter how "almost" they were. That is what they get for buying into this, I suppose. A lesson to be learned about FOMO and getting in early -- sometimes it only "almost" pays off. As a hilarious side-note, there is one linux distro which is completely and perfectly tuned for this insane RISC-V landscape - Gentoo, since its thing was always: build each package from source to take advantage of the exact host CPU features and optimizations. That is: RISC-V's ideal (read: the only plausible) software distribution model is apparently Gentoo. After I hit "publish" on this article, I shall be off to find myself a contractor to make a Bat-Signal™-style lantern with the Gentoo logo, to aim at the clouds above the RISC-V HQ. Gentoo, you have been summoned to a battle you did not even know you have been preparing for your entire existence!
+Many RISC-V fans will claim that all the optionality is no longer an issue since the RISC-V foundation created "profiles" which is a list of mandatory optional extensions (yes, do read that again) that when implemented together allows one to claim to comply with a profile. Again: the ecosystem has had to invent a second layer of standardization whose entire purpose is to say which parts of the first standard you are actually allowed to assume exist. Really, if you find yourself having to build a second standard whose purpose is to tell everybody which parts of your first standard they must actually implement, perhaps the first standard wasn't quite finished. Only a design-by-committee process could produce this situation. To avoid having to target the lowest common denominator of RISC-V, or the embarrassment of having to build thousands of slightly different builds of every package so as to target every possible extension combination, most vendors who are delusional enough to hope that RISC-V desktops will actually happen are planning to mandate RVA23. Ubuntu, Red Hat, and Android are all in this group. Fun story: of all the currently available and recommended at time of publication RISC-V SBCs, approximately none are actually RVA23 compliant, not StarFive's VisionFive 2, not the Banana Pi BPI-F3, not the Lichee Pi 4A, not the Orange Pi RV2, not even the HiFive Premier P550. None of them will ever run Ubuntu LTS or future AOSP builds. Hilariously, some discussions online have taken to talking about "almost RVA23" cores. Again: the profile designed to solve fragmentation isn't backwards-compatible with much of the hardware that is currently sold as "RISC-V", thus *fragmenting* the RISC-V world into "almost-RVA23" and post-RVA23, with the majority of the current boards being "almost". The fans will call this profile system a win, but I say it is a direct indictment against this crime of infinite optionality and the people who thought it was ever a good idea. Big desktops and SBCs are unlikely to ever be a RISC-V stronghold for the reasons above. But, for small cheap cores? For those it is a qualified win. The bar is, as we said, low.
 
 ![Bat-Signal style Gentoo logo over the RISC-V headquarters](/assets/img/posts/risc-v-they-should-have-known-better/rva-batlight.jpg)
 
@@ -132,7 +132,127 @@ The second category for big-compute is actual desktops and SBCs that do interact
 
 ---
 
-# 第二部分：解析（深度解读）
+# 第二部分：中文翻译（Chinese Translation）
+
+> 本节为上述英文原文的逐段翻译，供不便直接阅读英文的读者参考。翻译力求准确传达作者原意与语气（含其情绪化、带粗口的表达），不代表本站立场。
+
+*RISC-V：他们本该想得更明白*
+
+> 此处所述全部观点均为我个人所有，不代表我的雇主、任何神明，或我的房东的见解。
+
+我常被问到为什么如此厌恶 RISC-V，而我也常发现自己只能零散地解释。听到的最常见的反应是「你根本没理解它那套设计的精妙之处」——这当然根本就不是什么论据。在被第 N 次要求解释之后，我决定把这一切一次写清楚，这样下次再被问到，我直接甩个链接就好。此外，如果有人想组织一个连贯的反驳，也可以把这篇文字当作参考，清楚地、详细地针对我的每一点来辩。
+
+## 万物通吃
+
+RISC-V 终将占领那些「便宜到尘土里」的一次性微控制器市场。但这并非得益于它的 ISA 设计，而是**尽管**设计如此，它仍能赢。
+
+第一个、也最容易理解的问题在于：没有任何一套 ISA 能对所有用途都是最优的。RISC-V 的粉丝们想让你相信，RISC-V 很快会占领所有超算，同时占据所有 tiny 微控制器用例，以及中间的一切。这是不可能的——对任何 ISA 都不可能。简而言之，高端 CPU 需要的，与廉价省成本的微控制器核需要的，是截然相反的。这些设计取舍不只是微架构层面的，它实际上（且必然地）会冲击 CPU 架构本身。话说回来，我 100% 确信 RISC-V *将* 最终占领那些「便宜到尘土里」的一次性微控制器市场。不是因为 ISA 设计，而是**尽管**设计如此。它会从 8051 手里接过这个角色，因为它总归是 8051 的一点改进——而那个门槛低得，不过是个减速带而已。
+
+廉价微控制器核需要什么？我们看看它们被用来干什么。典型用途是在一颗更大的芯片里去连接、并快速重配置各种硬件模块，比如在一台 MP3 播放器、一张 SD 卡，或一个 U 盘里。重活都由定制 IP 完成，CPU 核只是偶尔去戳一下寄存器、配个什么东西。这种情况下，重要的是中断延迟（越低越好）和面积（越小越好）。通常你不会指望在这种核上做多少运算。量产、压成本的器件会让代码跑在真正的 ROM（若不可更新）或 RAM（若可更新）里；NOR 闪存太贵，对真正量产的玩意儿根本不是选项。从 ROM 跑时，代码体积很重要，因为 ROM 并不紧凑。从 RAM 跑时，代码体积也很重要，因为 SRAM 在 die 上也很占地方。因此，代码密度对这些用例很重要。既然不指望做多少运算，像硬件除法器（甚至乘法器）都可以省掉。这种一次性场景也不需要特权隔离——根本不会去取外部不可信代码。「但是，」你可能会说，「你刚才描述的，不就是 RV32IC（或 RV32EC）吗！」
+
+所以，在嵌入式核几乎唯一的那个用途上，RISC-V 明显比现有的领头竞争者还要差。
+
+确实，它算接近，只不过你真正需要的是 RV32I_Zicsr 才能这么说。没有 Zicsr，就没有符合规范的方式来处理中断，因为没有临时寄存器可用来暂存别的东西，好让你去暂存其余寄存器。MIPS 为此预留了两个寄存器（$k0 和 $k1）。没有它们，RISC-V 就需要 mscratch/sscratch。没有 Zicsr，你就没有这些，只能卡在用一些怪异的其他办法来做事。于是我们又回到了 8051 的境地——它的专长就是「用怪异的方式做事」。小型嵌入式核可不是乱序执行的怪物。你能从它们身上每周期吞吐一条指令，就该谢天谢地了。有鉴于此，我们来乐观地数一下：一个中断处理程序要暂存 ABI 要求的寄存器、并调用一个 C 写的处理函数，需要多少周期。首先我们用一条 CSRRW 暂存一个寄存器（为便于说明，设为 t0）并拿到一个基地址，用来暂存其余的寄存器。然后我们要暂存 ra、sp、gp、tp、t1–t6 以及 a0–a7。接着我们还需要另一条 CSRRW，把旧的 t0 值取回来一并暂存。这*至少*是 21 个周期。出去的路线上，算法类似：一条 CSRRW 去读暂存寄存器的地址，再 19 次 load 把它们读回来。这*至少*是 20 个周期。但还没完。因为这得用汇编写，我们还得算上跳转到 C 处理函数的 JAL 和从那返回的 RET。我们慷慨地假设它们各占两周期。于是，在 C 处理函数干任何正事之前，每次中断至少有 44 周期的开销。Cortex-M0（竞争的廉价 32 位核）进入中断用 15 周期、退出用 12 周期，而且它在硬件里就把 ABI 会被破坏的寄存器压了栈，处理函数可以直接用 C 写。所以它每次中断只有 27 周期的开销。哎哟……快多了！你可能会抗议说我不公平，因为没考虑 RV32E。RV32E 寄存器少一半，初始压栈能快 6 周期、弹出也快 6 周期，把中断开销降到 38 周期。仍比 Cortex-M0 高出三分之一还多。哎哟……所以，在嵌入式核几乎唯一的那个用途上，RISC-V 明显比现有的领头竞争者还要差。CLIC *和* 各种专有「快速 IRQ」/自动压栈扩展的存在，是额外的罪证。基础 ISA 逼着厂商去发明非标硅片，才能追平十年前的 Cortex-M0。而这，反过来又进一步碎片化了那个「标准」（如果它也能叫标准的话）。讽刺的是，即便带上压缩扩展，典型的中断前导代码也比 Cortex-M0 那零字节的硬件路径更大更慢。
+
+接下来聊聊那些压缩指令。我们细看。它们设计得可笑地烂。假设你想把一个字节存到「寄存器 + 偏移」的位置。一条 16 位指令能编码多大的偏移范围？零到三。不是三十三，不是三百零三。是三！嗯，存半字也许能好点？不……零或二。搞什么？为什么？至少存字的时候，你有个合理的范围：零到 124 字节，但那另外两种到底是咋回事？更糟的是，存半字的指令和存字节的编码长得差不多，可它的偏移选项反而更少？为什么？嗯，存字节指令用来放偏移的位里，有一位被硬接线成了零……本可以用它把范围至少扩到 6，但它没这么做！相比之下，Cortex-M0 很乐意让你用 0–31 的偏移存字节、0–62 存半字、0–124 存字——显然这覆盖得多得多的用例。这里到底发生了什么？我真的不知道，但它确实很难自圆其说。常见的说辞是：大偏移就用全长指令呗。行吧，但密度会受损——而密度正是 RISC-V 粉丝们刚吹完 C 扩展时引以为豪的东西。但等等，还有更多。那些存字节和存半字的指令，根本就不在 C 扩展里。它们在另一个叫 Zcb 的扩展里，所以你可能压根拿不到它们，即便那可怜的范围在你的情况下够用。我们待会儿再聊「扩展」……
+
+服务器核需要什么？原始吞吐。在这里，我们身处乱序核的世界，硅面积或多或少是免费的，因为无论你的核多大，缓存都会把它远远甩在体量之后。现代乱序核一次能解码八条、有时十条指令，并并发地发往多个端口；许多现代核能在同一周期吞下不止一个分支（你想一下，让它在脑子里沉一沉……对）。代码密度在这里确实不像过去那么重要了。它在意，但把 L1i 做大一点并不特别复杂，而且再说一遍，在这种小东西的尺度上硅面积基本是免费的。你真正想要的是：能尽可能容易地、一次取出并解码尽可能多指令的能力。与此同时，指令最好还能尽可能多地透露它的意图，好让你最高效地把它们合并或拆分。表面上看，这两种愿望彼此矛盾，在某种程度上确实如此。「好解码」众所周知是「定长」的拉丁语，而「尽可能多」的希腊语是「长」。显然我们不想要定长但很长的指令。那界限划在哪？让指令长度是 2 的幂，能让对齐等许多事情更简单，那然后呢？两字节太短。八字节太长。答案是定长 4 字节指令是个不错的中间地带。它提供了足够的编码空间去编码你几乎想要的一切，即：每条指令编码 3 个寄存器，分支用长偏移。为什么这听起来耳熟？因为那正是 aarch64（和 A32）已被证明极其好用的设计。MIPS 出于同样的原因做了同样的选择。
+
+你现在可能会抗议说 ARM 也有 Thumb、MIPS 也有 microMIPS。然而，在高性能计算里 Thumb 已死。当 Apple 和 ARM 一起设计 aarch64 时，大量建模和测试表明它对每瓦指令数和每秒指令数都是净亏。如果 MIPS 活得够久、撑到当前这个每晶体管成本的时代，它肯定也会把 microMIPS 杀掉。主要的结论是：压缩指令在大核里根本没位置，它们通过让找指令边界变慢，妨碍了快速并行解码多条指令。你可能会抗议说「RISC-V 让找指令长度很容易」，但「容易」和定长指令给你的「即时且免费」不是一回事。
+
+他们花了两年才意识到数组是存在的！
+
+回到高端核需要展示原始性能这个话题。任何代码最常做的操作之一是什么？访问数组。这就是为什么 x86 有 `[ebx + esi * 4]` 这种寻址模式，ARM 有 `[R0, R1, LSL #2]`。没有它，你就被迫像个白痴一样，先把一个寄存器左移两位，再加到另一个寄存器上，然后才能用它去访问内存。一次数组访问要三条指令。对这种不可原谅的缺乏远见，常见的借口是「快速核里指令融合会把那三条融合成一条」。是啊……真有人做到了，能拿好多奖。据我所知，没有哪个核能融合超过两条连续指令。一个都没有。原因相当明显——要考虑、追踪、处理的可能组合数会组合爆炸。既然我们已经确立了这个狗屁借口就是狗屁，那能干点啥？嗯，在规范写完几年*之后*，有人提了个扩展来解决这个问题——Zba。它提供三条形如 SHxADD（x 为 1、2 或 3）的指令。它把移位和加法合在一起，基本上把我们的数组访问从三条指令缩短到两条。这仍比有「寄存器 + 移位寄存器」寻址模式要差，但至少现在「核可以融合它们」这话没那么狗屁、更可信了——假设真有人造出这样的核。一个问题：SHxADD 永远是 4 字节，而访存指令本身是 2 或 4 字节，于是数组访问变成了 6 或 8 字节代码，而 ARM 只要 4 字节。就在此刻，那些刚刚还在高喊 C 扩展对密度多美妙、对高性能核多伟大的所有人，都安静地闭嘴看着地板。是啊……额外补一句，Zba 扩展直到 2021 年才获批，比基础规范晚了两年多。他们花了*两年*才意识到数组是存在的！
+
+当你让高通听起来像理智之声时，你就知道你真的搞砸得很彻底了。
+
+奇怪的是，这很容易修。目前编码空间的 3/4 都分配给了压缩指令（所有低 2 位不是 0b11 的指令）。把其中一些编码空间复用给更好的寻址模式，是显而易见的事，而且能产生更密集、数组寻址能力更好的代码。不幸的是，这事太合理了，根本没人会真去做。在所有可能的理智代言人里，高通……提出了这么做，甚至做了原型。然后无疾而终……当你让高通听起来像理智之声时，你就知道你真的搞砸得很彻底了。不过，回到我们的 SHxADD。你也没法保证自己能用上它们，因为 Zba 是个扩展，所以是可选的。你是不是听「可选」听到烦了？我们下一段就聊这个。
+
+## 可选项
+
+RISC-V 和 USB-C、RCS 有什么共同点？这些东西名义上都是标准，没错，但有趣的地方在于：声称符合其中某一项标准，在技术上为真，却**什么也算不上**。我的 USB-C 线只接了 USB 2.0 的线，合规吗？当然，USB 3 的双绞线是可选项。我的没有 e-marker 的线合规吗？当然，e-marker 是可选项。我的 USB 3.0 USB-C 线可以选择不支持 20Gbps 吗？当然，20Gbps 支持是可选项。它能支持 20Gbps 却不支持 100W 充电吗？当然，那也可选。我手机里完全合规的 RCS 实现，可以不支持把短信升级成视频通话吗？当然！MIVC 是可选项。它能在通话时发不出图片吗？当然，那是可选的！它能不支持加密吗？你猜怎么着，那也是可选的！那么，如果一切都是可选的，声称「符合规范」到底还有什么意义？说白了，这意味着规范的撰写者花了太多时间自我意淫，太少时间接触真实世界。这有两种发生方式：一是学者们不知道他们办公室之外还有个叫真实世界的东西；二是委员会设计（design-by-committee）的情形，真实世界根本没在桌边拿到座位——它没能在主席把它提交表决前及时提交一份「入座动议」。
+
+且看这一句：「RISC-V B（位操作）扩展是一组标准的指令集增强，旨在通过高效的位级操作来提升性能与代码密度。它被拆分为不同的子扩展：Zba、Zbb、Zbc 和 Zbs。」只有委员会设计流程，才会一本正经地吐出这一串字。
+
+写规范时，你每把一样东西设为可选，就把可能的实现切成两个互不兼容的群体。做得够多次，你的规范就变得毫无意义。而 RISC-V 的设计者们在这一点上，真是把狗给操了。一切都是可选的！乘法——可选。除法——可选。用户态支持——可选。监管态——可选。CSR——可选。压缩指令——可选。「额外的压缩指令」——还是可选。我打赌，要是他们觉得能蒙混过关，连加法都会做成可选的！
+
+你每把一样东西设为可选，就把可能的实现切成两个互不兼容的群体。
+
+RISC-V 的基础指令集，在初次发布时，是包含 CSR 的——正如我前面提过的，CSR 是处理中断、以及支持不同特权级所必需的、符合规范的方式。这并不无理；它健全、而且*没坏*。当然，这正是他们「修」它的原因……而且 ASAP（越快越好）！CSR 被抽出来成了一个叫 Zicsr 的扩展，于是现在基础 ISA 既无法处理中断，也无法提供特权隔离。但这其实、而且可笑地，比那还要蠢得多。假设你有很多东西都是可选的。代码第一个想知道的是什么？当然是「我的硬件上实现了特性 X 吗？」。x86 上你用 CPUID 回答这个问题。在 RISC-V 上你怎么回答？嗯，有好消息也有坏消息。有个叫 misa 的 CSR 能回答其中一些问题（当然不是全部，那就太*健全*了）。你发现问题了吗？它是个 CSR，而 CSR 支持是可选的（Zicsr 扩展不是强制的）。如果这记胯下拳还不够，misa 即便被实现了也不要求准确——它允许被读成全零——它是否有意义本身完全是可选的。是啊……你赖以探测可选特性的唯一手段，也是可选的。但等等，还有更多！
+
+misa 前面的「M」表示这是个机器态（machine-mode）CSR。机器态是 RISC-V 里最高的特权级（如果你在记的话，也是唯一非可选的）。这个寄存器无法从更低特权级读取，即便你足够幸运地（a）跑在实现 Zicsr 的硬件上、（b）跑在 misa 没有被硬接线成全零的硬件上、（c）跑在实现其他特权模式的硬件上。这意味着，让代码去适配硬件能力，对普通用户代码来说是不可能的。如果你的硬件实现了那个*可选*的监管态，它也同样无法探测核特性。官方说辞是「去问机器态监管者」。问题显然在于，你根本不知道那个监管者是什么、也不知道怎么「问」它。有个常用的叫 OpenSBI，但当然，你也没法探测你的机器态跑的是不是它。
+
+这里另一桩有趣的可选项，是系统定时器。RISC-V 规范里有个定时器；当然，它是可选的。它*不*用 CSR 访问，因为当然不会！那太一致了。官方说辞/借口是：这么做是为了节省 CSR 里的编码空间。我猜这是因为他们预期会耗光……4096 个？！‽ 就这野心在我看来都有点夸张了——当前没有任何架构接近这个数，连 x86 都没有。但我们先接着看。如果定时器寄存器不是 CSR，那它们在哪？它们是内存映射的！在哪？嗯，既然定时器是任何操作系统都会需要的核外设，而且 CPU 核规范也规定了它，它当然就在某个你能依赖的、定义良好的地址上。开玩笑的！这规范里没有任何东西有那么健全！地址是「由实现定义」的，可以在任何地方。祝你好运，玩得开心，别崩！
+
+我再说一个这里的趣事（我本可以说很多）：异常和中断的向量化。当异常或中断发生时（假设那个可选的 Zicsr 被实现了），CPU 跳去哪？取决于大量可选的、且可选支持配置寄存器、委托寄存器，以及各种各式过度复杂的废话，最终核会选机器态或监管态向量寄存器（mtvec 或 stvec）。那个 CSR 指向处理程序，除了它最低两位决定它的「模式」。模式是什么？文档里记载了两种模式。直接模式是当低两位为 0b00，此时所有异常和中断都直接跳到高位里的地址。向量化模式（低两位 0b01）旨在简化并加速中断处理。所有异常跳到寄存器高位里的地址，而所有中断跳到那个地址加上「中断号 × 4」。那么我对这个看似健全的设计有什么意见？在于这两种模式*都是可选的*！！！！规范没有任何部分强制哪怕那个简单的直接模式！在运行时，你可以通过写入低两位、再读回来、看它们是否「粘住」来探测某模式是否被实现。但完全可能合法地实现一个只支持向量化模式的核。或者只支持直接模式，或者两者都支持，或者都不支持——如果你的核厂商自己发明了一套独立模式的话。这让编写任何通用的内核变得非常困难——你 literally 不知道该期待什么。为什么直接模式没被做成强制的，我无法揣度，但我完全可以告诉你，决定那事的人穿了大号鞋、有大红鼻子、还化了好多白色脸妆。
+
+看起来作者们听说过 Popek & Goldberg，却没能读到摘要之外。
+
+此时你可能会跳出来为这种不可辩护的愚蠢辩护，喊出两句话之一：「别的架构也有可选特性」和/或「藏起 misa 是为了支持虚拟化，你没读过 Popek & Goldberg 吗？」。我们一条条拆穿这些软弱借口。关于「别的架构」，我们看看过去几十年里实际常用的：x86、ARMv7 和 Aarch64。如前所述，x86 有 CPUID，它会很乐意告诉你当前核有哪些特性。它能在用户态轻松做到，正如人们所预期的。ARM 至少有 ID_AA64PFR0_EL1 和 ID_AA64ISAR0_EL1 可供内核使用（尽管用户态不行）。但这里有个重要得多的点，解释了为什么 ARM 的设计不是致命的。在 x86 和 ARM 里，可选特性都清晰地分成两类：（1）高性能计算类，通常用内建函数或手写的汇编，在特殊情形（视频编码、流体模拟）的紧循环中编程，或由 libc（memcpy、memset、strlen）使用；（2）NOP 兼容的可选东西，可以在不支持它们的硬件上安全运行，因为它会当作 NOP 执行，而那是安全的。对 x86 来说那是 endbr64，对 aarch64 来说那几乎就是整个 PAC 指令集。注意，在完全正常的编译代码里需要的东西，*从来没有*是可选的。乘法、除法、寻址模式，永远可用。这意味着，以这些架构为目标的普通 C 编译器，不会面临那个不可能的选择：「编译到最低公共分母，好让代码能跑在所有架构版本上」，还是「假设乘法和健全的寻址模式存在、并准备在没实现它们的核上崩溃」。是的，当然，这时候人们会说「那你干脆就针对你确切的核编译，不行吗？」。是的，我可从没说过这套 ISA 的愚蠢不能靠足够的扭曲来克服。我说的是，这种设计在 1970 年代、我们还不懂更好的时候尚可接受，而在 2000 年代就不可原谅了，因为现在我们已经懂了。
+
+现在聊聊虚拟化的借口。首先，Popek & Goldberg 谈一个架构「可虚拟化」，特指它*缺乏*专门的虚拟化支持。确实，通过陷入（trap）每一条在用户态和监管态行为不同的指令，你可以虚拟化任何架构。但替代方案无非是内置虚拟化支持。按 Popek & Goldberg，x86 是不可虚拟化的，至少因为 POPF 指令。然而我的 x86 机器上正跑着虚拟机，跑得好好的，因为 x86 后来加上了虚拟化支持。事后补上相当不容易，但确实做成了。如果在架构设计时就做，那是小菜一碟。也就是说，*任何*拿 Popek & Goldberg 来为「架构设计时做的决定」辩护，都是狗屁。架构设计之时，恰恰就是「做对」的时机。Popek & Goldberg 甚至提到，陷入一切在虚拟化证明里理论上很有趣，但并不实用。**并不实用**。那么 RISC-V 的设计者干了什么？他们用「但虚拟化……万一 hypervisor 想对 VM 隐藏某些能力呢？」来证明 misa 不向监管态和用户态暴露是合理的。狗……等它到……屎！x86 和 ARM 都处理得挺好。RISC-V 本也可以——只需允许 hypervisor 在 misa 内容上撒谎，同时让所有人仍能读取它。看起来作者们听说过 Popek & Goldberg，却没能读到摘要之外。
+
+他们用朝 Popek & Goldberg 方向含糊一挥来开脱的另一件事，是正在执行的代码无法探测自己处于哪个 CPU 模式。这，再次，纯属胡扯。x86 通过 POPF（举个例子）间接暴露这一点，ARM 甚至不用你骗它，直接在 CurrentEL MSR 里完全公开地暴露。在 RISC-V 上探测当前模式是一场冒险。有时可能，但并非所有情况都行。你为什么会需要这个？比如，你在写一个内核，想让它支持所有 RISC-V 核。我花了点时间试图为我的 rePalm 内核实现这点，所以我可以带你走一遍决策树，并指出每个分叉在哪里活过来、照着你的睾丸来一记。首先，如果核没有 Zicsr，你就能确定自己跑在机器态，但是，你没法知道「没有 Zicsr」这件事，除非去探测性地做一次 CSR 读，但这里有两个问题：第一，没有 Zicsr，就没有恰当通用的方式来捕获无效指令陷入产生时的异常。第二，读哪个 CSR？别忘了它们很可能全都是可选的。你可能会想去读 misa，但别忘了你正在探测自己处于什么模式。如果你在监管态，那次探测也会失败，即便 Zicsr 被实现了。好吧，你可以试着读 sstatus。那个监管态*和*机器态都能读。你安全了，对吧？你想得美！监管态是可选的，如果你的核没实现它，就没有 sstatus 寄存器，于是……你陷入异常。好吧。我们把问题简化。假设 Zicsr 存在。那你至少能分清 S 态和 M 态吗？不能！下面这个方案看起来很诱人：把 stvec 设成指向你的处理程序，它只需把 sepc 往前调 4 然后返回（跳过那条出错指令），然后去读一次 misa。如果你在机器态，它读得顺畅。如果你在监管态，它会陷入，而任何健全的机器监视器都会给你一个非法指令陷入。然后，你的处理程序会跳过那条指令，你注意到这点，从而断定自己在监管态。你赢了，对吧？差一点……再次：监管态是可选的。设想你在没有监管态支持的核上处于机器态。你一试图设置 stvec 就会陷入，因为它不存在。你可能会说：那为啥不连这个陷入也捕获了？因为要做到那，你得设置 mtvec，而你没法确定自己能做到，因为你可能从头到尾都在监管态。于是，一切皆可选、加上作者对 Popek & Goldberg 的彻底误解，这两者的交集，把可怜的你扔进了一堆屎里。
+
+## 缺了显而易见的拼图
+
+平均而言，每两个函数里就有一个用得上、或本可用一条「测某位据其值分支」的指令。
+
+尽管有个看似包罗万象的扩展，连常见的厨房水槽操作都涵盖，但不知为何，一些明显有用的指令却缺失了。我已经聊过缺「寄存器 + 寄存器」寻址模式，所以就不绕回去了。还有几个明显低垂的果实，似乎被无视了。在你辩称 RV32I 是为了简洁而设计时，请记住：我要建议的所有东西，都极其简单，基本上在 ASIC 上化约为几条简单的线。
+
+首要一条：测一位、并据其值分支。这一条指令替代两条（SLLI + BGEZ/BLTZ），而且它不需要临时寄存器。为了验证这会多常见，如果它存在的话，我抓了一个随机的 aarch64 二进制（树莓派最新的 raspbian 内核，"vmlinuz-6.1.0-49-arm64"，sha256：B3B686DE 82CC7B84 EFEB8F6B 309A4E6C 53E7461F 281D3E56 F42E4AA3 B6207075），反汇编它，数了 TBZ/TBNZ 出现的次数。有 35,393 次。相比之下，RET 出现了 70,109 次，这意味着平均而言，每两个函数里就有一个用得上、或本可用一条「测某位据其值分支」的指令。在硬件里实现它微不足道，而且确实，按位分支在解析协议或使用位域时极其常见。对大型乱序核，少破坏一个寄存器时重命名更简单，而且既然有了这一条，也没必要去融合两条指令。对较小的 MCU 核，那里没有融合，这就是简单的代码体积和速度双赢。为什么这个显而易见的东西没被做，我不知道。
+
+我的下一个主要抱怨——位域操作——位域提取和位域插入。它们对处理网络包和硬件寄存器极为有用。位域提取可以用两条指令模拟——SLLI + SRLI/SRAI，取决于想要的带符号性。位域插入要模拟则费力得多：造出反向掩码、与目标寄存器 AND、把源寄存器移位到位置、再 OR 进目标。视位数而定，轻松就是 3–6 条指令。BFC（位域清除）是个更简单的特例，也相当有用。它用 2–3 条指令就能做。但在硬件里，它不过就是几根线——没有复杂逻辑，啥也没有！没必要像 aarch64 那样耍聪明，尽管 RISC-V 的设计者确实能从 aarch64 身上学到一两个、甚至十个关于巧妙位域处理的教训。我用同一个内核镜像做了同样的计数练习。有 6,284 次位域插入指令和 8,881 次位域提取指令——平均每 9 个函数里就有 2 个用到这些位域操作。雪上加霜的是，RISC-V *确实* 有个位操作扩展——Zbs。看一眼你就知道作者是学者。它干净、简单、好解释、优雅，而且完全没用。到底有谁会需要只提取单独一位？说真的，多大的一个错失良机。
+
+## 荒唐的编码
+
+RISC-V 是我见过的第一个把立即数毫无明显理由地、随机散布在整条指令里的架构。这让模拟它成为巨大的痛苦，因为相比于 MIPS 或 ARM 这样的架构，重新拼回立即数值要花老长时间。前者干脆用 bit 0..15 放立即数，后者有更花哨的编码，但至少只有区区几种。RISC-V 设计者为这给出的理由是「立即数的相同比特来自指令的相同比特」——一个蠢到让我假装相信它时生理上都觉得痛的借口。这是一种从没写过 verilog 的软件人才会觉得能让事情变简单的东西。你看，无论如何绕，你都需要一个给立即数用的多路选择器（mux），因为它们长度不同、尾随零的个数也不同，视指令而定。而那个 mux，嗯……它根本不在乎输入接的是哪几个指令比特，反正都只是线。但即便「为什么」的理由是蠢的，我们还是来看一下这个说法本身，看他们是否真达成了他们声称想要的。立即数的相同比特总来自同一处吗？我们来看。对 I-type 指令，立即数的第 1 位来自指令的第 21 位，立即数的第 11 位来自指令的第 31 位。对 S-type 指令，立即数的相同比特分别来自指令的第 8 位和第 31 位。对 B-type 指令，它们分别来自第 8 位和第 7 位。而对 J-type 指令，它们分别来自第 21 位和第 20 位。如你所见，它们确实总来自同一处，正如承诺的——只要我们忽略「same（相同）」和「place（位置）」这两个词的含义。
+
+但这仅仅触及了编码疯狂的表面！对 J-type 指令，立即数值被以如下顺序散布：20 10 9 8 7 6 5 4 3 2 1 11 19 18 17 16 15 14 13 12。除了「设计者把宾果游戏厅的喧哗当成了立即数应有的正确位序」之外，你还能想象出什么借口来解释这种疯狂？然而，与他们在压缩指令集上搞出的那团乱麻相比，这*根本不算什么*……
+
+这里有不少于 9（九！）种指令格式，而这还不包括 Zcb——它又加了 8 种！但这仍没完！视指令而定，同一种格式（比如 CI）在同一个位位置上对立即数的编码方式都不同。把这一切算上，几乎是「每条指令一种编码格式」了！它本不必如此！Thumb 和 microMIPS 都给出了「如何别搞这么砸」的例子，然而，尽管有现成的正确范例，RISC-V 的设计者们让我们拿着他们集体泡过 LSD 的啤酒，以能想象到的最差方式莽了上去。当然，我们先来看 C 里的立即数，因为「它们总来自指令字里的同一处」，你懂的 ;)
+
+此后谈到立即数编码时，我会用「x」表示立即数被拆成几段、中间夹了指令里的其他东西。C.LWSP（从栈里加载一个字）把立即数按如下顺序编码：5 x x x x x 4 3 2 7 6；它的兄弟 C.SWSP（往栈里存）则把立即数编码成 5 4 3 2 7 6。C.LW（从寄存器寻址的内存里加载一个字）把它的立即数编码成：5 4 3 x x x 2 6，自然。它的兄弟 C.SW 用同样的编码，说明设计团队错失了一个把某些位也搅乱的机会。如果你想从内存加载一个字节，你会用 C.LB，它的立即数编码当然和上面没有任何相似之处。它用的位序是：0 1。如果你想加载半字，你会用 C.LHU，它的位序干脆就是：1。因为当然是这样！我甚至都不打算碰 CM.PUSH 和 CM.POP，因为它们的编码复杂到规范用了整整一章来解释如何解码它们。真的，如果你问我，这正是一个「简单而直观的编码」的标志。
+
+在声称利用了 16 位指令空间里所有可用的编码空间时，有些果实低垂到需要 OSHA（职业安全）警告的地步！一个简单的例子：逻辑移位包含 6 位立即数。理由是这对 64 位指令是需要的，但压缩指令集里已经有很多是 RV64 专属的编码了。也就是说 RV32C 和 RV64C *已经*互不兼容。既然如此，RV32C 里所有移位指令凭什么还扛着一个多余的零位？你没法把一个 32 位寄存器移位超过 32 位。规范说那个位必须是零，然而却没有哪个编码用到了「该位为一」所打开的空间。朋友们，自我欺骗就是：一边告诉自己「我在好好利用编码空间」，一边还背着能把 32 位寄存器移位 61 位的能力。RV32E 更离谱，因为它许多压缩指令扛着一个多余的位，用来编码那里根本不存在的寄存器。由于 RV32E 在 ABI 上和 RV32I 不兼容、且它们永远不会共享代码，用那些本会编码 x16..x31 寄存器的多余位，给 RV32E 更有用的编码，本是个极好的主意。这大概就是它没被做的原因。
+
+接着看……C.J 的位序大概能通过 NIST 随机数生成器统计测试套件：11 4 9 8 10 6 7 3 2 1 5。搞什么‽ C.BEQZ/C.BNEZ 也是跳转，不过是条件跳转，所以当然它们的编码和前面那个几乎没共同点，它们用的是：8 4 3 x x x 7 6 2 1 5。编码 C.LI 的立即数时，位序是 5 x x x x x 4 3 2 1 0。这看起来几乎正常，但别灰心，更多乐子要来了。假设你想要调整栈指针。C.ADDI16SP 为你服务，它的立即数编码为：9 x x x x 4 6 8 7 5。而如果你想取一个栈变量的地址，C.ADDI4SPN 在那儿，它的立即数编码为：5 4 9 8 7 6 2 3。一切都非常符合逻辑、健全而清晰，正如承诺的。
+
+想象你是个 CPU（或模拟器），正试图决定如何解码一条指令。如果你是个健全的 CPU，大概率是这样：看 1–3 位确定指令格式，从那再看 2–5 位弄清是哪条指令，然后就完了，可以执行了。如果你是 RISC-V，事情就有点……更复杂。首先你看最低 2 位，弄清这条指令是 2 还是 4 字节；对于 2 字节指令，你再看最高三位来确定这是哪条指令。到这为止，还好。但然后……你注意到这条指令带个立即数。你得把那个拼图重新拼起来。接着你回想起来，有些寄存器-寄存器指令是用立即数格式编码的，用一个魔数一样的立即数值来表明它们是寄存器-寄存器操作。比如 C.NOT 就是这样编码的，魔数是 0b111101。C.ZEXT.W（如果你的硬件实现了恰好的那一锅扩展乱炖、从而有它）用的魔数是 0b111100。microMIPS 和 Thumb 不知怎么就没用这种疯狂也过来了。怎么做到的？古老的秘密，显然在 RISC-V 作者们出生前就不可挽回地失传了。
+
+如果这还不够，还值得注意的是：压缩指令集里存在相互冲突的编码，取决于实现了哪些扩展。有些扩展组合干脆是不可能的（比如 Zcmp 和 D）。这比前面所有问题都更严重的失误，因为它不只是美观或效率问题。尽管积累了*几十年*的向后兼容包袱，连 x86 都成功避开了「同一字节序列对同一架构的不同实现意味着不同东西」这个显而易见的陷阱。我重申：那个以编码糟糕闻名的架构，在近 50 年里保住了语义稳定性，而由一群拥有数十年后见之明的人设计的白纸架构，居然在五年内没做到。一个架构有「未实现的编码、在后续版本变成已实现的指令」，这没关系。有「已实现指令、在之后变成未实现」，这也说得通。然而，同一架构的不同实现里，编码改变含义（或更糟：一开始就有不同含义），是疯了！我想我在 DSM-5（《精神疾病诊断与统计手册》）里见过专门一章讲这个！
+
+让编码在不同实现里改变含义……对同一架构的不同实现而言，是疯了！
+
+发生这种事意味着：你得到的不是一次清清楚楚能理解的崩溃，而是……嗯……任何东西。谁能预测自己的二进制在「一条浮点存储悄悄变成双精度寄存器搬移或一条跳转指令」、或反过来时，会如何表现？这不是某部 B 级程序员主题恐怖片剧情的摘要。它真可能发生在你身上！考虑指令 0xA002。视你的核而定，它可能把一个双精度浮点寄存器 0 存到栈偏移 0（C.FSDSP f0, 0(sp)），也可能跳到某处（CM.JT 0）。但至少随机跳转可能很快导致崩溃，让你注意到。考虑 0xAC66。视你的核而定，它可能把一个双精度浮点寄存器存到栈（C.FSDSP f25, 0x18(sp)），也可能把 a0 搬进 s0、把 a1 搬进 s1（CM.MVA01S s0, s1）。没有控制流变化。只是两个寄存器被篡改、一个值没存进栈。有些人会试图辩称这种混淆绝不可能发生，因为人人都知道（或应该知道）自己的核是什么、做什么。那些「有些人」显然从未遭遇过真实世界。很多时候，你从厂商那里拿到二进制 blob，直接链进你的微控制器代码。MEMS 传感器厂商就出了名地这样发货他们「超级专有」的校准算法。现在，设想我们有这样一个二进制，链进了出货代码，并出货在一颗带 Zcmp 扩展的 MCU 上。一直风平浪静，直到我们升级到一颗更大的 MCU，以便为新产品需要的某些更花哨的数学提供更好的浮点支持。这颗新 MCU 支持双精度浮点数。突然，我们的二进制在随机的地方随机崩溃、行为失常。没有「未定义指令」陷入，没有立即可见的成因。结果，新核支持 D 扩展，因此无法支持 Zcmp。但因为复用了编码，我们没用正常的方式发现——一次未定义指令陷入。相反，我们花了数周调试随机崩溃，那些随机寄存器被篡改。我们的反汇编器没用——它们正确地把指令按两种有效方式之一反汇编。调试器也没啥帮助——它们显示某些指令看似啥也没干，而栈上几个字很快就变坏了。中断处理程序被重做了好几次，浪费了大量工程师时间，以确保它们正确地保存和恢复上下文。MCU 厂商的现场应用工程师（FAE）在现场呆了好几天，帮我们的电气工程师排除电源线上可能导致随机寄存器和栈损坏的噪声。而且，自 MCU 升级以来传感器的校准就一直坏着，但因为传感器通常不做校准也勉强够用、且在一片随机崩溃中没人注意到。现在，调试这个，*就是*那部 B 级程序员主题恐怖片的剧情——我已拿着它在好莱坞推销一阵子了。亲爱的 RISC-V 委员会，今天你留堂，把下面这句话在白板上写 100 遍：升级一颗处理器，不应把一个有效二进制变成语义不同的有效二进制。
+
+## 所谓的修复
+
+在本文发布时所有在售且被推荐的 RISC-V 单板电脑里，几乎没有一款真正符合 RVA23。它们没有一款能跑 Ubuntu LTS 或未来的 AOSP 构建。
+
+许多 RISC-V 粉丝会声称，所有可选项问题都不再是问题了，因为 RISC-V 基金会创造了「profiles（配置档）」——一份「强制的可选扩展」清单（对，请再读一遍那句话）——当它们被一起实现时，就允许你声称符合某个 profile。再说一遍：生态圈不得不发明第二层标准化，其全部目的就是说明第一层标准里哪些部分是你真正可以假定存在的。真的，如果你发现自己不得不建第二套标准、其目的就是告诉所有人你第一套标准里哪些部分他们*必须*真正实现，那么也许第一套标准压根没写完。只有委员会设计流程能造出这种局面。为了避免不得不瞄准 RISC-V 的最低公共分母，或为了避免要为每个可能的扩展组合构建数千个略有不同的软件包这种尴尬，大多数妄想「RISC-V 桌面真能成事」的厂商，正计划强制采用 RVA23。Ubuntu、Red Hat 和 Android 都在这个群体里。有趣的故事：在本文发布时所有在售且被推荐的 RISC-V 单板电脑里，几乎没有一款真正符合 RVA23——不是 StarFive 的 VisionFive 2，不是 Banana Pi BPI-F3，不是 Lichee Pi 4A，不是 Orange Pi RV2，甚至连 HiFive Premier P550 也不是。它们没有一款能跑 Ubuntu LTS 或未来的 AOSP 构建。讽刺的是，网上一些讨论已经开始谈「almost RVA23（近乎 RVA23）」核了。再说一遍：那个旨在解决碎片化的 profile，却和当前大量作为「RISC-V」在售的硬件不向后兼容，从而把 RISC-V 世界*碎片化*成「almost-RVA23」和「post-RVA23」两半，而当前大多数板子都是「almost」。粉丝们会把这套 profile 系统称作胜利，但我说它正是对「无限可选项」这桩罪行、以及那些曾认为它一度是个好主意的人，一份直白的控诉。大型桌面和单板电脑，出于上述原因，不太可能 ever 成为 RISC-V 的堡垒。但，对于小型廉价核？对它们而言，这是个有条件的胜利。正如我们所说，门槛很低。
+
+![RISC-V 总部上方的、蝙蝠侠信号风格的 Gentoo logo](/assets/img/posts/risc-v-they-should-have-known-better/rva-batlight.jpg)
+
+## 我们怎么走到这一步，又该去向何方？
+
+如果你读 RISC-V 的「 rationale（设计理由）/借口」文档，并剔除我们（在以上各节）已经判定为彻头彻尾的谎言、夸大、或对现有架构（以及广大世界）如何运作的彻底误解的所有部分，我们最终得到的这唯一一句话，很可能解释了全部：「归根结底，我们认为，从一张白纸出发、而非相应地去修改 OpenRISC，最符合我们的目的。」这是在解释完 OpenRISC 已做了他们想要的一切、只差它有延迟槽（delay slot），并进而承认「一个没有延迟槽的版本已经存在」之后说的。你瞧：为什么比特像宾果一样乱散、为什么有几百个相互冲突编码的扩展、为什么显而易见有用的指令遍寻不见——全都是因为，它们统统是「**非我发明（not invented here）**」。
+
+平心而论，走到这一步的另一个可能解释，是学术界和经费的运作方式。就其本性，经费提案倾向于过度简化、并过度承诺它们的现实适用性与影响。鉴于大量 RISC-V「研究」是在各种经费下完成的，学术界的激励机制产生了影响，是说得通的。由于这个假说在现有信息下无法证伪，我们就此打住。
+
+## 这是否意味着 RISC-V 完蛋了？
+
+这绝不是说 RISC-V 完蛋了。如我所说，我完全预期它会接管当前由 8051 占据的空间——即当需要一点逻辑、或某个强悍的加速器或 DMA 引擎需要轻微照看时，实例化的一颗典型廉价嵌入式核。很像 Linux 内核——价格对路。ARM 要授权费，而 RISC-V 规范是免费的，而且（这一点是关键）市面上有可以免费授权的核。在对性能不是因素、价格是因素的情形下，RISC-V 会纯粹因为它便宜而赢。「够好（good-enough）」在这种情况下是个低门槛，而 RISC-V 的身高正好够得着它。而且你看，这个市场不怎么光鲜，但它重要，也需要新鲜血液。然而，重要的是 RISC-V 别不小心以为自己是因为「好」才被选中的。它需要内化这一点：它是因为「便宜」才被选中的。这不是对廉价小核的侮辱——我为各种 ISA 设计得很烂的破核写过大量汇编。RISC-V *确实*比 PIC 和 8051 是个改进，尽管这算不上什么夸奖。
+
+「够好（good-enough）」在这种情况下是个低门槛，而 RISC-V 的身高正好够得着它。
+
+对于大型计算，依我看有两类分开的市场。ML 加速器很可能最终也会挂上 RISC-V 核。这其实和上面的用例很接近，因为大部分计算会在专用硅块里完成，为每周期很多很多次 MATMUL 而优化。RISC-V 核会去配置 DMA、并重配置这些大块来算下一层的输出。这个设计的一个变体，可能是一颗带着极宽向量引擎焊在上面的 RISC-V 核。这可以用于元素级操作，那在 ML 负载里也很常见。再次，这个核不需要花哨、甚至不需要乱序，它只要向量够宽就能工作。它的整数流水线不会是性能的重要因素，而 RISC-V 的那些疣，会被当作「你没付钱授权一颗 Cortex-A55 所付出的代价」。我预期 RISC-V 会以和小型照看核相同的理由赢下这个市场——这里传统意义上真正严肃的每核 CPU 性能并不需要，所以一个够好的核就够。而传统上，够好的方案总是通过「ORDER BY price ASC LIMIT 1;」这个过程被选中的。
+
+大型计算的第二类，是真正做交互式计算、浏览、游戏及其他此类「桌面工作」的桌面和单板电脑。我不预期 RISC-V 在这个市场顶端成为严肃玩家。简而言之，架构就不是为它设计的，如上所述。此外，这个市场有利润空间去授权一颗设计得好得多的 aarch64 核、并从庞大得多的软件 corpus 获得恰当支持。在你举起大喇叭高喊「开放」之前，请注意 RISC-V 规范的开放性在这里根本不相关，因为一个开放的规范不会魔法般地免费为你变出一颗设计良好的乱序核。而如果有人设计了一颗好的乱序核，他们也不会免费送人。开放规范不等于每个实现都免费。廉价单板电脑市场的中低端，很可能仍是新的 RISC-V 核与更老的 ARM 核的混合。
+
+---
+
+# 第三部分：解析（深度解读）
 
 ## 核心论点摘要
 
@@ -183,4 +303,4 @@ Dmitry.GR（硅谷工程师，rePalm 等项目作者）把多年被反复追问�
 - 本文为作者对 RISC-V 的**个人批判性观点**，论据偏工程实现层面（中断延迟、编码、可选集），不代表客观定论；x86/ARM 阵营亦有各自历史包袱（作者自己也承认）。
 - 投资含义为**本站引申解读**，非作者原意，亦非投资建议。RISC-V 生态仍在高速演进，Profiles（RVA23 及后续）可能缓解碎片化，结论会随标准落地而调整。
 - 原文**未标注发布日期**，本页 `date` 字段为**本站发布日（2026-08-15）**，仅用于排序，非原文时间。
-- 英文原文含作者个人化、带情绪与少量粗口的表达，已逐字转载作分析对象，不代表本站立场；如希望软化措辞可告知。
+- 英文原文含作者个人化、带情绪与少量粗口的表达，已逐字转载、并附逐段中文翻译作分析对象，不代表本站立场；如希望软化措辞可告知。
