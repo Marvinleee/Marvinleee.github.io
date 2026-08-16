@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">垂直 beta-Ga2O3 ISEFET 原理示意</title>
+  <desc id="desc">展示背面漏极、导电衬底、低掺杂漂移层、窄鳍沟道、双侧栅极、顶部源极，以及通过二氧化硅隔离层延伸到键合焊盘的源极金属。</desc>
+  <defs>
+    <linearGradient id="drift" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b9ddf5"/>
+      <stop offset="1" stop-color="#76b9e6"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#e34a33"/>
+    </marker>
+    <marker id="field" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6f42c1"/>
+    </marker>
+    <style>
+      .label { font: 600 26px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #172033; }
+      .small { font: 500 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #344054; }
+      .note { font: 500 21px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475467; }
+      .panel { fill: #fbfcfe; stroke: #d0d5dd; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <text x="800" y="58" text-anchor="middle" class="label" style="font-size:34px">垂直 β-Ga₂O₃ ISEFET：把源极引出问题移到有源区之外</text>
+
+  <rect x="70" y="95" width="960" height="735" rx="20" class="panel"/>
+  <text x="100" y="140" class="label">简化剖面（非按比例）</text>
+
+  <!-- backside drain and substrate -->
+  <rect x="150" y="715" width="800" height="55" rx="5" fill="#f2c94c" stroke="#b8860b" stroke-width="2"/>
+  <text x="550" y="751" text-anchor="middle" class="label">背面漏极 Ti/Au</text>
+  <rect x="150" y="630" width="800" height="85" fill="#1b75bb" stroke="#145a8d" stroke-width="2"/>
+  <text x="550" y="680" text-anchor="middle" class="label" fill="#ffffff">Sn 掺杂导电 β-Ga₂O₃ (001) 衬底</text>
+
+  <!-- drift layer -->
+  <rect x="150" y="310" width="800" height="320" fill="url(#drift)" stroke="#3a8dbe" stroke-width="2"/>
+  <text x="720" y="570" text-anchor="middle" class="label">n⁻ 漂移层</text>
+  <text x="720" y="605" text-anchor="middle" class="small">10 μm，N<tspan baseline-shift="sub" font-size="16">D</tspan> ≈ 1×10¹⁶ cm⁻³</text>
+
+  <!-- fin -->
+  <rect x="315" y="190" width="170" height="440" fill="#91c9ed" stroke="#287eb3" stroke-width="3"/>
+  <rect x="315" y="190" width="170" height="55" fill="#175f9b"/>
+  <text x="400" y="225" text-anchor="middle" class="small" fill="#ffffff">n⁺ 源接触层</text>
+
+  <!-- gate oxide -->
+  <path d="M286 190 L315 190 L315 510 L485 510 L485 190 L514 190 L514 540 L286 540 Z" fill="#f8df75" opacity="0.95" stroke="#d6a900" stroke-width="2"/>
+  <!-- gate metal -->
+  <path d="M245 225 L286 225 L286 540 L514 540 L514 225 L555 225 L555 575 L245 575 Z" fill="#d99a22" opacity="0.94" stroke="#a86f00" stroke-width="3"/>
+  <text x="205" y="430" text-anchor="middle" class="label">栅极</text>
+  <line x1="225" y1="420" x2="270" y2="420" stroke="#172033" stroke-width="3"/>
+  <text x="590" y="480" class="small">Al₂O₃ 栅介质</text>
+  <line x1="575" y1="470" x2="510" y2="470" stroke="#172033" stroke-width="2"/>
+
+  <!-- dielectric CBL outside active area -->
+  <rect x="610" y="250" width="340" height="60" fill="#8bc66a" stroke="#4b8f31" stroke-width="3"/>
+  <text x="780" y="289" text-anchor="middle" class="label">SiO₂ 介质隔离层（CBL）</text>
+
+  <!-- source metal extension and pad -->
+  <path d="M315 160 L485 160 L485 190 L840 190 L840 150 L950 150 L950 250 L610 250 L610 220 L485 220 L485 245 L315 245 Z" fill="#f5cf42" stroke="#b88b00" stroke-width="3"/>
+  <text x="760" y="185" text-anchor="middle" class="label">连续源极金属延伸</text>
+  <text x="895" y="135" text-anchor="middle" class="small">源极焊盘</text>
+
+  <!-- current path -->
+  <line x1="400" y1="260" x2="400" y2="610" stroke="#e34a33" stroke-width="12" marker-end="url(#arrow)"/>
+  <text x="420" y="405" class="label" fill="#b42318">I<tspan baseline-shift="sub" font-size="18">D</tspan></text>
+  <text x="400" y="285" text-anchor="middle" class="small">窄鳍沟道</text>
+  <text x="400" y="320" text-anchor="middle" class="small">W<tspan baseline-shift="sub" font-size="16">fin</tspan> = 0.2–0.4 μm</text>
+
+  <!-- electrostatic control arrows -->
+  <line x1="270" y1="350" x2="325" y2="350" stroke="#6f42c1" stroke-width="5" marker-end="url(#field)"/>
+  <line x1="530" y1="350" x2="475" y2="350" stroke="#6f42c1" stroke-width="5" marker-end="url(#field)"/>
+  <text x="400" y="120" text-anchor="middle" class="note">双侧栅在零偏压下耗尽窄鳍，实现 normally-off</text>
+
+  <!-- explanation panel -->
+  <rect x="1080" y="95" width="450" height="735" rx="20" class="panel"/>
+  <text x="1115" y="145" class="label">电流与制造逻辑</text>
+
+  <circle cx="1125" cy="205" r="15" fill="#e34a33"/>
+  <text x="1160" y="214" class="small">导通电流垂直流向背面漏极</text>
+  <text x="1160" y="249" class="note">漂移层厚度与掺杂承担耐压</text>
+
+  <circle cx="1125" cy="315" r="15" fill="#6f42c1"/>
+  <text x="1160" y="324" class="small">双侧栅控制窄鳍耗尽程度</text>
+  <text x="1160" y="359" class="note">0.2 μm 鳍实现 V<tspan baseline-shift="sub" font-size="15">TH</tspan> ≈ 2 V</text>
+
+  <circle cx="1125" cy="425" r="15" fill="#f5cf42" stroke="#b88b00" stroke-width="2"/>
+  <text x="1160" y="434" class="small">源极金属跨出有源区</text>
+  <text x="1160" y="469" class="note">无需为接触源极做平坦化回刻</text>
+
+  <circle cx="1125" cy="535" r="15" fill="#8bc66a" stroke="#4b8f31" stroke-width="2"/>
+  <text x="1160" y="544" class="small">SiO₂ 隔离源极引出区</text>
+  <text x="1160" y="579" class="note">不在有源区植入 Mg/N 受主阻挡层</text>
+
+  <rect x="1110" y="645" width="390" height="140" rx="14" fill="#fff4e5" stroke="#f79009" stroke-width="2"/>
+  <text x="1135" y="686" class="small" style="font-weight:700">关键代价</text>
+  <text x="1135" y="724" class="note">• 栅—源重叠可能增加 C<tspan baseline-shift="sub" font-size="15">GS</tspan> / Q<tspan baseline-shift="sub" font-size="15">G</tspan></text>
+  <text x="1135" y="759" class="note">• 侧壁界面与边缘电场仍决定可靠性</text>
+
+  <text x="800" y="875" text-anchor="middle" class="note">本站原创示意｜依据 arXiv:2608.12797 的文字描述重绘，不复制论文原图</text>
+</svg>
