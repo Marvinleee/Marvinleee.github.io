@@ -49,11 +49,25 @@ jobs:
         env:
           JEKYLL_ENV: "production"
 
-      - name: Test site
+      - name: Test site (capture output)
+        continue-on-error: true
         run: |
           bundle exec htmlproofer _site \
             \-\-disable-external \
-            \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
+            \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/" 2>&1 | tee /tmp/proofer.txt
+
+      - name: Upload proofer output (diagnostic)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: proofer-output
+          path: /tmp/proofer.txt
+
+      - name: Fail job if proofer found issues
+        run: |
+          if grep -qiE 'error|fail|not found|404|warning' /tmp/proofer.txt; then
+            echo "html-proofer reported issues (see proofer-output artifact)"; exit 1
+          fi
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v5
