@@ -15,7 +15,7 @@ description: 高性能 agent 必须知道什么：不确定性下稳健决策的
 
 # What Capable Agents Must Know: Selection Theorems for Robust Decision-Making under Uncertainty
 
-[Aran Nayebi](mailto:<anayebi@cs.cmu.edu>?Subject=Your%20UAI%202026%20paper)
+[Aran Nayebi](mailto:anayebi@cs.cmu.edu?Subject=Your%20UAI%202026%20paper)
 
 Affiliation: Machine Learning Department and Neuroscience & Robotics Institutes
 
