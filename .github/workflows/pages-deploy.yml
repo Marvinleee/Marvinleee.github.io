@@ -15,6 +15,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  issues: write
 
 # Allow one concurrent deployment
 concurrency:
@@ -56,17 +57,24 @@ jobs:
             \-\-disable-external \
             \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/" 2>&1 | tee /tmp/proofer.txt
 
-      - name: Upload proofer output (diagnostic)
-        uses: actions/upload-artifact@v4
+      - name: Publish proofer output to public issue (diagnostic)
         if: always()
-        with:
-          name: proofer-output
-          path: /tmp/proofer.txt
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          title="proofer-diag-$(date +%s)"
+          if [ -s /tmp/proofer.txt ]; then
+            body=$(head -c 60000 /tmp/proofer.txt)
+          else
+            body="(no proofer output captured)"
+          fi
+          printf '%s' "$body" > /tmp/proofer_issue.md
+          gh issue create --title "$title" --body-file /tmp/proofer_issue.md --repo Marvinleee/Marvinleee.github.io || echo "issue create failed"
 
       - name: Fail job if proofer found issues
         run: |
           if grep -qiE 'error|fail|not found|404|warning' /tmp/proofer.txt; then
-            echo "html-proofer reported issues (see proofer-output artifact)"; exit 1
+            echo "html-proofer reported issues (see proofer-diag issue)"; exit 1
           fi
 
       - name: Upload site artifact
