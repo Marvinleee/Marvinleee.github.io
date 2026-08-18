@@ -15,7 +15,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  issues: write
 
 # Allow one concurrent deployment
 concurrency:
@@ -50,32 +49,11 @@ jobs:
         env:
           JEKYLL_ENV: "production"
 
-      - name: Test site (capture output)
-        continue-on-error: true
+      - name: Test site
         run: |
           bundle exec htmlproofer _site \
             \-\-disable-external \
-            \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/" 2>&1 | tee /tmp/proofer.txt
-
-      - name: Publish proofer output to public issue (diagnostic)
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          title="proofer-diag-$(date +%s)"
-          if [ -s /tmp/proofer.txt ]; then
-            body=$(head -c 60000 /tmp/proofer.txt)
-          else
-            body="(no proofer output captured)"
-          fi
-          printf '%s' "$body" > /tmp/proofer_issue.md
-          gh issue create --title "$title" --body-file /tmp/proofer_issue.md --repo Marvinleee/Marvinleee.github.io || echo "issue create failed"
-
-      - name: Fail job if proofer found issues
-        run: |
-          if grep -qiE 'error|fail|not found|404|warning' /tmp/proofer.txt; then
-            echo "html-proofer reported issues (see proofer-diag issue)"; exit 1
-          fi
+            \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/"
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v5

@@ -90,7 +90,7 @@ GPU kernel optimization is fundamental to modern deep learning but remains a hig
 ## 
 1 Introduction
 
-![[Uncaptioned image]](2602.24286v1/x1.png)
+![CUDA Agent 架构示意](/assets/img/posts/cuda-agent-agentic-rl-kernel-generation/x1.png)
 
 GPU kernels are a foundational component of modern deep learning infrastructure [[17], [12]], with NVIDIA’s CUDA architecture currently dominating the AI hardware ecosystem. Despite its widespread adoption, the development and optimization of high-performance CUDA kernels remain highly challenging, which requires a deep understanding of GPU microarchitectural features [[16]], and sophisticated profiling toolkits [[4]].
 
