@@ -20,10 +20,10 @@ layout: default
 </div>
 
 {% comment %} === 仅展示最新 3 篇文章（按日期降序） === {% endcomment %}
-{% assign posts = site.posts | limit: 3 %}
+{% comment %} 用 Liquid 循环内建 limit 参数截断，避免对 site.posts 这种 Drop 对象用 | limit 过滤器不生效的问题 {% endcomment %}
 
 <div id="post-list" class="flex-grow-1 px-xl-1">
-  {% for post in posts %}
+  {% for post in site.posts limit: 3 %}
     <article class="card-wrapper card">
       <a href="{{ post.url | relative_url }}" class="post-preview row g-0 flex-md-row-reverse">
         {% assign card_body_col = '12' %}
