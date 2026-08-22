@@ -21,6 +21,8 @@ layout: default
 
 {% comment %} === 仅展示最新 3 篇文章（按日期降序） === {% endcomment %}
 {% assign posts = site.posts | limit: 3 %}
+{% assign diag_count = posts | size %}
+<!-- DIAG_RENDER_COUNT:{{ diag_count }} -->
 
 <div id="post-list" class="flex-grow-1 px-xl-1">
   {% for post in posts %}
