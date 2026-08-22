@@ -5,7 +5,7 @@ date: 2026-08-15 13:00:00 +0800
 categories: [AI硬件]
 tags: [硅光子, AI互连, CPO, OCP, 光互连, 系统架构]
 description: "深度解读 OCP《Architecture Vision: Open Silicon Photonics for AI Systems》：为什么 AI 的瓶颈正从计算转向互连，开放光子架构如何以通道预算、放置分类、接口契约和可复用无源光纤基础设施统一 scale-up、scale-out 与异构互连，以及 CPO、APO、光测试和系统集成的产业含义。"
-image: /assets/img/covers/open-silicon-photonics-for-ai-systems.jpg
+image: /assets/img/posts/open-silicon-photonics-ai/fig-9-4.png
 
 ---
 

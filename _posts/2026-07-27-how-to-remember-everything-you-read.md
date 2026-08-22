@@ -5,7 +5,7 @@ date: 2026-07-27 22:50:00 +0800
 categories: [阅读与思考]
 tags: [阅读, 学习, 知识管理, 笔记系统, 写作]
 description: "翻译自 Dan 的英文原文。文章批判了「记住读过的一切」这种执念：记忆不是阅读的目的，理解才是；真正的学习是输出驱动的控制论过程，而非囤积输入。随后拆解为什么大多数笔记系统/书签/「第二大脑」被误用，以及如何用数字化的「摘记簿」捕捉想法、用创作行为固化知识。本文为英文原文 + 中文翻译，未做解读。"
-image: /assets/img/covers/how-to-remember-everything-you-read.jpg
+image: /assets/img/posts/how-to-remember-everything-you-read/image3.jpeg
 
 ---
 

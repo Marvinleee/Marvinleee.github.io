@@ -6,7 +6,7 @@ categories: [数字电路]
 tags: [CORDIC, ASIC, Tiny Tapeout, Sky130, 数字信号处理, 流片, 误差分析, SPI, 定点数]
 description: 逐译 Rohan Verma 在 Bit Banging Bytes 的 ROM-less CORDIC 流片实战：如何用泰勒级数在硬件里生成反正切微旋转角、首硅误差结构拆解（20 码相位偏差的方形波指纹），以及仅靠 SPI 包里的两个常量把平均绝对误差从 13.5 LSB 降到 1.71 LSB、RMS 改善 6.8×。
 mathjax: true
-image: /assets/img/posts/from-taylor-series-to-silicon-building/fig-cover.jpeg
+image: /assets/img/posts/from-taylor-series-to-silicon-building/fig2.png
 ---
 
 > **原文**：Rohan Verma《From Taylor Series to Silicon: Building and Debugging a ROM-less CORDIC》（Bit Banging Bytes，2026-08-16）｜ 英文原文 + 中文深度解读。

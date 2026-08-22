@@ -5,7 +5,7 @@ date: 2026-08-16 20:00:00 +0800
 categories: [半导体投资]
 tags: [半导体, AI硬件, NVIDIA, Rubin, CPO, 先进封装, 数据中心, 共封装光学]
 description: "NVIDIA 官方技术博客对 Vera Rubin POD 的架构全景解读：七类芯片（Rubin GPU、Vera CPU、ConnectX-9、BlueField-4、NVLink 交换机、Spectrum-6、Groq 3 LPU）协同、五套机柜级系统、第三代 MGX 机柜的供电/散热/可维护性创新，以及 Spectrum-6 交换机集成 200Gb/s 共封装光学（CPO）对光互联投资主线的印证。含 12 张官方原图本地落地。"
-image: /assets/img/covers/nvidia-vera-rubin-pod.jpg
+image: /assets/img/posts/nvidia-vera-rubin-pod/fig3-power-smoothing.webp
 
 ---
 
