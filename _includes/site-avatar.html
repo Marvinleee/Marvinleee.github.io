@@ -1,0 +1,9 @@
+{% comment %} SITE AVATAR — 单栏方案下复用的头像块（不含侧栏导航） {% endcomment %}
+{%- if site.avatar != empty and site.avatar -%}
+  {%- capture avatar_url -%}
+    {% include media-url.html src=site.avatar %}
+  {%- endcapture -%}
+  <a href="{{ '/' | relative_url }}" id="site-avatar" class="d-inline-block rounded-circle" aria-label="{{ site.title }}">
+    <img src="{{- avatar_url -}}" width="112" height="112" alt="avatar" onerror="this.style.display='none'">
+  </a>
+{%- endif -%}

@@ -120,6 +120,12 @@ script_includes:
     </dialog>
   {% endif %}
 
+  {% if enable_toc %}
+    <div class="post-toc-top mb-4 p-3 rounded-3">
+      {% include toc.html %}
+    </div>
+  {% endif %}
+
   <div class="content">
     {{ content }}
   </div>

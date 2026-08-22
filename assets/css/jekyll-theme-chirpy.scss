@@ -300,11 +300,42 @@ h1, h2, h3, h4, h5, h6,
 #all-posts-heading { scroll-margin-top: 80px; }
 
 /* ---------- 首页去掉侧栏后满宽（仅 home，文章页不受影响） ---------- */
-body:not(.home) #panel-wrapper { display: none; }
-
-/* home 页面：main 已用 col-12 满宽，这里确保居中容器不被 col-xl-9 限制、
-   且落地页 hero 在窄屏也有合适内边距 */
-.layout-home #main-wrapper .container { max-width: 1140px; }
+/* ---------- 全站单栏（方案B）：容器居中，不再依赖 col-xl-9 侧栏栅格 ---------- */
+#main-wrapper .container { max-width: 1140px; }
 @media (min-width: 1400px) {
-  .layout-home #main-wrapper .container { max-width: 1140px; }
+  #main-wrapper .container { max-width: 1140px; }
 }
+
+/* ---------- 头像（单栏方案下复用于首页 hero 与文章页） ---------- */
+#site-avatar {
+  width: 112px;
+  height: 112px;
+  overflow: hidden;
+  border: 3px solid var(--gordi-teal, #03c6ad);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
+}
+#site-avatar:hover { transform: scale(1.04); }
+#site-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ---------- 首页 hero 头像微调 ---------- */
+.layout-home #landing-hero #site-avatar { margin: 0 auto; }
+
+/* ---------- 文章页顶部 TOC 块（替代原右侧 panel） ---------- */
+.post-toc-top {
+  background: var(--card-bg, #f6f8fa);
+  border: 1px solid var(--border-color, #e0e0e0);
+}
+[data-bs-theme='dark'] .post-toc-top {
+  background: #1c1f23;
+  border-color: #2d3238;
+}
+.post-toc-top #toc-wrapper { margin: 0; }
+.post-toc-top .panel-heading {
+  font-size: 0.95rem;
+  color: var(--gordi-teal, #03c6ad);
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+.post-toc-top #toc { max-height: 320px; overflow-y: auto; padding-left: 0.5rem; }
+.post-toc-top #toc a { color: var(--text-muted, #6c757d); text-decoration: none; }
+.post-toc-top #toc a:hover { color: var(--gordi-teal, #03c6ad); }
