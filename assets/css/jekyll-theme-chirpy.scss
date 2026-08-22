@@ -298,3 +298,13 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- 全部文章区块标题偏移 ---------- */
 #all-posts-heading { scroll-margin-top: 80px; }
+
+/* ---------- 首页去掉侧栏后满宽（仅 home，文章页不受影响） ---------- */
+body:not(.home) #panel-wrapper { display: none; }
+
+/* home 页面：main 已用 col-12 满宽，这里确保居中容器不被 col-xl-9 限制、
+   且落地页 hero 在窄屏也有合适内边距 */
+.layout-home #main-wrapper .container { max-width: 1140px; }
+@media (min-width: 1400px) {
+  .layout-home #main-wrapper .container { max-width: 1140px; }
+}
