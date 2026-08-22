@@ -102,3 +102,199 @@ h1, h2, h3, h4, h5, h6,
   --menu-active-color: #1cccb5;
   --text-muted-highlight-color: #1cccb5;
 }
+
+/* ===================================================================
+ * Phase B — Landing page (home.html override): gordicaleksa style
+ * 大名字 hero + whoami + 精选卡片网格 + 写作时间线。
+ * 沿用 Phase A 的 Poppins / teal 视觉语言。
+ * =================================================================== */
+
+/* ---------- 通用 teal 辅助类 ---------- */
+.teal { color: var(--gordi-teal); }
+
+/* ---------- HERO ---------- */
+#landing-hero { border-bottom: 1px solid var(--main-border-color, #e9ecef); }
+:root[data-bs-theme=dark] #landing-hero { border-color: #2a2f35; }
+
+.landing-name {
+  font-size: clamp(2.6rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--gordi-teal), var(--heading-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.landing-tagline {
+  font-size: clamp(1rem, 2.4vw, 1.35rem);
+  font-weight: 400;
+  color: var(--text-muted, #6c757d);
+}
+.landing-whoami {
+  max-width: 640px;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--text-color, #212529);
+}
+.landing-social { font-size: 0.95rem; }
+.landing-social-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--main-border-color, #dee2e6);
+  border-radius: 2rem;
+  color: var(--text-color, #212529);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.landing-social-link:hover {
+  border-color: var(--gordi-teal);
+  color: var(--gordi-teal);
+  transform: translateY(-2px);
+}
+
+/* ---------- Section titles ---------- */
+.landing-section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.landing-section-rule {
+  height: 2px;
+  background: linear-gradient(90deg, var(--gordi-teal), transparent);
+  border-radius: 2px;
+}
+.landing-section-more {
+  font-size: 0.9rem;
+  color: var(--gordi-teal);
+  white-space: nowrap;
+  text-decoration: none;
+}
+.landing-section-more:hover { text-decoration: underline; }
+
+/* ---------- Featured cards ---------- */
+.featured-card {
+  display: block;
+  height: 100%;
+  border: 1px solid var(--main-border-color, #e9ecef);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: var(--card-bg, #fff);
+  color: var(--text-color, #212529);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.featured-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(3, 198, 173, 0.12);
+  border-color: var(--gordi-teal);
+}
+.featured-thumb {
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--gordi-teal), #0a7d72);
+}
+.featured-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.featured-card:hover .featured-thumb img { transform: scale(1.05); }
+.featured-thumb-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+.featured-body { padding: 1rem 1.1rem 1.2rem; }
+.featured-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted, #6c757d);
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+.featured-cat {
+  color: var(--gordi-teal);
+  font-weight: 600;
+}
+.featured-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.featured-summary {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted, #6c757d);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---------- Timeline ---------- */
+.timeline { position: relative; padding-left: 1.5rem; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--main-border-color, #e9ecef);
+}
+.timeline-year { position: relative; margin-bottom: 1.5rem; }
+.timeline-dot {
+  position: absolute;
+  left: -1.5rem;
+  top: 6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gordi-teal);
+  box-shadow: 0 0 0 3px var(--card-bg, #fff);
+}
+.timeline-year-label {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gordi-teal);
+  margin-bottom: 0.6rem;
+}
+.timeline-list { margin: 0; }
+.timeline-item {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.25rem 0;
+  align-items: baseline;
+}
+.timeline-date {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  color: var(--text-muted, #6c757d);
+  width: 3rem;
+}
+.timeline-link {
+  color: var(--text-color, #212529);
+  text-decoration: none;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.timeline-link:hover { color: var(--gordi-teal); }
+.timeline-more { padding: 0.25rem 0 0 3.8rem; font-size: 0.85rem; }
+.timeline-more a { color: var(--text-muted, #6c757d); }
+
+/* ---------- 全部文章区块标题偏移 ---------- */
+#all-posts-heading { scroll-margin-top: 80px; }
