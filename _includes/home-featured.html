@@ -1,14 +1,14 @@
-{% comment %} FEATURED ARTICLES GRID — latest 6 posts, responsive cards {% endcomment %}
+{% comment %} FEATURED ARTICLES GRID — latest 3 posts, responsive cards {% endcomment %}
 <section id="landing-featured" class="mb-5">
   <div class="d-flex align-items-center mb-3">
-    <h2 class="landing-section-title mb-0">精选文章</h2>
+    <h2 class="landing-section-title mb-0">精选文章（最新 3 篇）</h2>
     <span class="landing-section-rule flex-grow-1 ms-3"></span>
     <a href="#post-list" class="landing-section-more ms-3">全部 →</a>
   </div>
 
   <div class="row g-4">
-    {% assign featured = site.posts | where_exp: 'p', 'p.hidden != true' | limit: 6 %}
-    {% for post in featured %}
+    {% assign featured_all = site.posts | where_exp: 'p', 'p.hidden != true' %}
+    {% for post in featured_all limit: 3 %}
       <div class="col-12 col-md-6 col-lg-4">
         <a href="{{ post.url | relative_url }}" class="featured-card text-decoration-none">
           <div class="featured-thumb">

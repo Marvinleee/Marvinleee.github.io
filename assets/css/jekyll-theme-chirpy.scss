@@ -344,3 +344,30 @@ h1, h2, h3, h4, h5, h6,
 .post-site-id { border-bottom: 1px solid var(--border-color, #e0e0e0); padding-bottom: 1.25rem; }
 .post-site-id #site-avatar { width: 56px; height: 56px; }
 .post-site-name { font-weight: 600; letter-spacing: 0.02em; color: var(--gordi-teal, #03c6ad); }
+
+/* ---------- 其余文章简洁列表（首页下方 list 区块） ---------- */
+.other-posts-list { margin: 0; }
+.other-post-item { border-bottom: 1px solid var(--border-color, #e9ecef); }
+.other-post-item:last-child { border-bottom: none; }
+.other-post-link {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.6rem 0.2rem;
+  text-decoration: none;
+  transition: background 0.15s ease, padding-left 0.15s ease;
+}
+.other-post-link:hover { background: var(--tag-hover, #e6faf7); padding-left: 0.5rem; }
+.other-post-date {
+  flex: 0 0 auto;
+  width: 6rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  color: var(--text-muted, #6c757d);
+}
+.other-post-title {
+  font-size: 0.97rem;
+  color: var(--text-color, #212529);
+  line-height: 1.5;
+}
+.other-post-link:hover .other-post-title { color: var(--gordi-teal, #03c6ad); }
