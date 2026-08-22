@@ -5,6 +5,8 @@ date: 2026-08-02 18:40:00 +0800
 categories: [半导体投资]
 tags: [半导体设备, WFE, MKS, 中国半导体, 片上液冷, ABF基板]
 description: "整理自 Chips & Wafers（Substack）的每周更新，英文原文涵盖中国 WFE 需求退烧、MKS 对中国营收披露的「掩盖」、AI 芯片片上液冷路线图与 ABF 基板（CoWoS 之「基」）复苏信号；本页保留完整英文原文并附中文深度解读。"
+image: /assets/img/covers/china-wfe-exposure-mks-cover-up-on.jpg
+
 ---
 
 > 本文整理自 **Chips & Wafers（Substack）**（[chipsandwafers.substack.com](https://chipsandwafers.substack.com)），原文发布于 **Jul 04, 2025**（标题原文：*China WFE Exposure, MKS Cover-Up, On-Chip Cooling & All Things Substrates*）。

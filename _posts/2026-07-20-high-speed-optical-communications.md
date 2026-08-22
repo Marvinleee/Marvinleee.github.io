@@ -5,6 +5,8 @@ date: 2026-07-20 22:28:00 +0800
 categories: [半导体技术]
 tags: [光通信, 光模块, IM-DD, VCSEL, 硅光, 相干光学]
 description: "整理自 chadw（Silicon Code Design, Substack）的技术科普：从短距主力 IM-DD、VCSEL 激光器、光纤模色散与接收端 PIN/TIA，到底层缩放三轴与四大技术趋势（共封装光学/硅光/外调制/相干光学）。英文原文 + 中文解读。"
+image: /assets/img/covers/high-speed-optical-communications.jpg
+
 ---
 
 > 本文整理自 chadw (Substack / siliconcodesign.com) 的技术科普文章，原文发布于 2026-04-14。

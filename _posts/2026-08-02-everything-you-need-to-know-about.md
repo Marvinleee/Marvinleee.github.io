@@ -5,6 +5,8 @@ date: 2026-08-02 19:25:00 +0800
 categories: [半导体技术]
 tags: [CPO, 光测试, 量产测试, 测试设备, 良率]
 description: "整理自 Damnang（Substack）的英文原文 Everything You Need to Know About CPO Testing，并附中文深度解读，系统拆解 CPO 测试的价值链、技术难点与投资含义。"
+image: /assets/img/covers/everything-you-need-to-know-about.jpg
+
 ---
 
 > 本文整理自 **Damnang（Substack）**（[damnang2.substack.com](https://damnang2.substack.com)），原文发布于 **Apr 07, 2026**（标题原文：*Everything You Need to Know About CPO Testing*）。

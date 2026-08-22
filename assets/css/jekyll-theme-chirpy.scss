@@ -308,8 +308,8 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- 头像（单栏方案下复用于首页 hero 与文章页） ---------- */
 #site-avatar {
-  width: 112px;
-  height: 112px;
+  width: 84px;
+  height: 84px;
   overflow: hidden;
   border: 3px solid var(--gordi-teal, #03c6ad);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -342,5 +342,5 @@ h1, h2, h3, h4, h5, h6,
 
 /* ---------- 文章页顶部站点标识行（头像 + 站名） ---------- */
 .post-site-id { border-bottom: 1px solid var(--border-color, #e0e0e0); padding-bottom: 1.25rem; }
-.post-site-id #site-avatar { width: 72px; height: 72px; }
+.post-site-id #site-avatar { width: 56px; height: 56px; }
 .post-site-name { font-weight: 600; letter-spacing: 0.02em; color: var(--gordi-teal, #03c6ad); }

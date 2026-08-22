@@ -5,6 +5,8 @@ date: 2026-08-19 00:00:00 +0800
 categories: [人工智能]
 tags: [弦理论, 人工智能, 贝叶斯推断, 暗物质, 物理, 可证伪性]
 description: 伦敦国王学院团队用结合统计与机器学习的 AI 工具，以轴子（axion）这一暗物质候选者检验弦理论的额外维度，首次实现对数百万个弦理论模型的严格可证伪性测试。本文附英文原文与中文解读。
+image: /assets/img/covers/string-theory-testable-with-ai.jpg
+
 ---
 
 > 原文：[String theory finally testable with power of AI](https://www.kcl.ac.uk/news/string-theory-finally-testable-with-power-of-ai)，King's College London 新闻稿，发布于 2026-08-05。

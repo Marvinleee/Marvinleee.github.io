@@ -5,6 +5,8 @@ date: 2026-08-19 20:00:00 +0800
 categories: [先进封装]
 tags: [Chiplet, 先进封装, 异构集成, 测试, AI芯片, 硅中介层, CPO, 测试插入]
 description: "SemiEngineering 对 AI chiplet / 2.5D-3D 异构集成如何把质量保障从单 die 推向 CoW/CoP 模组级、并重定义测试插入点（metrology/ATE/SLT 分层策略）的技术解读，附 Teradyne 四张架构图。"
+image: /assets/img/covers/ai-chiplet-architectures-redefining-test-insertions.jpg
+
 ---
 
 > 原文来源：SemiEngineering｜作者 Jeorge Hurtarte｜原文发布于 2026-08-11

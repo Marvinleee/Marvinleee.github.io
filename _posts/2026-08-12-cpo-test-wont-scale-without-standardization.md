@@ -5,6 +5,8 @@ date: 2026-08-12 20:00:00 +0800
 categories: [半导体技术]
 tags: [CPO, 光测试, 标准化, 量产, 良率]
 description: "整理自 SemiEngineering（Anne Meixner，2026-08-11）：CPO 从实验室仪表走向量产 ATE 卡在标准化缺失——连接器/测试规格/数据格式各自为政，导致交期长、成本高、设备难复用；NPO 12–18 个月、CPO 18–24 个月量产的节奏，呼唤共同制造框架。英文原文 + 中文深度解读。"
+image: /assets/img/covers/cpo-test-wont-scale-without-standardization.jpg
+
 ---
 
 > 本文整理自 **SemiEngineering**，原文发布于 **2026-08-11**，署名 **Anne Meixner**。

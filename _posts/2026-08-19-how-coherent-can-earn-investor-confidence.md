@@ -5,6 +5,8 @@ date: 2026-08-19 00:00:00 +0800
 categories: [半导体投资]
 tags: [CPO, 光通信, 激光器, 投资, Coherent, Lumentum]
 description: 在 Coherent 的 Q4FY26 业绩会上，华尔街分析师首次直接引用 Substack 行业分析来质疑其 CPO 激光器能力。Vikram Sekar 本文给出 Coherent 重建投资人信心的路径——公开激光实测数据、做 live demo。附英文原文与中文解读。
+image: /assets/img/covers/how-coherent-can-earn-investor-confidence.jpg
+
 ---
 
 > 原文：[How Coherent Can Earn Investor Confidence](https://www.viksnewsletter.com/p/how-coherent-can-earn-investor-confidence)，作者 Vikram Sekar（viksnewsletter），发布于 2026-08-16。

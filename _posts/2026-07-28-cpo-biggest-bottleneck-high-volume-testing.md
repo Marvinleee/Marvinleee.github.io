@@ -5,6 +5,8 @@ date: 2026-07-28 20:30:00 +0800
 categories: [半导体技术]
 tags: [CPO, 硅光, 量产测试, 光测试, 良率, 测试标准]
 description: "TSPA Semiconductor 深度分析：当 CPO 从实验室走向量产，真正的瓶颈不是光子芯片设计、不是封装，而是能否建立可重复、自动化、标准化、经济可行的光电混合测试体系。Advantest 在 SEMICON Taiwan 2025 的演讲指出了硅光/CPO 量产测试的四大关键方向与三大缺口。英文原文 + 中文深度解读。"
+image: /assets/img/covers/cpo-biggest-bottleneck-high-volume-testing.jpg
+
 ---
 
 > 本文整理自 **TSPA Semiconductor (Substack)** 的深度分析，原文发布于 **2026-07-27**（标题原文：*CPO's Biggest Bottleneck Is Not Optics—It Is High-Volume Testing*）。

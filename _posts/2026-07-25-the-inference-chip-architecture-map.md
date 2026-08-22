@@ -5,6 +5,8 @@ date: 2026-07-25 23:15:00 +0800
 categories: [AI硬件]
 tags: [推理芯片, AI加速器, HBM, 存储带宽, 芯片架构]
 description: "整理自 Damnang：把推理芯片市场拆成三大瓶颈（内存带宽 / 灵活性成本 / 部署与功耗），再用实测规格梳理 12 家创企如何作答，按内存阵营（SRAM 中心 / 低成本 DRAM / 分层 / HBM）深挖，最后看 Nvidia 与超大规模云厂如何上下夹击。英文原文 + 中文解读。"
+image: /assets/img/covers/the-inference-chip-architecture-map.jpg
+
 ---
 
 > 本文整理自 Damnang (Substack) 的科技投资分析文章，原文发布于 **2026-07-01**（内容截至 2026-06-30）。

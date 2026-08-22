@@ -5,6 +5,8 @@ date: 2026-06-14
 categories: [站务]
 tags: [站务, 博客]
 description: "用 GitHub Pages 搭建的第一篇博客，开启技术、生活与零碎想法的记录。"
+image: /assets/img/covers/my-first-post.jpg
+
 ---
 
 欢迎来到我的个人博客！

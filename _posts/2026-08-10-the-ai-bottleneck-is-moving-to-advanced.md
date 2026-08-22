@@ -5,6 +5,8 @@ date: 2026-08-10 20:00:00 +0800
 categories: [半导体投资]
 tags: [先进封装, 半导体材料, 供应链, 日本, CoWoS, 投资]
 description: 整理 Asia Next (X-RAY #3) 的长文：从 NVIDIA 预付 Amkor 15 亿美元切入，论证 AI 瓶颈正从设计/制造移向先进封装与更底层的材料（玻璃布、铜箔、微钻），并点出六道锁定中由日本公司把持的耗材钥匙。英文原文（免费框架全本）+ 中文深度解读；公司具体标的在付费墙后，未转载。
+image: /assets/img/covers/the-ai-bottleneck-is-moving-to-advanced.jpg
+
 ---
 
 > 本文整理自 **Asia Next**（asianext.substack.com，Substack 专栏），原文发布于 **Aug 04, 2026**（标题原文：*The AI Bottleneck Is Moving to Advanced Packaging, Three Japanese Companies Hold the Keys.*，编号 X-RAY #3）。

@@ -5,6 +5,8 @@ date: 2026-08-01 00:30:00 +0800
 categories: [工业智能]
 tags: [制造调度, "Physical AI", 变形虫优化, 智能体, 半导体制造]
 description: "Masashi Aono（AMOEBA ENERGY）'Lab to Fab' 系列第四篇。区分'让个体变聪明的学习智能'（AI/深度学习/Physical AI）与'让众多个体在共享资源上同时成立的中介智能'（变形虫优化引擎），论证半导体 gigafab 的相变——从靠缓冲吸收不确定性的防御系统，转向靠可预测性与实时重调度同步整厂的进攻系统。TSMC 2nm 单晶圆 ~3 万美元、单制程代年产值数百亿美元，整厂流量提升 1% 即可达数亿美元/年量级。英文原文（Medium 公开全文，无付费墙）+ 中文深度解读。"
+image: /assets/img/covers/ai-and-amoeba-fighting-together-learning-and-mediating-intelligence.jpg
+
 ---
 
 > 本文整理自 **Masashi Aono（青野正士，AMOEBA ENERGY 创始人；曾任理化学研究所/CeMVISTA、大阪大学教授）** 发布于 **Medium** 的文章，原文发布于 **2026-07-16**（标题原文：*AI and Amoeba, Fighting Together — Learning intelligence and mediating intelligence*）。

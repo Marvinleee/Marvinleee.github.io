@@ -5,6 +5,8 @@ date: 2026-08-22 09:30:00 +0800
 categories: [人工智能]
 tags: [Meta, MTIA300, AI芯片, chiplet, 先进封装, Broadcom]
 description: "逐译 Vengineer 对 Meta MTIA 300 内部框图（ISCA 2026）的解读，并附中文结构化解读：chiplet 构成、MAX2 互连、SRAM 层级、内置 NIC 与集合卸载、RISC-V 控制核，及与本站 CPO/先进封装系列的衔接。"
+image: /assets/img/covers/meta-mtia-300-internal-block-diagram.jpg
+
 ---
 
 > **原文**：Vengineer《Meta MTIA 300 の内部ブロック図》（はてなブログ，2026-08-18）｜ 日文逐译 + 中文结构化解读。

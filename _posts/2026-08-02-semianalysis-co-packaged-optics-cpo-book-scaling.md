@@ -5,6 +5,8 @@ date: 2026-08-02 18:55:00 +0800
 categories: [半导体技术]
 tags: [CPO, 硅光, SerDes, 先进封装, 数据中心网络]
 description: "SemiAnalysis 重磅 CPO 专题（英文原文 + 中文深度解读）：从 TCO/功耗、SerDes 瓶颈、TSMC COUPE、MZM/MRM/EAM 调制器到 NVIDIA 与 Broadcom 的 CPO 供应链，系统拆解共封装光学如何驱动下一代互联扩展。"
+image: /assets/img/covers/semianalysis-co-packaged-optics-cpo-book-scaling.jpg
+
 ---
 
 > 本文整理自 **SemiAnalysis（Substack）**（<https://semianalysis.com>），原文发布于 **Jan 02, 2026**（标题原文：*Co-Packaged Optics (CPO) Book – Scaling with Light for the Next Wave of Interconnect*）。

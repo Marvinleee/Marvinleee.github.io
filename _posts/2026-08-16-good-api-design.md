@@ -5,6 +5,8 @@ date: 2026-08-16 21:00:00 +0800
 categories: [软件工程]
 tags: [API设计, 软件工程, REST, 系统设计, 幂等性, 接口稳定性]
 description: Sean Goedecke 的 API 设计经验长文。本站按「英文原文 + 中文翻译 + 中文深度解读」三层呈现。核心命题：好 API 是「无聊」的、绝不破坏既有使用者（WE DO NOT BREAK USERSPACE）、版本化是必要之恶、产品价值大于接口优雅、幂等键与游标分页与限流是工程底线。
+image: /assets/img/covers/good-api-design.jpg
+
 ---
 
 > 原文：[Everything I know about good API design](https://www.seangoedecke.com/good-api-design/)

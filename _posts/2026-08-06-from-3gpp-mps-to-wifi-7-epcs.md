@@ -5,6 +5,8 @@ date: 2026-08-06 20:00:00 +0800
 categories: [通信技术]
 tags: ["Wi-Fi 7", EPCS, MPS, 3GPP, RADIUS, Passpoint]
 description: "对 Zahid Ghadialy（The 3G4G Blog）关于 3GPP MPS 与 Wi-Fi 7 EPCS 技术演进解读的英文原文与中文深度分析，覆盖跨接入技术的 NS/EP 优先级通信架构、IETF RADIUS 扩展与 Passpoint 流程。"
+image: /assets/img/covers/from-3gpp-mps-to-wifi-7-epcs.jpg
+
 ---
 
 > **原文**：Zahid Ghadialy，*The 3G4G Blog*，发布于 2026-07-10。

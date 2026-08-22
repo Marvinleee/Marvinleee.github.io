@@ -5,6 +5,8 @@ date: 2026-08-19 20:00:00 +0800
 categories: [光互联]
 tags: [CPO, 共封装光学, 硅光, 光互联, AI基础设施, 规模部署, 先进封装]
 description: "SemiEngineering 对 CPO 从 PoC 走向可量产拐点的讨论——基于 Alchip / Astera Labs / Ayar Labs 三位先驱的对谈，拆解 scale-out→scale-up→extended memory 三阶段路线图，以及标准化、制造、可靠性、光互连独特失效模式等规模化门槛。"
+image: /assets/img/covers/what-will-it-take-to-deploy-cpo-at-scale.jpg
+
 ---
 
 > 原文来源：SemiEngineering｜作者 James Nguyen｜原文发布于 2026-08-13

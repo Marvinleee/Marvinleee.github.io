@@ -5,6 +5,8 @@ date: 2026-08-19 00:00:00 +0800
 categories: [数学]
 tags: [离散数学, 证明, 概率, 图论, MIT, 数学基础]
 description: MIT 6.042 教材《Mathematics for Computer Science》（Lehman, Leighton, Meyer，1048 页）。按「超过 40 页的 PDF 只做结构化解读」规则，此处仅做结构化解读，不发布原文。
+image: /assets/img/covers/mathematics-for-computer-science-mit.jpg
+
 ---
 
 > 来源：[mcs.pdf](https://courses.csail.mit.edu/6.042/spring18/mcs.pdf)，作者 Eric Lehman, F. Thomson Leighton, Albert R. Meyer（MIT 6.042 课程教材）。

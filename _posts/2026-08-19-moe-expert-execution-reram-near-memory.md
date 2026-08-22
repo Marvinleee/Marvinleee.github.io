@@ -5,6 +5,8 @@ date: 2026-08-19 00:00:00 +0800
 categories: [人工智能]
 tags: [MoE, 存内计算, ReRAM, LLM推理, 近内存计算]
 description: 用高带宽 ReRAM 近内存架构执行分解式 LLM 服务中的 MoE 专家 本文附英文原文（arXiv 全文/PDF 提取）与中文深度解读。
+image: /assets/img/covers/moe-expert-execution-reram-near-memory.jpg
+
 ---
 
 > 原文：[MoE Expert Execution in Disaggregated LLM Serving with a High-Bandwidth ReRAM Near-Memory Architecture](https://arxiv.org/abs/2608.13962)，作者 Kunming Shao, Ming Zeng, et al. (HKUST & Alibaba Cloud)。

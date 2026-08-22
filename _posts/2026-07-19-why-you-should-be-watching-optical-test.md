@@ -5,6 +5,8 @@ date: 2026-07-19 16:23:00 +0800
 categories: [半导体投资]
 tags: [CPO, 光测试, 晶圆级测试, 测试设备, 投资]
 description: "整理自 Damnang 的 CPO 投资分析：拆解光测试价值链条的 5 大瓶颈，解析不同渗透情景下哪些设备公司最先兑现收益。英文原文 + 中文解读。"
+image: /assets/img/covers/why-you-should-be-watching-optical-test.jpg
+
 ---
 
 > 本文整理自 Damnang (Substack) 的科技投资分析文章，原文发布于 2026-05-03。

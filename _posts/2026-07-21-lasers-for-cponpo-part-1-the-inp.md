@@ -5,6 +5,8 @@ date: 2026-07-21 08:06:00 +0800
 categories: [半导体技术]
 tags: [CPO, NPO, InP, DFB激光器, 光通信]
 description: "整理自 Viks Newsletter：CPO 超高功率(UHP) CW 激光器是供应链隐形 choke point，Lumentum 公认领先但工程难点少有人讲清。系列第 1 篇（基础篇）从第一性原理拆 InP DFB 激光器——多量子阱增益、自发/受激辐射、L-I 曲线与温度阈值，并指出 Lumentum 的优势可追溯到 2007 年 JDS Uniphase 的 DFB 设计（片上 600mW、出纤 350mW、线宽 <500kHz）。英文原文（免费公开部分，至 L-I 曲线）+ 中文深度解读。"
+image: /assets/img/covers/lasers-for-cponpo-part-1-the-inp.jpg
+
 ---
 
 > 本文整理自 [Viks Newsletter](https://www.viksnewsletter.com/p/lasers-for-cponpo-part-1-the-inp)（Substack）的付费技术专栏，原文发布于 **2026-07-15**（作者署名为 Viks / SemiExponent）。

@@ -5,6 +5,8 @@ date: 2026-08-19 00:00:00 +0800
 categories: [算法]
 tags: [算法, 递归, 动态规划, 图算法, NP完全, 计算理论]
 description: Jeff Erickson 的免费算法教材（472 页）。按「超过 40 页的 PDF 只做结构化解读」规则，此处仅做结构化解读，不发布原文。
+image: /assets/img/covers/algorithms-jeff-erickson.jpg
+
 ---
 
 > 来源：[Algorithms](https://jeffe.cs.illinois.edu/teaching/algorithms/book/Algorithms-JeffE.pdf)，作者 Jeff Erickson（University of Illinois Urbana-Champaign）。

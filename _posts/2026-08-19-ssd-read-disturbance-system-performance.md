@@ -5,6 +5,8 @@ date: 2026-08-19 00:00:00 +0800
 categories: [计算机体系结构]
 tags: [SSD, NAND, 读干扰, 存储可靠性, 系统性能]
 description: 现代 SSD 中读干扰对系统级性能影响的实验研究 本文附英文原文（arXiv 全文/PDF 提取）与中文深度解读。
+image: /assets/img/covers/ssd-read-disturbance-system-performance.jpg
+
 ---
 
 > 原文：[Experimental Study on System-Level Performance Impact of Read Disturbance in Modern SSDs](https://arxiv.org/abs/2608.14073)，作者 Yonggon Park, Hyunuk Cho, Onur Mutlu, et al. (POSTECH & ETH Zurich)。

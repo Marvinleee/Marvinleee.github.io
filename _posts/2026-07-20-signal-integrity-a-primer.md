@@ -5,6 +5,8 @@ date: 2026-07-20 22:43:00 +0800
 categories: [电子工程]
 tags: [信号完整性, SerDes, PAM4, 通道损耗, 抖动, DSP]
 description: "整理自 Chad Wallace（Silicon Co-Design, Substack）的技术科普：从 SerDes 的角色、铜互连的介质损耗与趋肤效应、随机/确定性抖动分类，到 BER 推算与 PAM-4/DSP 收发器架构趋势。英文原文 + 中文深度解读。"
+image: /assets/img/covers/signal-integrity-a-primer.jpg
+
 ---
 
 > 本文整理自 Chad Wallace (Substack / siliconcodesign.com) 的技术科普文章，原文发布于 2026-03-18。

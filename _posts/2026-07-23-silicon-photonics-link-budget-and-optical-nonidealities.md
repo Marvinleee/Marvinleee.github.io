@@ -5,6 +5,8 @@ date: 2026-07-23 08:21:00 +0800
 categories: [半导体技术]
 tags: [硅光, CPO, 链路预算, PAM4, 激光器, 光电探测器]
 description: "整理自 Silicon Codesign（Substack）的硅光入门技术文。免费公开部分系统拆解一条硅光收发链路（CPO 语境下 224 Gbps NRZ）的链路预算(link budget)：发射端功耗效率(pJ/bit)与 BER 指标、激光功率（双光子吸收导致的 Pout 饱和/钝化层熔融风险、对 PAM4 至关重要的 RIN）、连接器损耗（调制器损耗 / MPI / PDL）、接收端（响应度 / 暗电流 / 输入参考噪声 / TIA 增益 / 接收灵敏度 / THD）。真正的『眼图质量 FOM』『量产验证挑战（晶圆筛片 + 热稳定性 + NVIDIA 热调谐设计）』位于付费墙之后。英文原文（免费公开部分）+ 中文深度解读。"
+image: /assets/img/covers/silicon-photonics-link-budget-and-optical-nonidealities.jpg
+
 ---
 
 > 本文整理自 [Silicon Codesign](https://www.siliconcodesign.com/p/understanding-the-link-budget-and)（Substack 技术专栏），原文发布于 **2026-05-20**（作者署名为 Silicon Codesign；文中图表多引自 ISSCC 2026 / DesignCon 2026 讲稿：Ossieur、Aflatouni、Nourzad & Liu (Lightmatter) 等）。

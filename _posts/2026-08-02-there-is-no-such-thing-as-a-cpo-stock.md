@@ -5,6 +5,8 @@ date: 2026-08-02 19:20:00 +0800
 categories: [半导体投资]
 tags: [CPO, 光通信, Lumentum, Coherent, Broadcom, 投资]
 description: "本文整理 PhotonCap 对 2026 年 6 月 9 日 CPO「延迟」抛售的解读：英文原文 + 中文深度解读，剖析市场如何将 800VDC 与 CPO 两条时间线误读为同一笔交易，并拆穿「纯 CPO 股」这一伪命题。"
+image: /assets/img/covers/there-is-no-such-thing-as-a-cpo-stock.jpg
+
 ---
 
 > 本文整理自 **PhotonCap**（photoncap.net），原文发布于 **Jun 10, 2026**（标题原文：*There Is No Such Thing as a 'CPO Stock': How the Market Misread SemiAnalysis*）。

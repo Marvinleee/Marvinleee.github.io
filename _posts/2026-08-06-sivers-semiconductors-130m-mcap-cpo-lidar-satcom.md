@@ -5,6 +5,8 @@ date: 2026-08-06 23:00:00 +0800
 categories: [半导体投资]
 tags: [Sivers, CPO, LiDAR, SATCOM, InP, 公司研究]
 description: "对 Silicon Matter（原 Semis and Stocks）关于瑞典 Sivers Semiconductors 的深度公司剖析的英文原文与中文解读，覆盖 CPO 光器件、LiDAR、SATCOM 三大业务线与估值逻辑。作者持股，非投资建议。"
+image: /assets/img/covers/sivers-semiconductors-130m-mcap-cpo-lidar-satcom.jpg
+
 ---
 
 > **原文**：Silicon Matter（Substack，曾用名 *Semis and Stocks*，handle: siliconmatter），发布于 2026-03-13。

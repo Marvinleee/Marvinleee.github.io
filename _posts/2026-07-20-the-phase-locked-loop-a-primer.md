@@ -5,6 +5,8 @@ date: 2026-07-20 22:44:00 +0800
 categories: [电子工程]
 tags: [PLL, 锁相环, 模拟电路, 时钟, 频率合成]
 description: "整理自 Chad Wallace（Silicon Co-Design, Substack）的技术科普：从 PLL 的「管弦乐队指挥」比喻出发，深入 Type I（XOR+RC LPF）与 Type II（电荷泵）PLL 的架构差异、Bode 图对比、以及二阶传递函数的推导。英文原文 + 中文深度解读。"
+image: /assets/img/covers/the-phase-locked-loop-a-primer.jpg
+
 ---
 
 > 本文整理自 Chad Wallace (Substack / siliconcodesign.com) 的技术科普文章，原文发布于 2026-02-11。

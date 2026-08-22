@@ -5,6 +5,8 @@ date: 2026-07-20 23:33:00 +0800
 categories: [电子工程]
 tags: [模拟电路, 带隙基准, 基准电压, 模拟IC]
 description: "整理自 Chad Wallace（Silicon Co-Design, Substack）的技术科普：从 PTAT 与 CTAT 电压的一阶温度抵消出发，拆解 Brokaw 带隙基准的推导、SPICE 仿真（温漂/线性调整率/PSRR/失配）、曲率校正与启动电路，并附一段工程师带隙设计竞赛的趣事。英文原文 + 中文深度解读。全文免费。"
+image: /assets/img/covers/the-bandgap-reference-a-primer.jpg
+
 ---
 
 > 本文整理自 Chad Wallace (Substack / siliconcodesign.com) 的技术科普文章，原文发布于 2026-02-04（作者署名为 Chad Wallace，后并入 Silicon Co-Design）。

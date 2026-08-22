@@ -5,6 +5,8 @@ date: 2026-08-19 00:00:00 +0800
 categories: [人工智能]
 tags: [Mixture of Experts, 大模型, 模型架构, NVIDIA, 稀疏激活, 专家专业化]
 description: NVIDIA 技术博客详解 MoE（混合专家）架构：如何用多个专家子网络在扩大模型容量的同时降低每 token 计算成本，并以开源 Mixtral 8x7B 实证专家的专业化行为。附英文原文、本地化图表与中文深度解读。
+image: /assets/img/covers/nvidia-moe-llm-architectures.jpg
+
 ---
 
 > 原文：[Applying Mixture of Experts in LLM Architectures](https://developer.nvidia.com/blog/applying-mixture-of-experts-in-llm-architectures/)，作者 Kyle Kranen 与 Vinh Nguyen（NVIDIA Technical Blog），发布于 2024-03-14。

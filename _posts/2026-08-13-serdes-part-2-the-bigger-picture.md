@@ -5,6 +5,8 @@ date: 2026-08-13 20:00:00 +0800
 categories: [半导体产业]
 tags: [SerDes, CPO, 铜互连, AEC, 光通信, 产业格局]
 description: "Nutty 的 SerDes 系列第二篇：铜与光的战争远未尘埃落定——物理站在光一边，但金钱与时间站在铜一边；先进 SerDes 是挑战者跻身系统级公司的「入场券」，而定价权仍握在 NVIDIA 与 Broadcom 手中。"
+image: /assets/img/covers/serdes-part-2-the-bigger-picture.jpg
+
 ---
 
 > **来源**：Nutty（硅谷模拟 IC 设计工程师）· *Nutty* Substack · 原文发布于 **2026-08-12**（UTC）

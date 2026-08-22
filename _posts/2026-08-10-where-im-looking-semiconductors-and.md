@@ -5,6 +5,8 @@ date: 2026-08-10 20:00:00 +0800
 categories: [半导体投资]
 tags: [AI硬件, 台积电, ASML, 存储, 半导体材料, 投资组合]
 description: 整理 William David (The Chokepoint) 的季度关注清单：用「物理约束层 vs 估值错位」框架，列出代工/内存/材料基建三大类共 10 个情形（TSMC、ASML、ONTO、SK 海力士、美光、Entegris、AXT、Coherent、ASM International、Linde），并逐一给出 bear case 与催化剂。英文原文 + 中文深度解读。
+image: /assets/img/covers/where-im-looking-semiconductors-and.jpg
+
 ---
 
 > 本文整理自 **William David / The Chokepoint**（williamdavid.substack.com，Substack 专栏），原文发布于 **Jul 19, 2026**（标题原文：*Where I'm Looking: Semiconductors & AI Hardware*，系列收官/季度格式第一篇）。

@@ -5,6 +5,8 @@ date: 2026-08-16 23:10:00 +0800
 categories: [AI硬件]
 tags: [MTIA, HCCL, 集合通信, AI加速器, RDMA, 分布式训练]
 description: "深度解读 Meta HCCL 与 MTIA 300：专用 Message Engine、近存计算、片上 RDMA NIC、编译式通信子图、拓扑感知算法，以及训练 940 GB/s、推理亚 6 微秒背后的真实口径与工程代价。"
+image: /assets/img/covers/meta-hccl-mtia300-collective-communication.jpg
+
 ---
 
 > **论文**：Wesley Bland 等 66 位 Meta 作者，[*HCCL: Collective Communication for Meta Training and Inference Accelerators*](https://arxiv.org/abs/2608.00358)，arXiv:2608.00358，2026-08-01；论文计划发表于 SC 2026。
