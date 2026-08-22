@@ -339,3 +339,8 @@ h1, h2, h3, h4, h5, h6,
 .post-toc-top #toc { max-height: 320px; overflow-y: auto; padding-left: 0.5rem; }
 .post-toc-top #toc a { color: var(--text-muted, #6c757d); text-decoration: none; }
 .post-toc-top #toc a:hover { color: var(--gordi-teal, #03c6ad); }
+
+/* ---------- 文章页顶部站点标识行（头像 + 站名） ---------- */
+.post-site-id { border-bottom: 1px solid var(--border-color, #e0e0e0); padding-bottom: 1.25rem; }
+.post-site-id #site-avatar { width: 72px; height: 72px; }
+.post-site-name { font-weight: 600; letter-spacing: 0.02em; color: var(--gordi-teal, #03c6ad); }
