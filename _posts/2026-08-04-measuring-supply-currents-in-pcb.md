@@ -5,7 +5,6 @@ date: 2026-08-04 21:00:00 +0800
 categories: [电子工程]
 tags: [PCB, 电源完整性, 供电电流, PDN, 电流测量]
 description: "Stanford 2008 博士论文（James Alden Weaver）：在 PCB 上测量供电电流的新方法、探索性验证与真实问题应用。中文模块化解读（DeepSeek 生成，非翻译）。"
-image: /assets/img/covers/measuring-supply-currents-in-pcb.jpg
 
 ---
 

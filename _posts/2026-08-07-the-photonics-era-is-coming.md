@@ -5,7 +5,6 @@ date: 2026-08-07 22:45:00 +0800
 categories: [半导体技术]
 tags: [光子学, 光互连, CPO, PIC, 硅光, AI基础设施]
 description: "对光子学博士 PhotonEra 的科普长文《The Photonics Era Is Coming》的英文原文与中文解读。从晶体管缩放、内存墙，到铜在高频长距离下的趋肤效应与功耗极限，论证「通信才是 AI 时代首要瓶颈」，并梳理 PIC 的核心器件（调制器/激光器/移相器/探测器/光纤耦合/CPO）与产业链公司格局。全文公开无付费墙。"
-image: /assets/img/covers/the-photonics-era-is-coming.jpg
 
 ---
 

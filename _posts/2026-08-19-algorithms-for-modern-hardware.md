@@ -5,7 +5,6 @@ date: 2026-08-19 00:00:00 +0800
 categories: [高性能计算]
 tags: [HPC, 性能工程, SIMD, 缓存优化, 底层优化, 算法]
 description: Sergey Slotin 的免费开源书《Algorithms for Modern Hardware》系统讲解在现代 CPU/GPU 上写出高性能代码所需的算法与硬件知识。本书为整站形式的鸿篇，按「超过 40 页」规则仅做结构化概览与解读，不发布全文。
-image: /assets/img/covers/algorithms-for-modern-hardware.jpg
 
 ---
 

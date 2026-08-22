@@ -5,7 +5,6 @@ date: 2026-07-19 20:32:00 +0800
 categories: [半导体投资]
 tags: [CPO, 光通信, 晶圆级测试, 产业链, 投资]
 description: "整理自 Damnang：把光投资拆成 7 层价值链（材料/器件/连接 IC/PIC 平台/代工/封装/测试），叠加 FRO→LPO→NPO→CPO 架构演进轴，并梳理 50 只相关标的与垂直整合关系。英文原文 + 中文解读。"
-image: /assets/img/covers/optical-investment-map-v1-0.jpg
 
 ---
 

@@ -5,7 +5,6 @@ date: 2026-08-19 00:00:00 +0800
 categories: [数学]
 tags: [数值计算, 初等函数, 科学计算, 算子]
 description: 用单一算子生成全部初等函数 本文附英文原文（arXiv 全文/PDF 提取）与中文深度解读。
-image: /assets/img/covers/elementary-functions-single-operator.jpg
 
 ---
 

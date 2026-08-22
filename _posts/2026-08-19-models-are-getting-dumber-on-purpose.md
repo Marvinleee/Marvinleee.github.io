@@ -5,7 +5,6 @@ date: 2026-08-19 00:00:00 +0800
 categories: [人工智能]
 tags: [大模型, 模型效率, 幻觉, 推理能力, 知识检索, 参数效率]
 description: 为什么前沿模型在推理基准上越来越强、却在事实问答上越来越「笨」？本文逐字翻译并深度解读 Walter van der Giessen 关于「用世界知识换取推理能力」这一刻意权衡的论点。
-image: /assets/img/covers/models-are-getting-dumber-on-purpose.jpg
 
 ---
 

@@ -5,7 +5,6 @@ date: 2026-08-12 20:00:00 +0800
 categories: [半导体技术]
 tags: [先进封装, 异构集成, CoWoS, TSV, RDL]
 description: "整理自 Silicon Co-Design（Chad）：从 2D 到 3.5D 的先进封装与异构集成分类、TSMC 2.5D CoWoS 拆解（TSV 制造、RDL 工艺、C4/C2 凸点），以及基板瓶颈。英文原文（免费部分）+ 中文深度解读；🔒 付费段（玻璃基板、面板 vs 晶圆、有机基板内嵌桥、混合键合工艺）未包含。"
-image: /assets/img/covers/a-masterclass-on-advanced-packaging.jpg
 
 ---
 

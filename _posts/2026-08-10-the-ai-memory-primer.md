@@ -5,7 +5,6 @@ date: 2026-08-10 20:00:00 +0800
 categories: [AI硬件]
 tags: [HBM, DRAM, 存储, SK海力士, 三星, 美光]
 description: 整理 William David (The Chokepoint) 的 AI 内存入门：用仓库/电梯类比讲清 HBM 与 DRAM 的关系、TSV 与薄化晶圆、电压 droop 与良率数学、三家寡头与认证壁垒，以及 SK 海力士/三星/美光的真实竞争格局。英文原文 + 中文深度解读。
-image: /assets/img/covers/the-ai-memory-primer.jpg
 
 ---
 

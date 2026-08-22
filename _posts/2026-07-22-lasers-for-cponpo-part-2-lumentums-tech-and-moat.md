@@ -5,7 +5,6 @@ date: 2026-07-22 21:20:00 +0800
 categories: [半导体投资]
 tags: [CPO, NPO, Lumentum, InP, 激光器, 技术壁垒]
 description: "整理自 Viks Newsletter：CPO 超高功率(UHP) CW 激光器系列第 2 篇（判词篇）。市场 FUD 说 Lumentum 领先却少有人讲清工程难点与护城河。免费段拆『重新展宽(re-broadening)』两大机制（空间烧孔 + MQW 随机复合相位噪声），并给出 κL≈0.7 的甜点（相位平坦度覆盖近 200°）。真正的腔长工程、可靠性、模态稳定与『护城河不在 UHP 设计本身』的判词位于付费墙之后。英文原文（免费公开部分）+ 中文深度解读。"
-image: /assets/img/covers/lasers-for-cponpo-part-2-lumentums-tech-and-moat.jpg
 
 ---
 

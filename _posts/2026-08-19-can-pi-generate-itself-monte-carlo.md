@@ -5,7 +5,6 @@ date: 2026-08-19 00:00:00 +0800
 categories: [数学]
 tags: [蒙特卡洛, 圆周率, 数论, 伪随机, 正态性]
 description: π 能生成自己吗？基于 314 万亿位数字的蒙特卡洛分析 本文附英文原文（arXiv 全文/PDF 提取）与中文深度解读。
-image: /assets/img/covers/can-pi-generate-itself-monte-carlo.jpg
 
 ---
 

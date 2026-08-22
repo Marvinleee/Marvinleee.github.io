@@ -15,10 +15,6 @@ script_includes:
 {% include toc-status.html %}
 
 <article class="px-1" data-toc="{{ enable_toc }}">
-  <div class="post-site-id text-center mb-4">
-    {% include site-avatar.html %}
-    <div class="post-site-name mt-2">{{ site.title }}</div>
-  </div>
 
   <header>
     <h1 data-toc-skip>{{ page.title }}</h1>
@@ -125,11 +121,6 @@ script_includes:
     </dialog>
   {% endif %}
 
-  {% if enable_toc %}
-    <div class="post-toc-top mb-4 p-3 rounded-3">
-      {% include toc.html %}
-    </div>
-  {% endif %}
 
   <div class="content">
     {{ content }}

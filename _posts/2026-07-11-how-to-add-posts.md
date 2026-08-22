@@ -5,7 +5,6 @@ date: 2026-07-11
 categories: [站务]
 tags: [Jekyll, "GitHub Pages", 写作, 媒体]
 description: "本站写作与媒体指南：文件命名规则、Front Matter 写法，如何插入图片（含点击放大 lightbox）、自托管与 B 站/YouTube 嵌入视频，以及推送上线流程。"
-image: /assets/img/covers/how-to-add-posts.jpg
 
 ---
 

@@ -5,7 +5,6 @@ date: 2026-08-16 22:50:00 +0800
 categories: [半导体技术]
 tags: [氧化镓, ISEFET, 垂直晶体管, 宽禁带半导体, 功率器件, 器件工艺]
 description: "技术解读 arXiv:2608.12797 提出的垂直 β-Ga₂O₃ 隔离源极场效应晶体管（ISEFET）：用有源区外的 SiO₂ 介质隔离层引出埋藏源极，绕开多次平坦化回刻与 Mg/N 深能级受主电流阻挡层；拆解其纵向导电、双栅耗尽、制造流程、510 V 击穿、界面陷阱与量产边界。"
-image: /assets/img/covers/vertical-gallium-oxide-isefet.jpg
 
 ---
 

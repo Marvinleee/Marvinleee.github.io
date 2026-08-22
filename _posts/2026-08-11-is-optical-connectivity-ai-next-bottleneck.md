@@ -5,7 +5,6 @@ date: 2026-08-11 20:00:00 +0800
 categories: [半导体产业]
 tags: [CPO, NPO, 光通信, NVIDIA, Broadcom, 供应链]
 description: "整理自 Third Bridge（桥知集团）TMT Perspectives：基于多位全球光通信专家访谈，拆解从可插拔光模块到 CPO 的演进节奏、NPO 过渡定位、NVIDIA 与 Broadcom 的生态卡位，以及 200G EML / 高功率 CW 激光器短缺下的中国替代窗口。英文原文 + 中文深度解读。"
-image: /assets/img/covers/is-optical-connectivity-ai-next-bottleneck.jpg
 
 ---
 

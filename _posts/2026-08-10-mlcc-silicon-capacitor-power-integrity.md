@@ -5,7 +5,6 @@ date: 2026-08-10 20:00:00 +0800
 categories: [电子工程]
 tags: [MLCC, 硅电容, 电源完整性, AI服务器, 去耦]
 description: 整理 TrendForce 关于 AI 服务器电源完整性的分析：板级 MLCC 与封装级硅电容如何分工互补，硅电容凭借极低 ESL 与近 die 去耦成为 AI 加速器的关键高端元件，以及村田/SEMCO/台耀等供应链格局与双轨未来。英文原文 + 中文深度解读。
-image: /assets/img/covers/mlcc-silicon-capacitor-power-integrity.jpg
 
 ---
 

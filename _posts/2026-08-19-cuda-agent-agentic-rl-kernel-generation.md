@@ -5,7 +5,6 @@ date: 2026-08-19 00:00:00 +0800
 categories: [人工智能]
 tags: [CUDA, Agentic RL, 代码生成, 高性能计算, 内核优化]
 description: CUDA Agent：用大规模智能体强化学习生成高性能 CUDA 内核 本文附英文原文（arXiv 全文/PDF 提取）与中文深度解读。
-image: /assets/img/posts/cuda-agent-agentic-rl-kernel-generation/x1.png
 
 ---
 

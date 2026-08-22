@@ -5,7 +5,6 @@ date: 2026-07-28 20:00:00 +0800
 categories: [AI与机器学习]
 tags: [强化学习, 基础模型, 论文研究, 机器学习]
 description: "Zihan Ding (Princeton, 2026) 博士论文《Reinforcement Learning: From Algorithms to Foundation Models》的结构化英文总结（含 11 张 Mermaid 流程图）+ 完整英文原文。涵盖博弈论 Nash 均衡、扩散世界模型、一致性策略、少步视频生成等核心贡献。"
-image: /assets/img/covers/reinforcement-learning-from-algorithms-to-foundation-models-full.jpg
 
 ---
 

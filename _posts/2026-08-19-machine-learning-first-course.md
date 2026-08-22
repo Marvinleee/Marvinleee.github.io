@@ -5,7 +5,6 @@ date: 2026-08-19 00:00:00 +0800
 categories: [人工智能]
 tags: [机器学习, 深度学习, 贝叶斯方法, 集成方法, 教材]
 description: "Lindholm 等著《Machine Learning: A First Course for Engineers and Scientists》（剑桥大学出版社，348 页）。按「超过 40 页的 PDF 只做结构化解读」规则，此处仅做结构化解读，不发布原文。"
-image: /assets/img/covers/machine-learning-first-course.jpg
 
 ---
 

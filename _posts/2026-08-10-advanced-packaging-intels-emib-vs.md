@@ -5,7 +5,6 @@ date: 2026-08-10 20:00:00 +0800
 categories: [半导体技术]
 tags: [先进封装, EMIB, CoWoS, Intel, 台积电, 2.5D封装]
 description: 整理 Austin Lyons (Chipstrat) 关于 AI 加速器先进封装的科普：reticle 上限如何催生 2.5D 封装、台积电 CoWoS 家族（S/R/L）与 Intel EMIB 的架构差异，并从成本、面板利用率、reticle 外扩展性、小片键合良率四维度对比 EMIB 与 CoWoS-L。英文原文 + 中文深度解读。
-image: /assets/img/covers/advanced-packaging-intels-emib-vs.jpg
 
 ---
 

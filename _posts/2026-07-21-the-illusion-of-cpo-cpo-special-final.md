@@ -5,7 +5,6 @@ date: 2026-07-21 22:42:00 +0800
 categories: [半导体投资]
 tags: [CPO, 硅光, 先进封装, 光测试, 产业链]
 description: "整理自 Damnang (Substack) 的 CPO 系列收官长文：方向正确（铜遇上物理极限、光是早晚的事）不等于当下可行。逐节拆解 scale-up/scale-out 双域、铜墙与功耗墙、热管理/封装良率/激光源/晶圆级光测试/光纤耦合六大瓶颈，以及代工厂（TSMC/GF/Tower）、集成方案（Broadcom/Marvell/Ayar/Lightmatter）与公司映射。英文全文 + 中文深度解读。"
-image: /assets/img/covers/the-illusion-of-cpo-cpo-special-final.jpg
 
 ---
 

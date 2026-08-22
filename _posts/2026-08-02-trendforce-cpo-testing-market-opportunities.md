@@ -5,7 +5,6 @@ date: 2026-08-02 19:00:00 +0800
 categories: [半导体产业]
 tags: [CPO, 量产测试, 测试设备, 光通信, 市场规模]
 description: "TrendForce 深度解析 CPO 量产的真正瓶颈不在封装而在测试，拆解四大测试阶段与 Advantest、Teradyne、Keysight、Chroma、Enlitech 等设备的竞争格局；本文含英文原文 + 中文深度解读。"
-image: /assets/img/covers/trendforce-cpo-testing-market-opportunities.jpg
 
 ---
 

@@ -24,350 +24,82 @@
 }
 
 /* ===================================================================
- * gordicaleksa-style reskin (Phase A)
- * 移除原终端绿主题，改为 Poppins(标题) + Open Sans(正文) + teal #03c6ad
- * 强调色的干净极简风。仅在此追加覆盖，不改动上方 @use 结构。
- * 字体自托管于 /assets/fonts/，避免国内 Google Fonts 被墙导致首屏卡顿。
- * 暗色选择器与 Chirpy 7.6 一致：:root[data-bs-theme=dark]。
+ * Terminal / CLI accent —— 借鉴 aleksagordic.com 的终端风，但只做"点缀"
+ * 设计取向：保留 Chirpy 的阅读体验，仅在标题/版块加终端味道
+ * （等宽字体 + 命令提示符 + 闪烁光标 + 绿色强调），不伤长文可读性。
+ * 注意：只在此处追加，切勿改动上方 @use 结构，否则会触发 SCSS 自引用死循环。
  * =================================================================== */
 
-/* ---------- 自托管字体 ---------- */
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 300; font-display: swap;
-  src: url('/assets/fonts/poppins-latin-300-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('/assets/fonts/poppins-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 500; font-display: swap;
-  src: url('/assets/fonts/poppins-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('/assets/fonts/poppins-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 700; font-display: swap;
-  src: url('/assets/fonts/poppins-latin-700-normal.woff2') format('woff2'); }
-
-@font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 400; font-display: swap;
-  src: url('/assets/fonts/open-sans-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 600; font-display: swap;
-  src: url('/assets/fonts/open-sans-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Open Sans'; font-style: normal; font-weight: 700; font-display: swap;
-  src: url('/assets/fonts/open-sans-latin-700-normal.woff2') format('woff2'); }
-
-/* ---------- 字体应用（CJK 回退到系统中文字体） ---------- */
-body, .content, .post-content, p, li, blockquote, td, th {
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+:root {
+  /* 等宽字体栈：中文会回退到系统字体，仅 Latin/数字呈终端感 */
+  --term-font: 'JetBrains Mono', 'SFMono-Regular', Menlo, Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+  --term-green: #1a7f37; /* 浅色模式：深绿，保证白底对比度 */
 }
-h1, h2, h3, h4, h5, h6,
-.site-title, .site-subtitle, .post-title, .label,
-#topbar, .nav-link, .card-title, .post-list .post-title {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
-  letter-spacing: -0.01em;
+.dark {
+  --term-green: #3fb950; /* 深色模式：亮终端绿（跟随 Chirpy 的 .dark 开关） */
 }
 
-/* ---------- teal 强调色：亮色模式 ---------- */
-:root, :root[data-bs-theme=light] {
-  --gordi-teal: #03c6ad;
-  --link-color: #00796b;            /* 正文链接用深 teal，保证白底 AA 对比 */
-  --link-underline-color: #03c6ad;
-  --sidebar-active-color: #00796b;  /* 侧栏当前项 */
-  --toc-highlight: #00796b;         /* TOC 当前小节 */
-  --tag-hover: #e6faf7;
-  --heading-color: #12161a;
-  --checkbox-checked-color: #03c6ad;
-  --input-focus-border-color: #03c6ad;
-  --btn-border-color: #03c6ad;
-  --btn-paginator-hover-color: #03c6ad;
-  --categories-icon-hover-color: #03c6ad;
-  --search-icon-color: #03c6ad;
-  --topbar-text-color: #03c6ad;
-  --menu-active-color: #03c6ad;
-  --text-muted-highlight-color: #03c6ad;
+/* 侧边栏站名：终端提示符 + 闪烁光标 */
+.site-title {
+  font-family: var(--term-font) !important;
 }
-
-/* ---------- teal 强调色：暗色模式 ---------- */
-:root[data-bs-theme=dark] {
-  --gordi-teal: #1cccb5;
-  --link-color: #2bd4c0;
-  --link-underline-color: #1cccb5;
-  --sidebar-active-color: #2bd4c0;
-  --toc-highlight: #2bd4c0;
-  --tag-hover: #163b38;
-  --heading-color: #eef2f4;
-  --checkbox-checked-color: #1cccb5;
-  --input-focus-border-color: #1cccb5;
-  --btn-border-color: #1cccb5;
-  --btn-paginator-hover-color: #1cccb5;
-  --categories-icon-hover-color: #1cccb5;
-  --search-icon-color: #1cccb5;
-  --topbar-text-color: #1cccb5;
-  --menu-active-color: #1cccb5;
-  --text-muted-highlight-color: #1cccb5;
-}
-
-/* ===================================================================
- * Phase B — Landing page (home.html override): gordicaleksa style
- * 大名字 hero + whoami + 精选卡片网格 + 写作时间线。
- * 沿用 Phase A 的 Poppins / teal 视觉语言。
- * =================================================================== */
-
-/* ---------- 通用 teal 辅助类 ---------- */
-.teal { color: var(--gordi-teal); }
-
-/* ---------- HERO ---------- */
-#landing-hero { border-bottom: 1px solid var(--main-border-color, #e9ecef); }
-:root[data-bs-theme=dark] #landing-hero { border-color: #2a2f35; }
-
-.landing-name {
-  font-size: clamp(2.6rem, 6vw, 4.5rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--gordi-teal), var(--heading-color));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.landing-tagline {
-  font-size: clamp(1rem, 2.4vw, 1.35rem);
+.site-title::before {
+  content: 'marvin@marvinlee:~$ ';
+  color: var(--term-green);
   font-weight: 400;
-  color: var(--text-muted, #6c757d);
 }
-.landing-whoami {
-  max-width: 640px;
-  font-size: 1.02rem;
-  line-height: 1.7;
-  color: var(--text-color, #212529);
-}
-.landing-social { font-size: 0.95rem; }
-.landing-social-link {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.4rem 0.9rem;
-  border: 1px solid var(--main-border-color, #dee2e6);
-  border-radius: 2rem;
-  color: var(--text-color, #212529);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-.landing-social-link:hover {
-  border-color: var(--gordi-teal);
-  color: var(--gordi-teal);
-  transform: translateY(-2px);
+.site-title::after {
+  content: '▋'; /* 终端闪烁光标 */
+  color: var(--term-green);
+  margin-left: 0.15em;
+  animation: term-blink 1.1s step-end infinite;
 }
 
-/* ---------- Section titles ---------- */
-.landing-section-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.landing-section-rule {
-  height: 2px;
-  background: linear-gradient(90deg, var(--gordi-teal), transparent);
-  border-radius: 2px;
-}
-.landing-section-more {
-  font-size: 0.9rem;
-  color: var(--gordi-teal);
-  white-space: nowrap;
-  text-decoration: none;
-}
-.landing-section-more:hover { text-decoration: underline; }
-
-/* ---------- Featured cards ---------- */
-.featured-card {
-  display: block;
-  height: 100%;
-  border: 1px solid var(--main-border-color, #e9ecef);
-  border-radius: 0.75rem;
-  overflow: hidden;
-  background: var(--card-bg, #fff);
-  color: var(--text-color, #212529);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-.featured-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(3, 198, 173, 0.12);
-  border-color: var(--gordi-teal);
-}
-.featured-thumb {
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: linear-gradient(135deg, var(--gordi-teal), #0a7d72);
-}
-.featured-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-.featured-card:hover .featured-thumb img { transform: scale(1.05); }
-.featured-thumb-fallback {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.4rem;
-  color: rgba(255, 255, 255, 0.85);
-}
-.featured-body { padding: 1rem 1.1rem 1.2rem; }
-.featured-meta {
-  font-size: 0.8rem;
-  color: var(--text-muted, #6c757d);
-  display: flex;
-  gap: 0.6rem;
-  align-items: center;
-  margin-bottom: 0.4rem;
-}
-.featured-cat {
-  color: var(--gordi-teal);
-  font-weight: 600;
-}
-.featured-title {
-  font-size: 1.05rem;
-  font-weight: 600;
-  line-height: 1.35;
-  margin-bottom: 0.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.featured-summary {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--text-muted, #6c757d);
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* 站点副标题：行首 > 提示符 */
+.site-subtitle::before {
+  content: '> ';
+  color: var(--term-green);
 }
 
-/* ---------- Timeline ---------- */
-.timeline { position: relative; padding-left: 1.5rem; }
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 5px;
-  top: 6px;
-  bottom: 6px;
-  width: 2px;
-  background: var(--main-border-color, #e9ecef);
+/* 文章标题（首页列表 & 正文页）：markdown 风格 # 前缀 */
+.post-title {
+  font-family: var(--term-font) !important;
 }
-.timeline-year { position: relative; margin-bottom: 1.5rem; }
-.timeline-dot {
-  position: absolute;
-  left: -1.5rem;
-  top: 6px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--gordi-teal);
-  box-shadow: 0 0 0 3px var(--card-bg, #fff);
-}
-.timeline-year-label {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--gordi-teal);
-  margin-bottom: 0.6rem;
-}
-.timeline-list { margin: 0; }
-.timeline-item {
-  display: flex;
-  gap: 0.8rem;
-  padding: 0.25rem 0;
-  align-items: baseline;
-}
-.timeline-date {
-  flex: 0 0 auto;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.82rem;
-  color: var(--text-muted, #6c757d);
-  width: 3rem;
-}
-.timeline-link {
-  color: var(--text-color, #212529);
-  text-decoration: none;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-.timeline-link:hover { color: var(--gordi-teal); }
-.timeline-more { padding: 0.25rem 0 0 3.8rem; font-size: 0.85rem; }
-.timeline-more a { color: var(--text-muted, #6c757d); }
-
-/* ---------- 全部文章区块标题偏移 ---------- */
-#all-posts-heading { scroll-margin-top: 80px; }
-
-/* ---------- 首页去掉侧栏后满宽（仅 home，文章页不受影响） ---------- */
-/* ---------- 全站单栏（方案B）：容器居中，不再依赖 col-xl-9 侧栏栅格 ---------- */
-#main-wrapper .container { max-width: 1140px; }
-@media (min-width: 1400px) {
-  #main-wrapper .container { max-width: 1140px; }
+.post-title::before {
+  content: '# ';
+  color: var(--term-green);
 }
 
-/* ---------- 头像（单栏方案下复用于首页 hero 与文章页） ---------- */
-#site-avatar {
-  width: 84px;
-  height: 84px;
-  overflow: hidden;
-  border: 3px solid var(--gordi-teal, #03c6ad);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  transition: transform 0.2s ease;
+/* 正文小标题：markdown 层级前缀 */
+.content h2::before,
+.post-content h2::before {
+  content: '## ';
+  color: var(--term-green);
 }
-#site-avatar:hover { transform: scale(1.04); }
-#site-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.content h3::before,
+.post-content h3::before {
+  content: '### ';
+  color: var(--term-green);
+}
+.content h4::before,
+.post-content h4::before {
+  content: '#### ';
+  color: var(--term-green);
+}
 
-/* ---------- 首页 hero 头像微调 ---------- */
-.layout-home #landing-hero #site-avatar { margin: 0 auto; }
+/* 首页 / 归档版块标签（Posts / Categories / Tags） */
+.label {
+  font-family: var(--term-font) !important;
+}
+.label::before {
+  content: '~/ ';
+  color: var(--term-green);
+}
 
-/* ---------- 文章页顶部 TOC 块（替代原右侧 panel） ---------- */
-.post-toc-top {
-  background: var(--card-bg, #f6f8fa);
-  border: 1px solid var(--border-color, #e0e0e0);
+/* 闪烁光标动画（硬切换，仿终端） */
+@keyframes term-blink {
+  50% {
+    opacity: 0;
+  }
 }
-[data-bs-theme='dark'] .post-toc-top {
-  background: #1c1f23;
-  border-color: #2d3238;
-}
-.post-toc-top #toc-wrapper { margin: 0; }
-.post-toc-top .panel-heading {
-  font-size: 0.95rem;
-  color: var(--gordi-teal, #03c6ad);
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
-}
-.post-toc-top #toc { max-height: 320px; overflow-y: auto; padding-left: 0.5rem; }
-.post-toc-top #toc a { color: var(--text-muted, #6c757d); text-decoration: none; }
-.post-toc-top #toc a:hover { color: var(--gordi-teal, #03c6ad); }
-
-/* ---------- 文章页顶部站点标识行（头像 + 站名） ---------- */
-.post-site-id { border-bottom: 1px solid var(--border-color, #e0e0e0); padding-bottom: 1.25rem; }
-.post-site-id #site-avatar { width: 56px; height: 56px; }
-.post-site-name { font-weight: 600; letter-spacing: 0.02em; color: var(--gordi-teal, #03c6ad); }
-
-/* ---------- 其余文章简洁列表（首页下方 list 区块） ---------- */
-.other-posts-list { margin: 0; }
-.other-post-item { border-bottom: 1px solid var(--border-color, #e9ecef); }
-.other-post-item:last-child { border-bottom: none; }
-.other-post-link {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 0.6rem 0.2rem;
-  text-decoration: none;
-  transition: background 0.15s ease, padding-left 0.15s ease;
-}
-.other-post-link:hover { background: var(--tag-hover, #e6faf7); padding-left: 0.5rem; }
-.other-post-date {
-  flex: 0 0 auto;
-  width: 6rem;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.82rem;
-  color: var(--text-muted, #6c757d);
-}
-.other-post-title {
-  font-size: 0.97rem;
-  color: var(--text-color, #212529);
-  line-height: 1.5;
-}
-.other-post-link:hover .other-post-title { color: var(--gordi-teal, #03c6ad); }

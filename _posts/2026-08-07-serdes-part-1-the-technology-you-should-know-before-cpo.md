@@ -5,7 +5,6 @@ date: 2026-08-07 22:30:00 +0800
 categories: [半导体技术]
 tags: [SerDes, CPO, PAM4, 信号完整性, 模拟IC, 光互连]
 description: "对硅谷模拟 IC 设计工程师 Nutty 的 SerDes 技术科普（系列第一篇）的英文原文与中文解读。从并串转换的物理动机、PAM4 调制、DAC/ADC SerDes，到铜的物理极限与 CPO/LPO/光 DSP 的承接关系，讲清为什么「数字时代反而最缺模拟设计」。全文公开无付费墙。"
-image: /assets/img/covers/serdes-part-1-the-technology-you-should-know-before-cpo.jpg
 
 ---
 

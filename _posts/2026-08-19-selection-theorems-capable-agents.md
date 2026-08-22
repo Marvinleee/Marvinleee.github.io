@@ -5,7 +5,6 @@ date: 2026-08-19 00:00:00 +0800
 categories: [人工智能]
 tags: [Agent, 决策理论, 世界模型, 选择定理, 不确定性]
 description: 高性能 agent 必须知道什么：不确定性下稳健决策的选择定理 本文附英文原文（arXiv 全文/PDF 提取）与中文深度解读。
-image: /assets/img/covers/selection-theorems-capable-agents.jpg
 
 ---
 

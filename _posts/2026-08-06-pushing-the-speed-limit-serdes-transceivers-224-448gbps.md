@@ -5,7 +5,6 @@ date: 2026-08-06 20:00:00 +0800
 categories: [半导体技术]
 tags: [SerDes, 高速接口, DSP, 电流舵DAC, TI-ADC, PAM4]
 description: "对 Chad（Inside the Silicon Machine）关于 224/448Gbps SerDes 收发器的系统架构拆解的英文原文与中文深度解读，覆盖 DSP 数据通路、电流舵 DAC、时间交织 ADC 及时钟架构的物理约束。⚠️ 原文含付费墙，时钟细节未含。"
-image: /assets/img/covers/pushing-the-speed-limit-serdes-transceivers-224-448gbps.jpg
 
 ---
 

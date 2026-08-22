@@ -5,7 +5,6 @@ date: 2026-08-08 09:30:00 +0800
 categories: [电子工程]
 tags: [史密斯圆图, 射频工程, 阻抗匹配, 传输线]
 description: "DigiKey 科普长文：史密斯圆图的由来、它如何把无穷的阻抗空间映射到一个单位圆内、以及为何它在 80 多年后仍是射频设计的核心工具。英文原文逐字 + 中文深度解读。"
-image: /assets/img/covers/the-smith-chart-its-history-and-why-its-so-important.jpg
 
 ---
 

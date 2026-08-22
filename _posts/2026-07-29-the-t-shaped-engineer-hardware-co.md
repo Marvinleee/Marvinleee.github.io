@@ -5,7 +5,6 @@ date: 2026-07-29 06:30:00 +0800
 categories: [半导体技术]
 tags: [先进封装, 异构集成, 热管理, 力学, 协同设计]
 description: "Silicon Code (Chad) 从 ECTC 2026 与《Hybrid Bonding, Advanced Substrates...》一书出发，拆解高功耗 GPU 先进封装协同设计所需的热力学与力学第一性原理：三种传热机制、热阻欧姆类比、应力-应变、CTE 失配与翘曲。英文原文（免费段，含 Figure 1–6）+ 中文深度解读。付费段（翘曲三大来源/四种失效模式/耦合建模/缓解方案）未含。"
-image: /assets/img/covers/the-t-shaped-engineer-hardware-co.jpg
 
 ---
 
