@@ -56,9 +56,12 @@ jobs:
             \-\-disable-external \
             \-\-check-scripts false \
             \-\-ignore-urls "/^http:\/\/127.0.0.1/,/^http:\/\/0.0.0.0/,/^http:\/\/localhost/" \
-            \-\-as-json /tmp/proof.json || true
+            \-\-as-json /tmp/proof.json 2>&1 | tee /tmp/proof.txt || true
           echo "=== htmlproofer failures (if any) ==="
-          cat /tmp/proof.json 2>/dev/null | head -c 4000 || echo "no report"
+          cat /tmp/proof.txt 2>/dev/null | head -c 6000 || echo "no report"
+          # TEMP diagnostic: expose report via site
+          mkdir -p _site && cp /tmp/proof.txt _site/_proof_report.txt 2>/dev/null || true
+          cp /tmp/proof.json _site/_proof_report.json 2>/dev/null || true
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v5
