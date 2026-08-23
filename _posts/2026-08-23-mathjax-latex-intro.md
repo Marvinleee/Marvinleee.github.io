@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "MathJax 与 LaTeX 公式简介"
-date: 2026-08-23 10:00:00 +0800
+date: 2026-08-23 08:00:00 +0800
 categories: [LaTeX, 工具]
 tags: [MathJax, LaTeX, 公式渲染, 科学空间]
 mathjax: true
