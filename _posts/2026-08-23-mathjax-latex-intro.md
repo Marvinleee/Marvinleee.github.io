@@ -40,7 +40,7 @@ $$x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
 
 ## LaTeX 入门
 
-这里有一份细致的 LaTeX 介绍：[LATEX 入门与提高（emath 论坛）](https://bbs.emath.ac.cn/thread-5237-1-1.html)，还有一份可下载的 [《MathJax 支持的命令列表》](http://www.emath.ac.cn/download/doc/mathTeX.pdf)，供大家在书写 LaTeX 时参考。期待大家都使用 LaTeX 语言来写出漂亮的数学公式来交流～
+这里有一份细致的 LaTeX 介绍：[LATEX 入门与提高（emath 论坛）](https://bbs.emath.ac.cn/thread-5237-1-1.html)，还有一份可下载的 [《MathJax 支持的命令列表》](https://www.emath.ac.cn/download/doc/mathTeX.pdf)，供大家在书写 LaTeX 时参考。期待大家都使用 LaTeX 语言来写出漂亮的数学公式来交流～
 
 下面摘录一小部分。
 
