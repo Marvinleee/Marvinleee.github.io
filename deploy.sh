@@ -36,6 +36,8 @@ fi
 #   - 指定了显式路径 → 只暂存这些路径，防止把 _posts/ 里预存在的未跟踪草稿一并扫入
 #   - 未指定         → 回退原行为，白名单暂存整个 _posts/ 与 assets/
 # 无论哪种方式，下方“安全守卫 0”都会再次校验暂存区只含允许的路径。
+# 允许目录：_posts（文章）、assets（图片/字体/自托管 JS 等）、_includes 与 _layouts
+# （Chirpy 主题扩展点，如 MathJax include、post 布局覆盖）、deploy.sh 自身。
 EXPLICIT=("${@:2}")
 if [ "${#EXPLICIT[@]}" -gt 0 ]; then
   echo "→ 仅暂存显式指定的 ${#EXPLICIT[@]} 个路径（防止误扫草稿）..."
@@ -63,6 +65,16 @@ fi
 #   [ -d _data ] && git add -- _data
 #   [ -d pages ] && git add -- pages
 
+# 主题扩展目录（Chirpy 的 _includes / _layouts 覆盖）：仅白名单模式时一并纳入。
+for d in _includes _layouts; do
+  if [ -d "$d" ]; then
+    if ! git add -- "$d"; then
+      echo "❌ git add $d 失败，已中止。" >&2
+      exit 1
+    fi
+  fi
+done
+
 # 取出即将进入提交的文件清单（自检用），换行分隔写入临时文件；
 # 遍历时用 while read 逐行读取，可正确处理含空格的文件名（NUL 需 bash>=4，本站文件名不含换行，换行足够）。
 # 注意：不再使用 --diff-filter=ACMR，以纳入“删除(D)”操作，避免删除非白名单文件绕过白名单检查。
@@ -80,7 +92,7 @@ fi
 NON_WHITELIST=""
 while IFS= read -r f; do
   case "$f" in
-    _posts/*|assets/*|deploy.sh) ;; # 允许：文章、资源、部署脚本自身
+    _posts/*|assets/*|_includes/*|_layouts/*|deploy.sh) ;; # 允许：文章、资源、主题扩展、部署脚本自身
     *) NON_WHITELIST="${NON_WHITELIST}
   - ${f}";;
   esac

@@ -4,7 +4,7 @@ title: "MathJax 与 LaTeX 公式简介"
 date: 2026-08-23 08:00:00 +0800
 categories: [LaTeX, 工具]
 tags: [MathJax, LaTeX, 公式渲染, 科学空间]
-mathjax: true
+math: true
 description: "转载自科学空间（苏剑林）：MathJax 简介、行内与块级公式写法、LaTeX 资源导航，以及常用希腊字母、关系符、数学结构与数学函数的命令速查表。"
 ---
 
