@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "XCENA MX1 CXL 计算型内存设备 @ Hot Chips 2026 — 与三星共推机架级「内存计算」"
-date: 2026-08-28 21:48:00 +0800
+date: 2026-08-28 21:30:00 +0800
 categories: [AI硬件, 内存与CXL]
 tags: [XCENA, CXL, 计算型内存, RISC-V, Samsung, Near-Memory Compute, Hot Chips 2026, KV Cache]
 description: "ServeTheHome 现场报道 XCENA MX1：一颗 Type 3 CXL 器件把 CXL 内存扩展、SSD 级字节寻址内存与 3072 个 RISC-V 近内存核熔于一炉，三星进一步给出机架级 CXL 内存池与 PNM 加速方案。"

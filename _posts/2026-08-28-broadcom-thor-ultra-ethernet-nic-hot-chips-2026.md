@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Broadcom Thor Ultra 以太网 NIC @ Hot Chips 2026 — 800GbE 时代的 AI 规模互连"
-date: 2026-08-28 21:50:00 +0800
+date: 2026-08-28 21:35:00 +0800
 categories: [AI硬件, 网络互连]
 tags: [Broadcom, Thor Ultra, 800GbE, RoCE, Ultra Ethernet, Hot Chips 2026, AI 网络]
 description: "ServeTheHome 现场报道 Broadcom Thor Ultra：5nm、2.4B 晶体管的 800GbE 网卡，强化 RoCE（分组喷射+乱序放置+超越 Go-Back-N 的可靠性和可编程拥塞控制），直指 AI scale-out 与 NVIDIA ConnectX-8、AMD Vulcano 正面对垒。"

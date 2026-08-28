@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "SambaNova SN50 RDU @ Hot Chips 2026 — 以数据流架构榨干「模型带宽利用率」"
-date: 2026-08-28 21:52:00 +0800
+date: 2026-08-28 21:40:00 +0800
 categories: [AI硬件, AI加速器]
 tags: [SambaNova, SN50, RDU, Dataflow, MoE, 模型带宽利用率, Hot Chips 2026, 推理加速]
 description: "ServeTheHome 现场报道 SambaNova 第五代 RDU（SN50）：以巨量片上 SRAM + 无全局同步的数据流架构把「模型带宽利用率（MBU）」做到 GPU 做不到的高位，并给出 H200 负责 prefill、SN50 负责 decode 的异构解聚部署。"
