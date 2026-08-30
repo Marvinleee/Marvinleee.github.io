@@ -22,7 +22,7 @@ toc: true
 - 暂停、重置、隐藏面板与 PNG 保存。
 
 <div style="position:relative;width:100%;height:min(72vh,680px);min-height:460px;margin:1.5rem 0;border-radius:16px;overflow:hidden;background:#050812;box-shadow:0 18px 60px rgba(0,0,0,.28);">
-  <iframe
+  <iframe data-proofer-ignore
     src="/assets/jellyfish/"
     title="交互式发光水母生成艺术"
     loading="eager"
