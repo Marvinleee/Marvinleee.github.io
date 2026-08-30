@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="基于 p5.js 数学公式生成的交互式发光水母艺术">
+  <meta name="theme-color" content="#050812">
+  <title>发光水母 · Generative Art</title>
+  <!-- p5.js 自托管：避免 CDN 被拦截或受 CSP 限制（原文档推荐的可选方案） -->
+  <script src="./vendor/p5.min.js"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --panel-bg: rgba(7, 12, 25, .72);
+      --panel-border: rgba(255, 255, 255, .14);
+      --text: rgba(245, 249, 255, .94);
+      --muted: rgba(225, 235, 255, .62);
+      --accent: #75e6ff;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #050812;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+      touch-action: none;
+    }
+
+    #home-link {
+      position: fixed;
+      z-index: 11;
+      top: max(16px, env(safe-area-inset-top));
+      left: max(16px, env(safe-area-inset-left));
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 12px;
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--panel-bg);
+      text-decoration: none;
+      font-size: 12px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    #home-link:hover, #home-link:focus-visible {
+      border-color: rgba(117, 230, 255, .62);
+      outline: none;
+    }
+
+    #ui {
+      position: fixed;
+      z-index: 10;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      width: min(310px, calc(100vw - 32px));
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      padding: 16px;
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      color: var(--text);
+      background: var(--panel-bg);
+      box-shadow: 0 14px 50px rgba(0, 0, 0, .32);
+      backdrop-filter: blur(16px) saturate(130%);
+      -webkit-backdrop-filter: blur(16px) saturate(130%);
+      transition: opacity 180ms ease, transform 180ms ease;
+      user-select: none;
+    }
+
+    #ui.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px);
+    }
+
+    h1 { margin: 0 0 4px; font-size: 16px; letter-spacing: .02em; }
+    .subtitle { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .control {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 4px 10px;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 12px;
+    }
+    .control output {
+      min-width: 54px;
+      color: var(--accent);
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .control input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin-top: 14px;
+    }
+    button {
+      min-height: 34px;
+      padding: 6px 8px;
+      border: 1px solid var(--panel-border);
+      border-radius: 9px;
+      color: var(--text);
+      background: rgba(255, 255, 255, .07);
+      cursor: pointer;
+    }
+    button:hover, button:focus-visible {
+      border-color: rgba(117, 230, 255, .6);
+      background: rgba(117, 230, 255, .12);
+      outline: none;
+    }
+    .help { margin: 12px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .status .check { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+    .status input { accent-color: var(--accent); cursor: pointer; }
+    #fpsOut { color: var(--accent); font-variant-numeric: tabular-nums; }
+    #hint {
+      position: fixed;
+      z-index: 5;
+      left: 50%;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      color: rgba(235, 245, 255, .64);
+      font-size: 12px;
+      letter-spacing: .04em;
+      pointer-events: none;
+      transition: opacity 800ms ease;
+    }
+
+    @media (max-width: 640px) {
+      #home-link { top: 12px; left: 12px; }
+      #ui { width: min(275px, calc(100vw - 24px)); top: 62px; right: 12px; }
+      .help { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { #hint { display: none; } }
+  </style>
+</head>
+<body>
+  <a id="home-link" href="/" aria-label="返回 Marvin Lee 博客首页">← 返回博客</a>
+
+  <aside id="ui" aria-label="水母动画参数">
+    <h1>Jellyfish Lab</h1>
+    <p class="subtitle">移动鼠标或触摸画布，改变跟随、视差与扰动。</p>
+
+    <label class="control"><span>粒子数量</span><output id="particlesOut"></output>
+      <input id="particles" type="range" min="3000" max="30000" step="1000" value="8000">
+    </label>
+    <label class="control"><span>动画速度</span><output id="speedOut"></output>
+      <input id="speed" type="range" min="0" max="2.5" step="0.05" value="1">
+    </label>
+    <label class="control"><span>拖尾长度</span><output id="trailOut"></output>
+      <input id="trail" type="range" min="0" max="100" step="1" value="78">
+    </label>
+    <label class="control"><span>发光强度</span><output id="glowOut"></output>
+      <input id="glow" type="range" min="0" max="40" step="1" value="12">
+    </label>
+    <label class="control"><span>基础色相</span><output id="hueOut"></output>
+      <input id="hue" type="range" min="0" max="359" step="1" value="190">
+    </label>
+    <label class="control"><span>渐变跨度</span><output id="hueSpreadOut"></output>
+      <input id="hueSpread" type="range" min="0" max="180" step="1" value="95">
+    </label>
+    <label class="control"><span>鼠标扰动</span><output id="disturbOut"></output>
+      <input id="disturb" type="range" min="0" max="2" step="0.05" value="0.8">
+    </label>
+    <label class="control"><span>跟随幅度</span><output id="followOut"></output>
+      <input id="follow" type="range" min="0" max="80" step="1" value="34">
+    </label>
+
+    <div class="buttons">
+      <button id="pauseButton" type="button">暂停</button>
+      <button id="resetButton" type="button">重置</button>
+      <button id="saveButton" type="button">保存 PNG</button>
+    </div>
+
+    <div class="status">
+      <label class="check"><input id="autoPerf" type="checkbox" checked> 自动性能保护</label>
+      <span id="fpsOut">— fps</span>
+    </div>
+
+    <p class="help">Space 暂停 · H 面板 · R 重置 · S 截图<br>[ / ] 粒子 · ↑ / ↓ 速度 · ← / → 色相<br>T 拖尾开关 · G 发光开关<br>手动拖动滑杆会关闭自动性能保护。</p>
+  </aside>
+
+  <div id="hint">移动指针，唤醒水母</div>
+
+  <script>
+    "use strict";
+
+    // 默认负载按“无独显的集显笔记本”标定：原文档的 18,000 粒子 + 每点 shadowBlur
+    // 会让 Canvas 2D 阴影绘制量随粒子数线性放大，是压垮 WindowServer 的主因。
+    const defaults = {
+      particles: 8000,
+      speed: 1,
+      trail: 78,
+      glow: 12,
+      hue: 190,
+      hueSpread: 95,
+      disturb: .8,
+      follow: 34
+    };
+    const params = { ...defaults };
+    const controls = {};
+    let t = 0;
+    let paused = false;
+    let trailsEnabled = true;
+    let glowEnabled = true;
+    let pointerX = 0;
+    let pointerY = 0;
+    let smoothX = 0;
+    let smoothY = 0;
+    let lastNow = 0;
+    let canvasElement;
+
+    // -------------------------
+    // 自动性能保护
+    // -------------------------
+    // 每秒统计一次真实帧率；持续偏低就逐级降载，避免低端设备上
+    // “粒子 × 阴影模糊”把 GPU / WindowServer 拖到无响应。
+    const perf = {
+      enabled: true,
+      frames: 0,
+      windowStart: 0,
+      fps: 60,
+      note: "",
+      windows: 0,      // 已完成的统计窗口数（前两个窗口作为预热，不参与判定）
+      lowStreak: 0,    // 连续低帧窗口数
+      cooldownUntil: 0 // 降载后的冷却期，等改动生效再重新测量
+    };
+
+    function updatePerf(now) {
+      perf.frames += 1;
+      if (perf.windowStart === 0) perf.windowStart = now;
+      const elapsed = now - perf.windowStart;
+      if (elapsed < 1000) return;
+
+      perf.fps = (perf.frames * 1000) / elapsed;
+      perf.frames = 0;
+      perf.windowStart = now;
+      perf.windows += 1;
+
+      const fpsEl = document.getElementById("fpsOut");
+      if (fpsEl) {
+        fpsEl.textContent = `${Math.round(perf.fps)} fps${perf.note ? " · " + perf.note : ""}`;
+      }
+
+      if (!perf.enabled || paused) return;
+      // 启动首帧与首次布局会拉低第一秒的统计，前两个窗口只观测不判定。
+      if (perf.windows <= 2) return;
+
+      if (perf.fps < 40) {
+        perf.lowStreak += 1;
+      } else {
+        perf.lowStreak = 0;
+      }
+
+      // 需连续两个窗口低于阈值，且不在冷却期内，才执行下一级降载。
+      if (perf.lowStreak >= 2 && now >= perf.cooldownUntil) {
+        degradePerformance(now);
+        perf.lowStreak = 0;
+      }
+    }
+
+    function degradePerformance(now) {
+      // 给刚生效的降载 2 秒观察期，避免一个窗口内连降多级。
+      perf.cooldownUntil = now + 2000;
+
+      // 先削粒子，再削发光，最后关发光；均有下限，且降到底后停止继续降载。
+      if (params.particles > 4000) {
+        // 对齐滑杆 step=1000，避免面板数值与内部值不一致。
+        params.particles = Math.max(4000, Math.round(params.particles * 0.7 / 1000) * 1000);
+        perf.note = "自动降粒子";
+      } else if (params.glow > 6) {
+        params.glow = Math.max(6, Math.round(params.glow * 0.6));
+        perf.note = "自动降发光";
+      } else if (glowEnabled) {
+        glowEnabled = false;
+        perf.note = "自动关发光";
+      } else {
+        perf.enabled = false;
+        perf.note = "已到最低负载";
+        syncAutoPerfCheckbox();
+        return;
+      }
+      syncControlsFromParams();
+    }
+
+    function syncAutoPerfCheckbox() {
+      const box = document.getElementById("autoPerf");
+      if (box) box.checked = perf.enabled;
+    }
+
+    // 用户手动调参后交还控制权，避免自动降载和滑杆互相拉扯。
+    function disableAutoPerf(reason) {
+      perf.enabled = false;
+      perf.note = reason || "";
+      syncAutoPerfCheckbox();
+    }
+
+    function setup() {
+      canvasElement = createCanvas(windowWidth, windowHeight);
+      canvasElement.attribute("aria-label", "交互式发光水母生成艺术");
+      pixelDensity(1);
+      colorMode(HSB, 360, 100, 100, 255);
+      strokeCap(ROUND);
+      background(228, 48, 4);
+      bindControls();
+
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        params.speed = .35;
+        params.trail = 45;
+        syncControlsFromParams();
+      }
+
+      lastNow = millis();
+      setTimeout(() => { document.getElementById("hint").style.opacity = "0"; }, 3500);
+    }
+
+    function draw() {
+      const now = millis();
+      const dt = constrain((now - lastNow) / 16.6667, 0, 3);
+      lastNow = now;
+      updatePointer();
+      if (!paused) t += (PI / 80) * params.speed * dt;
+      updatePerf(now);
+      drawTrailBackground();
+
+      push();
+      translate(width / 2, height / 2);
+      const responsiveScale = min(width, height) / 400;
+      scale(responsiveScale);
+      translate(-200, -200);
+      drawJellyfish();
+      pop();
+    }
+
+    function drawTrailBackground() {
+      const trail = trailsEnabled ? params.trail : 0;
+      const coverAlpha = map(trail, 0, 100, 255, 8);
+      blendMode(BLEND);
+      noStroke();
+      fill(228, 48, 4, coverAlpha);
+      rect(0, 0, width, height);
+    }
+
+    function updatePointer() {
+      const inside = mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height;
+      const targetX = inside ? map(mouseX, 0, width, -1, 1) : 0;
+      const targetY = inside ? map(mouseY, 0, height, -1, 1) : 0;
+      pointerX = lerp(pointerX, targetX, .12);
+      pointerY = lerp(pointerY, targetY, .12);
+      smoothX = lerp(smoothX, pointerX, .055);
+      smoothY = lerp(smoothY, pointerY, .055);
+    }
+
+    function drawJellyfish() {
+      const ctx = drawingContext;
+      const count = Math.round(params.particles);
+      blendMode(SCREEN);
+      noFill();
+      // 阴影模糊只作用在光晕抽样子集上（约 1/7 的点）。
+      // 原文档对“每一个点”都开 shadowBlur，绘制开销随粒子数线性放大，
+      // 实测是集显机型上 WindowServer 被拖死的主因；视觉上几乎无差别。
+      ctx.shadowBlur = 0;
+
+      for (let n = 0; n < count; n += 1) {
+        // 改变粒子数时仍完整覆盖原作 i∈[0,19999] 的采样域。
+        const sampleI = (n / max(1, count - 1)) * 19999;
+        const y = sampleI / 99;
+
+        // 原始核心公式：k、e、d、x、py 的数学结构保持不变。
+        const k = (8 + sin(sampleI / 19 + t)) * cos(sampleI / 49);
+        const e = y / 8 - 12;
+        const d = sq(mag(k, e)) / 79 + 1;
+        const wavePhase = sq(d) - t + cos(t / 3) + .3 * sin(e);
+        const originalX =
+          (k / d) * 4
+          - e * sin(k)
+          + (k / sq(d)) * (12 + d * 6 * sin(wavePhase))
+          + 200;
+        const originalY = 12 * sin(d * 2.6 - t) + d * 66 + 40;
+
+        // 交互增强层：跟随、深度视差与指针扰动。
+        const depth = constrain(map(d, 1, 10, 1, .12), .12, 1);
+        const followX = smoothX * params.follow * (.45 + depth * .55);
+        const followY = smoothY * params.follow * .48 * (.55 + depth * .45);
+        const pointerEnergy = sqrt(sq(pointerX) + sq(pointerY));
+        const disturbance =
+          sin(sampleI * .017 + t * 1.7 + pointerY * 2.4)
+          * pointerEnergy * params.disturb * (2 + depth * 5);
+        const px = originalX + followX + disturbance * pointerX;
+        const py = originalY + followY + disturbance * .35 * pointerY;
+
+        // 纵向、深度与时间共同驱动 HSB 色彩渐变。
+        const verticalMix = constrain((originalY - 35) / 330, 0, 1);
+        const animatedHue = (
+          params.hue + params.hueSpread * verticalMix
+          + 18 * sin(t * .45 + d * .7) + 360
+        ) % 360;
+        const saturation = 58 + 30 * depth;
+        const brightness = 72 + 28 * depth;
+        const alpha = 18 + 42 * depth;
+        const pointColor = color(animatedHue, saturation, brightness, alpha);
+
+        stroke(pointColor);
+        strokeWeight(.42 + .7 * depth);
+        point(px, py);
+
+        if (glowEnabled && n % 7 === 0) {
+          ctx.shadowBlur = params.glow;
+          ctx.shadowColor = pointColor.toString();
+          stroke(animatedHue, saturation - 12, 100, 10 + 18 * depth);
+          strokeWeight(1.8 + 1.8 * depth);
+          point(px, py);
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      ctx.shadowBlur = 0;
+      blendMode(BLEND);
+    }
+
+    function bindControls() {
+      const schema = {
+        particles: value => Math.round(value).toLocaleString(),
+        speed: value => `${Number(value).toFixed(2)}×`,
+        trail: value => `${Math.round(value)}%`,
+        glow: value => `${Math.round(value)} px`,
+        hue: value => `${Math.round(value)}°`,
+        hueSpread: value => `${Math.round(value)}°`,
+        disturb: value => Number(value).toFixed(2),
+        follow: value => `${Math.round(value)} px`
+      };
+
+      Object.entries(schema).forEach(([name, format]) => {
+        const input = document.getElementById(name);
+        const output = document.getElementById(`${name}Out`);
+        controls[name] = { input, output, format };
+        input.addEventListener("input", () => {
+          params[name] = Number(input.value);
+          output.value = format(params[name]);
+          // 只有影响负载的两个参数会让自动保护与用户意图冲突。
+          if (name === "particles" || name === "glow") disableAutoPerf("手动");
+        });
+      });
+
+      document.getElementById("autoPerf").addEventListener("change", event => {
+        perf.enabled = event.target.checked;
+        perf.note = "";
+      });
+
+      document.getElementById("pauseButton").addEventListener("click", togglePause);
+      document.getElementById("resetButton").addEventListener("click", resetExperience);
+      document.getElementById("saveButton").addEventListener("click", saveFrame);
+      syncControlsFromParams();
+    }
+
+    function syncControlsFromParams() {
+      Object.entries(controls).forEach(([name, control]) => {
+        control.input.value = params[name];
+        control.output.value = control.format(params[name]);
+      });
+    }
+
+    function togglePause() {
+      paused = !paused;
+      document.getElementById("pauseButton").textContent = paused ? "继续" : "暂停";
+    }
+
+    function resetExperience() {
+      Object.assign(params, defaults);
+      t = 0;
+      pointerX = pointerY = smoothX = smoothY = 0;
+      trailsEnabled = true;
+      glowEnabled = true;
+      paused = false;
+      document.getElementById("pauseButton").textContent = "暂停";
+      perf.enabled = true;
+      perf.note = "";
+      perf.frames = 0;
+      perf.windowStart = 0;
+      perf.windows = 0;
+      perf.lowStreak = 0;
+      perf.cooldownUntil = 0;
+      syncAutoPerfCheckbox();
+      syncControlsFromParams();
+      background(228, 48, 4);
+    }
+
+    function saveFrame() { saveCanvas("jellyfish-generative-art", "png"); }
+
+    function setParam(name, value) {
+      const input = controls[name].input;
+      params[name] = constrain(value, Number(input.min), Number(input.max));
+      if (name === "particles" || name === "glow") disableAutoPerf("手动");
+      syncControlsFromParams();
+    }
+
+    function keyPressed() {
+      if (key === " ") { togglePause(); return false; }
+      const lower = key.toLowerCase();
+      if (lower === "h") document.getElementById("ui").classList.toggle("hidden");
+      if (lower === "r") resetExperience();
+      if (lower === "s") saveFrame();
+      if (lower === "t") trailsEnabled = !trailsEnabled;
+      if (lower === "g") glowEnabled = !glowEnabled;
+      if (key === "[") setParam("particles", params.particles - 1000);
+      if (key === "]") setParam("particles", params.particles + 1000);
+      if (keyCode === UP_ARROW) setParam("speed", params.speed + .05);
+      if (keyCode === DOWN_ARROW) setParam("speed", params.speed - .05);
+      if (keyCode === LEFT_ARROW) setParam("hue", params.hue - 5);
+      if (keyCode === RIGHT_ARROW) setParam("hue", params.hue + 5);
+      if ([UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW].includes(keyCode)) return false;
+    }
+
+    function touchMoved() { return false; }
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+      background(228, 48, 4);
+    }
+  </script>
+</body>
+</html>
