@@ -1,0 +1,1712 @@
+---
+layout: null
+permalink: /assets/nyquist/
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="拖动真实频率与采样频率，用一个持续正转的轮子理解奈奎斯特频率、采样定理与混叠。">
+<meta name="theme-color" content="#05070d">
+<title>奈奎斯特频率是什么？· 采样与混叠交互实验</title>
+<style>
+  :root {
+    --bg: #05070d;
+    --surface: rgba(17, 22, 34, .82);
+    --surface-strong: #111622;
+    --grid: rgba(180, 200, 230, .10);
+    --text: #f4f7fb;
+    --muted: #9ca9bb;
+    --true-signal: #56d9e8;
+    --sample: #ffd166;
+    --alias: #ff4fa3;
+    --safe: #43e0a0;
+    --critical: #ffd166;
+    --danger: #ff6b6b;
+    --line: rgba(180, 200, 230, .16);
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 620px at 78% -10%, rgba(86, 217, 232, .10), transparent 60%),
+      radial-gradient(900px 520px at 8% 8%, rgba(255, 79, 163, .08), transparent 62%),
+      var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+  }
+
+  a { color: var(--true-signal); }
+
+  .home-link {
+    position: fixed;
+    z-index: 20;
+    top: max(14px, env(safe-area-inset-top));
+    left: max(14px, env(safe-area-inset-left));
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(10, 14, 22, .72);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--text);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .home-link:hover, .home-link:focus-visible { border-color: rgba(86, 217, 232, .6); outline: none; }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 64px 18px 72px;
+  }
+
+  /* ---------- 首屏文案 ---------- */
+  .hero { max-width: 720px; margin: 0 0 26px; }
+  .eyebrow {
+    margin: 0 0 10px;
+    color: var(--true-signal);
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 0 0 12px;
+    font-size: clamp(30px, 6.4vw, 52px);
+    line-height: 1.18;
+    letter-spacing: .01em;
+  }
+  .lede {
+    margin: 0 0 10px;
+    font-size: clamp(17px, 2.6vw, 21px);
+    color: var(--text);
+  }
+  .hero p.sub { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* ---------- 布局：移动端实验台在前 ---------- */
+  .layout { display: flex; flex-direction: column; gap: 26px; }
+  .stage { order: -1; }
+
+  @media (min-width: 1024px) {
+    .wrap { padding-top: 76px; }
+    .layout {
+      display: grid;
+      grid-template-columns: 34% 1fr;
+      gap: 44px;
+      align-items: start;
+    }
+    .stage { order: 0; position: sticky; top: 24px; }
+    .story { order: 0; }
+  }
+
+  /* ---------- 实验台 ---------- */
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 18px 60px rgba(0, 0, 0, .38);
+    padding: 16px;
+  }
+  .panel + .panel { margin-top: 14px; }
+
+  .canvas-shell { position: relative; width: 100%; }
+  #wheelCanvas {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+    touch-action: none;
+  }
+  #waveCanvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    min-height: 190px;
+    touch-action: none;
+    cursor: ew-resize;
+  }
+  #foldCanvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 190px;
+  }
+  .canvas-caption {
+    margin: 8px 2px 0;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* ---------- 状态卡 ---------- */
+  .status {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(7, 10, 18, .55);
+    transition: border-color 250ms var(--ease), box-shadow 250ms var(--ease);
+  }
+  .status[data-mode="safe"]     { border-color: rgba(67, 224, 160, .5);  box-shadow: 0 0 0 1px rgba(67, 224, 160, .12) inset; }
+  .status[data-mode="critical"] { border-color: rgba(255, 209, 102, .55); box-shadow: 0 0 0 1px rgba(255, 209, 102, .12) inset; }
+  .status[data-mode="aliasing"] { border-color: rgba(255, 107, 107, .55); box-shadow: 0 0 0 1px rgba(255, 107, 107, .12) inset; }
+
+  .status-head { display: flex; align-items: center; gap: 10px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #05070d;
+  }
+  .status[data-mode="safe"] .badge     { background: var(--safe); }
+  .status[data-mode="critical"] .badge { background: var(--critical); }
+  .status[data-mode="aliasing"] .badge { background: var(--danger); color: #2a0505; }
+  .badge .glyph { font-family: var(--mono); font-weight: 700; }
+  .status-note { color: var(--muted); font-size: 13px; margin: 0; }
+
+  .readouts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+    gap: 8px;
+    margin: 0;
+  }
+  .readout {
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .03);
+  }
+  .readout dt { color: var(--muted); font-size: 11px; letter-spacing: .04em; }
+  .readout dd { margin: 2px 0 0; font-family: var(--mono); font-size: 16px; font-variant-numeric: tabular-nums; }
+  .readout dd small { font-family: inherit; color: var(--muted); font-size: 11px; }
+
+  /* ---------- 频率标尺 ---------- */
+  .ruler { margin-top: 4px; }
+  .ruler-track {
+    position: relative;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(67, 224, 160, .14), rgba(255, 209, 102, .14) 50%, rgba(255, 107, 107, .18) 50.1%);
+    overflow: hidden;
+  }
+  .ruler-nyq {
+    position: absolute;
+    top: 0; bottom: 0; left: 50%;
+    width: 2px;
+    background: var(--critical);
+    opacity: .45;
+    transition: opacity 250ms var(--ease);
+  }
+  .ruler-nyq.hot { opacity: 1; box-shadow: 0 0 12px rgba(255, 107, 107, .85); background: var(--danger); }
+  .ruler-mark {
+    position: absolute;
+    top: 3px; bottom: 3px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--true-signal);
+    transform: translateX(-1px);
+    transition: left 250ms var(--ease), background 250ms var(--ease);
+  }
+  .ruler-legend {
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  /* ---------- 控件 ---------- */
+  .controls { margin-top: 14px; display: grid; gap: 12px; }
+  .control { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; }
+  .control > span { font-size: 13px; }
+  .control output {
+    min-width: 74px;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: var(--sample);
+  }
+  input[type="range"] {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 28px;
+    accent-color: var(--true-signal);
+    cursor: pointer;
+  }
+  label.control { cursor: pointer; }
+
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button {
+    min-height: 44px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .05);
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 180ms var(--ease), background 180ms var(--ease);
+  }
+  button:hover { border-color: rgba(86, 217, 232, .55); background: rgba(86, 217, 232, .10); }
+  button:focus-visible { outline: 2px solid var(--true-signal); outline-offset: 2px; }
+  button[aria-pressed="true"] {
+    border-color: rgba(86, 217, 232, .7);
+    background: rgba(86, 217, 232, .16);
+  }
+  .presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 8px; margin-top: 12px; }
+  .presets button { min-height: 46px; text-align: left; line-height: 1.35; }
+  .presets button b { display: block; font-size: 13px; font-weight: 600; }
+  .presets button span { color: var(--muted); font-size: 11px; }
+
+  details.more {
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .02);
+    padding: 10px 14px;
+  }
+  details.more > summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  details.more > summary:focus-visible { outline: 2px solid var(--true-signal); outline-offset: 4px; border-radius: 8px; }
+  .toggles { display: grid; gap: 6px; margin-top: 8px; }
+  .toggles label { display: flex; align-items: center; gap: 9px; min-height: 38px; font-size: 13px; cursor: pointer; }
+  .toggles input { width: 18px; height: 18px; accent-color: var(--true-signal); }
+
+  .keys {
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 4px 14px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .keys kbd {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, .05);
+    color: var(--text);
+  }
+
+  .narration {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--true-signal);
+    border-radius: 0 10px 10px 0;
+    background: rgba(86, 217, 232, .08);
+    font-size: 13px;
+    min-height: 44px;
+    display: none;
+  }
+  .narration.on { display: block; }
+
+  /* ---------- 叙事章节 ---------- */
+  .chapter { padding: 8px 2px 26px; }
+  .chapter h2 {
+    margin: 0 0 10px;
+    font-size: clamp(20px, 3.4vw, 26px);
+    line-height: 1.3;
+  }
+  .chapter p { margin: 0 0 12px; color: #d7e0ec; font-size: 15px; }
+  .chapter p strong { color: var(--text); }
+  .formula {
+    margin: 14px 0;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(7, 10, 18, .55);
+    font-family: var(--mono);
+    font-size: clamp(18px, 4vw, 24px);
+    text-align: center;
+    color: var(--text);
+    overflow-x: auto;
+  }
+  .callout {
+    margin: 14px 0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: rgba(255, 79, 163, .10);
+    border: 1px solid rgba(255, 79, 163, .3);
+    font-size: 15px;
+  }
+  ul.plain { margin: 0 0 12px; padding-left: 20px; color: #d7e0ec; font-size: 15px; }
+  ul.plain li { margin-bottom: 6px; }
+
+  .examples { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin: 14px 0 4px; }
+  .example {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .02);
+    padding: 12px;
+    text-align: center;
+  }
+  .example canvas { display: block; width: 100%; aspect-ratio: 1 / 1; }
+  .example b { display: block; margin-top: 8px; font-size: 13px; }
+  .example span { color: var(--muted); font-size: 12px; }
+
+  dl.glossary { margin: 14px 0 0; display: grid; gap: 10px; }
+  dl.glossary > div {
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .02);
+  }
+  dl.glossary dt { font-size: 14px; font-weight: 600; }
+  dl.glossary dd { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+  .sources { color: var(--muted); font-size: 13px; }
+  .sources a { word-break: break-all; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+  }
+</style>
+</head>
+<body>
+<a class="home-link" href="/" target="_top">← 返回博客</a>
+
+<div class="wrap">
+  <header class="hero">
+    <p class="eyebrow">Nyquist · Sampling · Aliasing</p>
+    <h1>奈奎斯特频率是什么？</h1>
+    <p class="lede">你看到的运动，可能从未真正发生。</p>
+    <p class="sub">拖动采样频率，看一个持续正转的轮子如何变慢、倒退，甚至完全静止。</p>
+  </header>
+
+  <div class="layout">
+    <!-- ============ 叙事章节 ============ -->
+    <div class="story">
+      <section class="chapter" id="ch1">
+        <h2>1 · 连续世界</h2>
+        <p>现实中的运动是连续的：轮子每时每刻都在转，声音每时每刻都在变化。右侧的圆盘以 <strong>真实频率 f</strong> 持续正转，它并不知道有谁在看它。</p>
+        <p>先把注意力放在圆盘上，再往下拖动“采样频率”。</p>
+      </section>
+
+      <section class="chapter" id="ch2">
+        <h2>2 · 相机没有连续地看</h2>
+        <p>数字设备只在一个个离散时刻记录世界。每一次闪光，就是一个样本。</p>
+        <p>闪光只在 <strong>60–90 毫秒</strong>内出现，用来标记“这一刻被记录下来了”。金色轮廓是最近几次采样留下的姿态，它们会在约 <strong>1.2 秒</strong>内淡出。</p>
+      </section>
+
+      <section class="chapter" id="ch3">
+        <h2>3 · 两点不总能说明一个周期</h2>
+        <p>采样频率必须高于信号最高频率的两倍。</p>
+        <div class="formula">f_s &gt; 2 f_max</div>
+        <p>状态卡里实时给出三个数字：采样频率 <code>f_s</code>、奈奎斯特频率 <code>f_N = f_s / 2</code>、真实频率 <code>f</code>。当 <code>f</code> 越过 <code>f_N</code>，标尺上的红色界线被点亮，状态从青绿切到珊瑚红。</p>
+        <p>注意：<strong>恰好等于两倍并不安全</strong>，页面会把它标成黄色的“临界”。</p>
+      </section>
+
+      <section class="chapter" id="ch4">
+        <h2>4 · 混叠就是“另一个答案也完全说得通”</h2>
+        <p>下方面板里，青蓝线是真实连续波，金色圆点是采样结果，洋红虚线是<strong>只根据这些采样点</strong>重建出来的信号。</p>
+        <div class="callout">采样点没有错。<br>错的是：这些点同时符合另一条更慢的波。</div>
+        <p>洋红虚线不是随便画的平滑曲线，而是同一组样本做有限窗 sinc 插值的结果——它正是数字系统“自认为”看到的那条波。</p>
+
+        <details class="more">
+          <summary>高级说明：频率折叠图</summary>
+          <div class="canvas-shell">
+            <canvas id="foldCanvas" aria-label="频率折叠图：真实频率与表观频率的映射关系"></canvas>
+          </div>
+          <p class="canvas-caption">横轴为真实频率，纵轴为表观频率；越过 <code>f_s / 2</code> 后，频率像被折返一样掉回来。</p>
+        </details>
+      </section>
+
+      <section class="chapter" id="ch5">
+        <h2>5 · 你每天都在遇到它</h2>
+        <div class="examples">
+          <div class="example">
+            <canvas id="iconWheel" aria-label="示意：车轮在视频里看似倒转"></canvas>
+            <b>车轮</b>
+            <span>视频里看似倒转</span>
+          </div>
+          <div class="example">
+            <canvas id="iconAudio" aria-label="示意：高频折回可听频段"></canvas>
+            <b>音频</b>
+            <span>高频折回可听频段</span>
+          </div>
+          <div class="example">
+            <canvas id="iconImage" aria-label="示意：细密纹理产生摩尔纹"></canvas>
+            <b>图像</b>
+            <span>细密纹理产生摩尔纹</span>
+          </div>
+        </div>
+        <p>采样不是“拍得够不够快”的小问题。它决定数字世界能否分清两个不同的现实。</p>
+        <div class="callout">奈奎斯特频率不是一条神秘公式。<br>它是一条关于“数字世界多久看一次，才能看懂现实”的边界。</div>
+
+        <dl class="glossary">
+          <div>
+            <dt>奈奎斯特频率</dt>
+            <dd>给定采样率后，可表示的最高频率，<code>f_N = f_s / 2</code>。</dd>
+          </div>
+          <div>
+            <dt>奈奎斯特采样率</dt>
+            <dd>给定信号带宽后，所需采样率边界，约为 <code>2B</code>。</dd>
+          </div>
+          <div>
+            <dt>混叠（Aliasing）</dt>
+            <dd>采样点本身没有告诉你两次采样之间走了哪条路。当采样太慢，多个不同的连续信号会穿过完全相同的离散点。数字系统通常会选择可表示区间内的低频解释——这就是混叠。</dd>
+          </div>
+          <div>
+            <dt>抗混叠滤波器</dt>
+            <dd>CD 音频采用 44.1 kHz 采样率，对应 22.05 kHz 的奈奎斯特频率。真实系统会在<strong>采样之前</strong>使用抗混叠低通滤波器，衰减边界以上的频率。</dd>
+          </div>
+        </dl>
+
+        <details class="more">
+          <summary>参考资料</summary>
+          <ul class="plain sources">
+            <li>MIT OpenCourseWare，Sampling：<a href="https://ocw.mit.edu/courses/res-6-007-signals-and-systems-spring-2011/resources/lecture-16-sampling/" target="_blank" rel="noopener">RES.6-007 Lecture 16</a></li>
+            <li>MIT OpenCourseWare，Sampling and the Discrete Fourier Transform：<a href="https://ocw.mit.edu/courses/2-161-signal-processing-continuous-and-discrete-fall-2008/resources/samplingdft/" target="_blank" rel="noopener">2.161 Sampling &amp; DFT</a></li>
+            <li>Claude Shannon, <em>A Mathematical Theory of Communication</em>（Theorem 13）：<a href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf" target="_blank" rel="noopener">PDF</a></li>
+          </ul>
+        </details>
+      </section>
+    </div>
+
+    <!-- ============ 实验台 ============ -->
+    <aside class="stage" aria-label="奈奎斯特采样实验台">
+      <div class="panel">
+        <div class="canvas-shell">
+          <canvas id="wheelCanvas" aria-label="旋转圆盘：显示真实连续姿态、采样姿态与表观旋转方向"></canvas>
+        </div>
+
+        <div class="status" id="status" data-mode="safe">
+          <div class="status-head">
+            <span class="badge"><span class="glyph" id="statusGlyph">✓</span><span id="statusTitle">采样足够</span></span>
+            <span id="statusAlias" style="font-family:var(--mono);font-size:12px;color:var(--muted)"></span>
+          </div>
+          <p class="status-note" id="statusNote">采样频率高于信号频率的两倍，样本可以区分真实运动。</p>
+
+          <dl class="readouts">
+            <div class="readout"><dt>采样频率 f_s</dt><dd id="outFs">12.0 <small>Hz</small></dd></div>
+            <div class="readout"><dt>奈奎斯特 f_N</dt><dd id="outFn">6.0 <small>Hz</small></dd></div>
+            <div class="readout"><dt>真实频率 f</dt><dd id="outF">3.0 <small>Hz</small></dd></div>
+            <div class="readout"><dt>采样后看见</dt><dd id="outAlias">3.0 <small>Hz 正转</small></dd></div>
+          </dl>
+
+          <div class="ruler">
+            <div class="ruler-track">
+              <div class="ruler-nyq" id="rulerNyq"></div>
+              <div class="ruler-mark" id="rulerMark"></div>
+            </div>
+            <div class="ruler-legend"><span>0</span><span>f_N = f_s / 2</span><span id="rulerMax">f_s</span></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <label class="control">
+            <span>真实频率 f</span><output id="fOut">3.0 Hz</output>
+            <input id="fRange" type="range" min="0.5" max="12" step="0.1" value="3">
+          </label>
+          <label class="control">
+            <span>采样频率 f_s</span><output id="fsOut">12.0 Hz</output>
+            <input id="fsRange" type="range" min="2" max="24" step="0.5" value="12">
+          </label>
+        </div>
+
+        <div class="presets" role="group" aria-label="一键预设">
+          <button type="button" data-preset="safe"><b>1 · 采样充足</b><span>3 Hz / 12 Hz</span></button>
+          <button type="button" data-preset="critical"><b>2 · 临界边界</b><span>5 Hz / 10 Hz</span></button>
+          <button type="button" data-preset="reverse"><b>3 · 倒转</b><span>7 Hz / 10 Hz</span></button>
+          <button type="button" data-preset="slow"><b>4 · 缓慢倒转</b><span>9 Hz / 10 Hz</span></button>
+          <button type="button" data-preset="still"><b>5 · 完全静止</b><span>10 Hz / 10 Hz</span></button>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" id="pauseBtn" aria-pressed="false">暂停</button>
+          <button type="button" id="stepBtn">单步采样</button>
+          <button type="button" id="autoBtn" aria-pressed="false">自动讲解</button>
+          <button type="button" id="resetBtn">恢复默认</button>
+        </div>
+
+        <div class="narration" id="narration" role="status" aria-live="polite"></div>
+
+        <details class="more">
+          <summary>更多参数与开关</summary>
+          <div class="controls" style="margin-top:10px">
+            <label class="control">
+              <span>相位 φ</span><output id="phaseOut">20°</output>
+              <input id="phaseRange" type="range" min="0" max="360" step="1" value="20">
+            </label>
+            <label class="control">
+              <span>动画速度</span><output id="speedOut">1.00×</output>
+              <input id="speedRange" type="range" min="0.25" max="1.5" step="0.05" value="1">
+            </label>
+          </div>
+          <div class="toggles">
+            <label><input type="checkbox" id="tgContinuous" checked> 显示真实连续轨迹</label>
+            <label><input type="checkbox" id="tgHistory" checked> 显示样本历史（幽灵轮廓）</label>
+            <label><input type="checkbox" id="tgAlias" checked> 显示混叠解释（sinc 重建）</label>
+            <label><input type="checkbox" id="tgReduced"> 减少动态效果</label>
+          </div>
+        </details>
+      </div>
+
+      <div class="panel">
+        <div class="canvas-shell">
+          <canvas id="waveCanvas" aria-label="波形视图：真实连续波、采样点与 sinc 重建结果"></canvas>
+        </div>
+        <p class="canvas-caption">青蓝＝真实连续波　金色＝采样点　洋红虚线＝仅由采样点重建出的信号（左右各 24 样本的 sinc 插值，加 Hann 窗抑制截断振铃）</p>
+
+        <ul class="keys">
+          <li><kbd>Space</kbd> 暂停 / 继续</li>
+          <li><kbd>←</kbd> <kbd>→</kbd> 真实频率</li>
+          <li><kbd>↑</kbd> <kbd>↓</kbd> 采样频率</li>
+          <li><kbd>1</kbd>–<kbd>5</kbd> 切换预设</li>
+          <li><kbd>A</kbd> 自动讲解</li>
+          <li><kbd>R</kbd> 恢复默认</li>
+          <li><kbd>.</kbd> 单步采样</li>
+          <li>在波形上左右拖动＝改变相位</li>
+        </ul>
+      </div>
+
+      <p class="sr-only" id="liveSummary" role="status" aria-live="polite"></p>
+    </aside>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+(function () {
+  /* =========================================================
+   * 常量与状态
+   * =======================================================*/
+  const TAU = Math.PI * 2;
+  const EPS = 1e-6;
+  const STILL_HZ = 0.05;      // 低于此表观频率视为“静止”
+  const WINDOW_SEC = 2;       // 波形时间窗
+  const GHOST_COUNT = 8;      // 圆盘幽灵轮廓数量
+  const GHOST_DECAY = 1.2;    // 幽灵衰减秒数
+  const SINC_SPAN = 24;       // sinc 插值左右各取样本数
+  const FLASH_MS = 80;        // 闪光时长（60–90 ms）
+
+  const DEFAULTS = { f: 3, fs: 12, phaseDeg: 20, speed: 1 };
+
+  const state = {
+    f: DEFAULTS.f,
+    fs: DEFAULTS.fs,
+    phase: DEFAULTS.phaseDeg * Math.PI / 180,
+    speed: DEFAULTS.speed,
+    simTime: 0,
+    nextSampleTime: 0,
+    sampleIndex: 0,
+    samples: [],          // { n, time, value, angle, born }
+    paused: false,
+    showContinuous: true,
+    showHistory: true,
+    showAlias: true,
+    reducedMotion: false,
+    hideSamplesNow: false,   // 自动讲解第一章暂不显示采样
+    flashUntil: 0,
+    lastAngle: null,
+    lastSampleN: -1
+  };
+
+  const ui = {};
+  const canvases = {};
+  let needsFit = true;
+  let rafId = 0;
+  let lastTimestamp = 0;
+  let pointer = { x: -1, y: -1, inside: false };
+  let drag = null;
+  let summaryAt = 0;
+  let summaryText = "";
+
+  /* =========================================================
+   * 数学辅助函数
+   * =======================================================*/
+  function nyquistFrequency(fs) { return fs / 2; }
+
+  function signedAliasFrequency(f, fs) {
+    return f - Math.round(f / fs) * fs;
+  }
+
+  function aliasFrequency(f, fs) {
+    return Math.abs(signedAliasFrequency(f, fs));
+  }
+
+  function sampleValue(n, f, fs, phase) {
+    return Math.sin(TAU * f * n / fs + phase);
+  }
+
+  function sinc(x) {
+    if (Math.abs(x) < 1e-8) return 1;
+    return Math.sin(Math.PI * x) / (Math.PI * x);
+  }
+
+  // 有限窗 sinc 插值重建：只取当前时刻附近的 2*SINC_SPAN+1 个样本，
+  // 并乘 Hann 窗抑制截断振铃。这是数值近似，不是理想的无穷项重建。
+  function reconstruct(t) {
+    const u = state.fs * t;
+    const n0 = Math.round(u);
+    let sum = 0;
+    for (let n = n0 - SINC_SPAN; n <= n0 + SINC_SPAN; n += 1) {
+      const k = u - n;
+      const w = 0.5 * (1 + Math.cos(Math.PI * k / (SINC_SPAN + 1)));
+      sum += sampleValue(n, state.f, state.fs, state.phase) * sinc(k) * w;
+    }
+    return sum;
+  }
+
+  function computeStatus() {
+    const f = state.f;
+    const fs = state.fs;
+    const fN = nyquistFrequency(fs);
+    const fSigned = signedAliasFrequency(f, fs);
+    const fAlias = aliasFrequency(f, fs);
+
+    let mode;
+    if (fs > 2 * f + EPS) mode = "safe";
+    else if (Math.abs(fs - 2 * f) <= EPS) mode = "critical";
+    else mode = "aliasing";
+
+    let direction;
+    if (Math.abs(fSigned) < STILL_HZ) direction = "still";
+    else if (fSigned < 0) direction = "reverse";
+    else direction = "forward";
+
+    return { f: f, fs: fs, fN: fN, fSigned: fSigned, fAlias: fAlias, mode: mode, direction: direction };
+  }
+
+  const MODE_TEXT = {
+    safe: { glyph: "✓", title: "采样足够", note: "采样频率高于信号频率的两倍，样本可以区分真实运动。" },
+    critical: { glyph: "!", title: "奈奎斯特边界", note: "恰好两个样本/周期并不对任意相位都可靠。工程上需要留出余量。" },
+    aliasing: { glyph: "✕", title: "发生混叠", note: "高频已经折回可表示区间，采样结果看起来像另一种更慢的运动。" }
+  };
+
+  /* =========================================================
+   * Canvas 尺寸与 DPR
+   * =======================================================*/
+  function registerCanvas(name, id) {
+    const canvas = document.getElementById(id);
+    canvases[name] = { el: canvas, ctx: canvas.getContext("2d"), w: 1, h: 1 };
+    return canvases[name];
+  }
+
+  function fitCanvas(entry) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const rect = entry.el.getBoundingClientRect();
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
+    const pw = Math.round(w * dpr);
+    const ph = Math.round(h * dpr);
+    if (entry.el.width !== pw || entry.el.height !== ph) {
+      entry.el.width = pw;
+      entry.el.height = ph;
+    }
+    entry.w = w;
+    entry.h = h;
+    entry.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function fitAll() {
+    Object.keys(canvases).forEach(function (k) { fitCanvas(canvases[k]); });
+    needsFit = false;
+  }
+
+  /* =========================================================
+   * 仿真时钟与采样事件队列
+   * =======================================================*/
+  function takeSample(forceTime) {
+    const n = state.sampleIndex;
+    const t = forceTime !== undefined ? forceTime : n / state.fs;
+    const angle = TAU * state.f * t + state.phase;
+    const value = Math.sin(angle);
+    state.samples.push({ n: n, time: t, value: value, angle: angle, born: state.simTime });
+    if (state.samples.length > GHOST_COUNT) state.samples.shift();
+    state.sampleIndex = n + 1;
+    state.nextSampleTime = state.sampleIndex / state.fs;
+    state.lastAngle = angle;
+    state.lastSampleN = n;
+    if (!state.reducedMotion) state.flashUntil = performance.now() + FLASH_MS;
+  }
+
+  function resyncSampleClock() {
+    // 参数变化后重排下一次采样时刻，避免采样事件一次性堆积。
+    state.nextSampleTime = Math.max(state.simTime, state.sampleIndex / state.fs);
+  }
+
+  function advance(dtSec) {
+    state.simTime += dtSec * state.speed;
+    // 采样事件按“下一次采样时刻”补齐，掉帧时也不会漏采。
+    let guard = 0;
+    while (state.nextSampleTime <= state.simTime && guard < 240) {
+      takeSample();
+      guard += 1;
+    }
+  }
+
+  function stepOnce() {
+    state.simTime = state.nextSampleTime;
+    takeSample();
+    if (state.simTime > 1e6) resetClock();
+  }
+
+  function resetClock() {
+    state.simTime = 0;
+    state.sampleIndex = 0;
+    state.nextSampleTime = 0;
+    state.samples.length = 0;
+    state.lastAngle = null;
+    state.lastSampleN = -1;
+  }
+
+  /* =========================================================
+   * 圆盘渲染
+   * =======================================================*/
+  function drawWheelPose(ctx, cx, cy, R, angle, stroke, accent, lineWidth) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(angle);
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = lineWidth || 2;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.arc(0, 0, R, 0, TAU);
+    ctx.lineWidth = (lineWidth || 2) * 2.2;
+    ctx.stroke();
+
+    ctx.lineWidth = lineWidth || 2;
+    for (let i = 0; i < 12; i += 1) {
+      const a = (i / 12) * TAU;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a) * R * 0.18, Math.sin(a) * R * 0.18);
+      ctx.lineTo(Math.cos(a) * R, Math.sin(a) * R);
+      ctx.strokeStyle = (i === 0 && accent) ? accent : stroke;
+      ctx.lineWidth = (i === 0 && accent) ? (lineWidth || 2) * 1.9 : (lineWidth || 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawArcArrow(ctx, cx, cy, R, reverse, color) {
+    const span = 0.9;
+    const start = reverse ? -0.45 * Math.PI : -0.55 * Math.PI;
+    const end = start + span * (reverse ? -1 : 1);
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, Math.min(start, end), Math.max(start, end));
+    ctx.stroke();
+
+    const tipX = cx + Math.cos(end) * R;
+    const tipY = cy + Math.sin(end) * R;
+    const tangent = end + (reverse ? -Math.PI / 2 : Math.PI / 2);
+    ctx.beginPath();
+    ctx.moveTo(tipX, tipY);
+    ctx.lineTo(tipX + Math.cos(tangent + 2.5) * 11, tipY + Math.sin(tangent + 2.5) * 11);
+    ctx.lineTo(tipX + Math.cos(tangent - 2.5) * 11, tipY + Math.sin(tangent - 2.5) * 11);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawWheel() {
+    const c = canvases.wheel;
+    const ctx = c.ctx;
+    const w = c.w;
+    const h = c.h;
+    const cx = w / 2;
+    const cy = h / 2;
+    const R = Math.min(w, h) / 2 - 26;
+
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(180, 200, 230, 0.12)";
+    ctx.lineWidth = 1;
+    [0.45, 0.75].forEach(function (k) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * k, 0, TAU);
+      ctx.stroke();
+    });
+    ctx.beginPath();
+    ctx.moveTo(cx - R, cy);
+    ctx.lineTo(cx + R, cy);
+    ctx.moveTo(cx, cy - R);
+    ctx.lineTo(cx, cy + R);
+    ctx.stroke();
+
+    // 真实连续姿态：永远按真实频率正转，且始终可见。
+    const trueAngle = TAU * state.f * state.simTime + state.phase;
+    if (state.showContinuous) {
+      drawWheelPose(ctx, cx, cy, R, trueAngle, "rgba(86, 217, 232, 0.30)", "rgba(86, 217, 232, 0.85)", 2);
+    }
+
+    // 采样历史：金色幽灵轮廓，约 1.2 s 衰减。
+    if (state.showHistory && !state.hideSamplesNow) {
+      for (let i = 0; i < state.samples.length; i += 1) {
+        const s = state.samples[i];
+        const age = state.simTime - s.born;
+        const alpha = Math.max(0, 1 - age / GHOST_DECAY);
+        if (alpha <= 0) continue;
+        const isCurrent = i === state.samples.length - 1;
+        drawWheelPose(
+          ctx, cx, cy, R, s.angle,
+          isCurrent ? "rgba(255, 255, 255, " + (0.55 + 0.45 * alpha).toFixed(3) + ")"
+                    : "rgba(255, 209, 102, " + (0.42 * alpha).toFixed(3) + ")",
+          isCurrent ? "#ffffff" : null,
+          isCurrent ? 2.6 : 1.6
+        );
+      }
+    }
+
+    // 中心与真实频率标注
+    ctx.fillStyle = "#f4f7fb";
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, TAU);
+    ctx.fill();
+
+    ctx.font = "600 13px " + getComputedStyle(document.body).fontFamily;
+    ctx.fillStyle = "rgba(244, 247, 251, 0.9)";
+    ctx.textAlign = "center";
+    ctx.fillText("真实：" + state.f.toFixed(1) + " Hz", cx, cy + R + 22);
+
+    // 表观方向：仅作辅助箭头，绝不用于生成采样点。
+    const st = computeStatus();
+    if (state.showAlias && st.mode === "aliasing") {
+      if (st.direction === "still") {
+        ctx.strokeStyle = "#ff4fa3";
+        ctx.setLineDash([6, 5]);
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx, cy, R + 12, 0, TAU);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      } else {
+        drawArcArrow(ctx, cx, cy, R + 12, st.direction === "reverse", "#ff4fa3");
+      }
+      ctx.fillStyle = "#ff4fa3";
+      ctx.font = "600 12px " + getComputedStyle(document.body).fontFamily;
+      const label = st.direction === "still"
+        ? "表观静止"
+        : (st.direction === "reverse" ? "表观倒转 " + st.fAlias.toFixed(1) + " Hz" : "表观正转 " + st.fAlias.toFixed(1) + " Hz");
+      ctx.fillText(label, cx, cy - R - 12);
+    }
+
+    // 采样闪光：只在圆盘范围内短暂提亮，不做全屏闪烁。
+    if (!state.reducedMotion && !state.hideSamplesNow && performance.now() < state.flashUntil) {
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 1.1);
+      g.addColorStop(0, "rgba(255, 255, 255, 0.20)");
+      g.addColorStop(1, "rgba(255, 255, 255, 0)");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 1.1, 0, TAU);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  /* =========================================================
+   * 波形渲染
+   * =======================================================*/
+  function drawWave() {
+    const c = canvases.wave;
+    const ctx = c.ctx;
+    const w = c.w;
+    const h = c.h;
+    const padL = 10;
+    const padR = 10;
+    const padT = 14;
+    const padB = 20;
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+    const midY = padT + plotH / 2;
+
+    const tEnd = state.simTime;
+    const tStart = tEnd - WINDOW_SEC;
+
+    const xAt = function (t) { return padL + ((t - tStart) / WINDOW_SEC) * plotW; };
+    const yAt = function (v) { return midY - (v / 1.2) * (plotH / 2); };
+
+    ctx.clearRect(0, 0, w, h);
+
+    // 网格与坐标轴
+    ctx.strokeStyle = "rgba(180, 200, 230, 0.10)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    [-1, -0.5, 0, 0.5, 1].forEach(function (v) {
+      ctx.moveTo(padL, yAt(v));
+      ctx.lineTo(w - padR, yAt(v));
+    });
+    ctx.stroke();
+
+    const tickStep = 0.5;
+    const firstTick = Math.ceil(tStart / tickStep) * tickStep;
+    ctx.strokeStyle = "rgba(180, 200, 230, 0.07)";
+    ctx.beginPath();
+    for (let t = firstTick; t <= tEnd; t += tickStep) {
+      const x = xAt(t);
+      ctx.moveTo(x, padT);
+      ctx.lineTo(x, padT + plotH);
+    }
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(156, 169, 187, 0.85)";
+    ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = "left";
+    ctx.fillText("t = " + tStart.toFixed(1) + " s", padL + 2, h - 6);
+    ctx.textAlign = "right";
+    ctx.fillText(tEnd.toFixed(1) + " s", w - padR - 2, h - 6);
+
+    // 真实连续波
+    ctx.strokeStyle = "#56d9e8";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const steps = Math.max(120, Math.round(plotW / 2));
+    for (let i = 0; i <= steps; i += 1) {
+      const t = tStart + (i / steps) * WINDOW_SEC;
+      const v = Math.sin(TAU * state.f * t + state.phase);
+      const x = xAt(t);
+      const y = yAt(v);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // 采样点
+    const nStart = Math.floor(tStart * state.fs) - 1;
+    const nEnd = Math.ceil(tEnd * state.fs) + 1;
+    const visible = [];
+    for (let n = nStart; n <= nEnd; n += 1) {
+      const t = n / state.fs;
+      if (t < tStart || t > tEnd) continue;
+      const v = sampleValue(n, state.f, state.fs, state.phase);
+      const x = xAt(t);
+      const y = yAt(v);
+      visible.push({ n: n, t: t, v: v, x: x, y: y });
+
+      ctx.strokeStyle = "rgba(255, 209, 102, 0.16)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, midY);
+      ctx.stroke();
+
+      ctx.fillStyle = "#ffd166";
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, TAU);
+      ctx.fill();
+    }
+
+    // 采样时钟刻度
+    ctx.fillStyle = "rgba(255, 209, 102, 0.5)";
+    for (let i = 0; i < visible.length; i += 1) {
+      const s = visible[i];
+      const isLast = (s.n === state.lastSampleN);
+      ctx.globalAlpha = isLast ? 1 : 0.42;
+      ctx.fillRect(s.x - 1, padT + plotH + 2, 2, isLast ? 8 : 4);
+    }
+    ctx.globalAlpha = 1;
+
+    // sinc 重建 / 混叠解释
+    if (state.showAlias) {
+      ctx.save();
+      ctx.strokeStyle = "#ff4fa3";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 5]);
+      ctx.beginPath();
+      const step = 2;
+      for (let x = padL; x <= w - padR; x += step) {
+        const t = tStart + ((x - padL) / plotW) * WINDOW_SEC;
+        const y = yAt(reconstruct(t));
+        if (x === padL) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 悬停提示
+    if (pointer.inside && pointer.canvas === "wave" && visible.length) {
+      let best = null;
+      let bestD = 18;
+      for (let i = 0; i < visible.length; i += 1) {
+        const s = visible[i];
+        const d = Math.abs(s.x - pointer.x) + Math.abs(s.y - pointer.y) * 0.35;
+        if (d < bestD) { bestD = d; best = s; }
+      }
+      if (best) {
+        const lines = [
+          "n = " + best.n,
+          "t = " + best.t.toFixed(3) + " s",
+          "x[n] = " + best.v.toFixed(3)
+        ];
+        ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+        const bw = 118;
+        const bh = 52;
+        let bx = best.x + 12;
+        let by = best.y - bh - 10;
+        if (bx + bw > w - padR) bx = best.x - bw - 12;
+        if (by < padT) by = best.y + 12;
+        ctx.fillStyle = "rgba(7, 10, 18, 0.92)";
+        ctx.strokeStyle = "rgba(180, 200, 230, 0.25)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.rect(bx, by, bw, bh);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "#ffd166";
+        ctx.textAlign = "left";
+        for (let i = 0; i < lines.length; i += 1) {
+          ctx.fillText(lines[i], bx + 9, by + 17 + i * 15);
+        }
+      }
+    }
+  }
+
+  /* =========================================================
+   * 频率折叠图
+   * =======================================================*/
+  function drawFold() {
+    const c = canvases.fold;
+    if (!c || c.w < 2) return;
+    const ctx = c.ctx;
+    const w = c.w;
+    const h = c.h;
+    const padL = 34;
+    const padR = 12;
+    const padT = 12;
+    const padB = 26;
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+    const fs = state.fs;
+    const yMax = fs;
+
+    const xAt = function (v) { return padL + (v / (2 * fs)) * plotW; };
+    const yAt = function (v) { return padT + plotH - (v / yMax) * plotH; };
+
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(180, 200, 230, 0.12)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, padT + plotH);
+    ctx.lineTo(w - padR, padT + plotH);
+    ctx.stroke();
+
+    // 未折叠的参考线：y = f
+    ctx.strokeStyle = "rgba(86, 217, 232, 0.35)";
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(xAt(0), yAt(0));
+    ctx.lineTo(xAt(fs), yAt(fs));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 折叠曲线：y = |f - round(f / fs) * fs|
+    ctx.strokeStyle = "#ff4fa3";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const steps = 240;
+    for (let i = 0; i <= steps; i += 1) {
+      const fx = (i / steps) * 2 * fs;
+      const y = aliasFrequency(fx, fs);
+      const x = xAt(fx);
+      if (i === 0) ctx.moveTo(x, yAt(y)); else ctx.lineTo(x, yAt(y));
+    }
+    ctx.stroke();
+
+    // 奈奎斯特线
+    ctx.strokeStyle = "#ffd166";
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(padL, yAt(fs / 2));
+    ctx.lineTo(w - padR, yAt(fs / 2));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#ffd166";
+    ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = "left";
+    ctx.fillText("f_N = f_s / 2", padL + 4, yAt(fs / 2) - 5);
+    ctx.fillStyle = "rgba(156, 169, 187, 0.9)";
+    ctx.textAlign = "center";
+    ctx.fillText("真实频率 f", padL + plotW / 2, h - 6);
+
+    // 当前点：青蓝为真实频率位置，洋红为折叠后的表观频率
+    const f = state.f;
+    const fa = aliasFrequency(f, fs);
+    const cx = xAt(f);
+    ctx.strokeStyle = "rgba(86, 217, 232, 0.55)";
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(cx, yAt(Math.min(f, yMax)));
+    ctx.lineTo(cx, yAt(fa));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#56d9e8";
+    ctx.beginPath();
+    ctx.arc(cx, yAt(Math.min(f, yMax)), 5, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = "#ff4fa3";
+    ctx.beginPath();
+    ctx.arc(cx, yAt(fa), 5, 0, TAU);
+    ctx.fill();
+  }
+
+  /* =========================================================
+   * 第五章小图标
+   * =======================================================*/
+  function drawIconWheel() {
+    const c = canvases.iconWheel;
+    const ctx = c.ctx;
+    const w = c.w, h = c.h;
+    const cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 8;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = "rgba(244, 247, 251, 0.75)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, TAU);
+    ctx.stroke();
+    for (let i = 0; i < 8; i += 1) {
+      const a = (i / 8) * TAU;
+      ctx.strokeStyle = i === 0 ? "#ff4fa3" : "rgba(244, 247, 251, 0.5)";
+      ctx.lineWidth = i === 0 ? 3 : 1.6;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R);
+      ctx.stroke();
+    }
+  }
+
+  function drawIconAudio() {
+    const c = canvases.iconAudio;
+    const ctx = c.ctx;
+    const w = c.w, h = c.h;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = "rgba(180, 200, 230, 0.18)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, h / 2);
+    ctx.lineTo(w, h / 2);
+    ctx.stroke();
+
+    // 高频真实波（超出可表示区间）
+    ctx.strokeStyle = "rgba(86, 217, 232, 0.85)";
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 1) {
+      const y = h / 2 - Math.sin((x / w) * TAU * 7) * (h / 2 - 8);
+      if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // 采样后的低频折返
+    ctx.strokeStyle = "rgba(255, 79, 163, 0.95)";
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 1) {
+      const y = h / 2 - Math.sin((x / w) * TAU * 1.5) * (h / 2 - 8) * 0.8;
+      if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawIconImage() {
+    const c = canvases.iconImage;
+    const ctx = c.ctx;
+    const w = c.w, h = c.h;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#05070d";
+    ctx.fillRect(0, 0, w, h);
+    // 细密条纹 + 稀疏采样网格 → 摩尔纹
+    ctx.strokeStyle = "rgba(86, 217, 232, 0.75)";
+    ctx.lineWidth = 1;
+    for (let x = -h; x < w + h; x += 5) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x + h, h);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.28)";
+    for (let x = 0; x < w; x += 11) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+  }
+
+  /* =========================================================
+   * 读数与状态更新
+   * =======================================================*/
+  function fmtHz(v) { return v.toFixed(1); }
+
+  let readoutKey = "";
+
+  function updateReadouts() {
+    const st = computeStatus();
+    // 每帧都写 DOM 会造成无谓的布局抖动：内容没变就整段跳过。
+    const key = [st.mode, st.direction, st.f.toFixed(2), st.fs.toFixed(2), st.fN.toFixed(2), st.fAlias.toFixed(2)].join("|");
+    if (key === readoutKey) return;
+    readoutKey = key;
+
+    const mode = MODE_TEXT[st.mode];
+
+    ui.status.setAttribute("data-mode", st.mode);
+    ui.statusGlyph.textContent = mode.glyph;
+    ui.statusTitle.textContent = mode.title;
+
+    if (st.mode === "aliasing" && st.direction === "still") {
+      ui.statusNote.textContent = "真实在旋转，采样却显示静止：每次快门都拍到同一个角度，数字记录无法知道中间发生过什么。";
+    } else {
+      ui.statusNote.textContent = mode.note;
+    }
+
+    let aliasText = "";
+    if (st.mode === "safe") aliasText = "f = " + fmtHz(st.f) + " Hz，方向正确";
+    else if (st.direction === "still") aliasText = "表观静止（f_signed ≈ 0）";
+    else aliasText = "f_signed = " + (st.fSigned > 0 ? "+" : "") + fmtHz(st.fSigned) + " Hz";
+    ui.statusAlias.textContent = aliasText;
+
+    ui.outFs.innerHTML = fmtHz(st.fs) + ' <small>Hz</small>';
+    ui.outFn.innerHTML = fmtHz(st.fN) + ' <small>Hz</small>';
+    ui.outF.innerHTML = fmtHz(st.f) + ' <small>Hz</small>';
+
+    let aliasCell;
+    if (st.direction === "still") aliasCell = fmtHz(st.fAlias) + ' <small>Hz 静止</small>';
+    else if (st.direction === "reverse") aliasCell = fmtHz(st.fAlias) + ' <small>Hz 反向</small>';
+    else aliasCell = fmtHz(st.fAlias) + ' <small>Hz 正转</small>';
+    ui.outAlias.innerHTML = aliasCell;
+
+    const ratio = Math.max(0, Math.min(1, st.f / st.fs));
+    ui.rulerMark.style.left = (ratio * 100).toFixed(2) + "%";
+    ui.rulerMark.style.background = st.mode === "aliasing" ? "#ff6b6b" : "#56d9e8";
+    ui.rulerNyq.classList.toggle("hot", st.mode === "aliasing");
+    ui.rulerMax.textContent = "f_s = " + fmtHz(st.fs) + " Hz";
+
+    // 屏幕阅读器摘要：节流，避免拖动滑杆时连续播报。
+    const now = performance.now();
+    if (now - summaryAt > 500) {
+      const dirText = st.direction === "still" ? "静止" : (st.direction === "reverse" ? "反向" : "正向");
+      const text = "真实频率 " + fmtHz(st.f) + " Hz，采样频率 " + fmtHz(st.fs) + " Hz，奈奎斯特频率 " +
+        fmtHz(st.fN) + " Hz；当前" + mode.title + "，表观频率 " + fmtHz(st.fAlias) + " Hz，方向" + dirText + "。";
+      if (text !== summaryText) {
+        summaryText = text;
+        ui.liveSummary.textContent = text;
+      }
+      summaryAt = now;
+    }
+  }
+
+  /* =========================================================
+   * 控件
+   * =======================================================*/
+  let easing = null;
+
+  function setF(value, fromUser) {
+    state.f = clamp(value, 0.5, 12);
+    ui.fRange.value = String(state.f);
+    ui.fOut.value = fmtHz(state.f) + " Hz";
+    if (fromUser) stopAutoplay();
+    updateReadouts();
+  }
+
+  function setFs(value, fromUser) {
+    const next = clamp(value, 2, 24);
+    const changed = Math.abs(next - state.fs) > 1e-9;
+    state.fs = next;
+    ui.fsRange.value = String(state.fs);
+    ui.fsOut.value = fmtHz(state.fs) + " Hz";
+    if (fromUser) stopAutoplay();
+    // 只有采样率真的变化时才重排采样时钟，否则每帧重排会导致采样被反复推迟。
+    if (changed) resyncSampleClock();
+    updateReadouts();
+  }
+
+  function setPhase(deg, fromUser) {
+    const d = ((deg % 360) + 360) % 360;
+    state.phase = d * Math.PI / 180;
+    ui.phaseRange.value = String(Math.round(d));
+    ui.phaseOut.value = Math.round(d) + "°";
+    if (fromUser) stopAutoplay();
+  }
+
+  function setSpeed(v, fromUser) {
+    state.speed = clamp(v, 0.25, 1.5);
+    ui.speedRange.value = String(state.speed);
+    ui.speedOut.value = state.speed.toFixed(2) + "×";
+    if (fromUser) stopAutoplay();
+  }
+
+  function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+
+  function applyParams(target, duration) {
+    // 预设切换使用 500–800 ms 缓动；减少动态效果时立即切换。
+    if (state.reducedMotion || !duration) {
+      setF(target.f, false);
+      setFs(target.fs, false);
+      if (target.phaseDeg !== undefined) setPhase(target.phaseDeg, false);
+      return;
+    }
+    easing = {
+      start: performance.now(),
+      duration: duration,
+      from: { f: state.f, fs: state.fs },
+      to: { f: target.f, fs: target.fs }
+    };
+  }
+
+  function tickEasing(now) {
+    if (!easing) return;
+    const p = clamp((now - easing.start) / easing.duration, 0, 1);
+    // cubic-bezier(.22, 1, .36, 1) 的近似：easeOutQuint
+    const e = 1 - Math.pow(1 - p, 5);
+    setF(easing.from.f + (easing.to.f - easing.from.f) * e, false);
+    setFs(easing.from.fs + (easing.to.fs - easing.from.fs) * e, false);
+    if (p >= 1) easing = null;
+  }
+
+  const PRESETS = {
+    safe: { f: 3, fs: 12 },
+    critical: { f: 5, fs: 10 },
+    reverse: { f: 7, fs: 10 },
+    slow: { f: 9, fs: 10 },
+    still: { f: 10, fs: 10 }
+  };
+
+  /* =========================================================
+   * 自动讲解状态机
+   * =======================================================*/
+  // 每一段都显式给出起点与终点，段内线性插值：参数在段末到达下一段的目标值。
+  const NARRATION = [
+    { at: 0, dur: 4, cap: "现实是连续的：轮子不停正转，没有一帧一帧这回事。", from: { f: 3, fs: 12 }, to: { f: 3, fs: 12 }, hideSamples: true },
+    { at: 4, dur: 4, cap: "数字设备只在一个个离散时刻记录世界。每一次闪光，就是一个样本。", from: { f: 3, fs: 12 }, to: { f: 3, fs: 12 } },
+    { at: 8, dur: 4, cap: "每周期有足够样本，旋转方向被正确识别。", from: { f: 3, fs: 12 }, to: { f: 3, fs: 12 } },
+    { at: 12, dur: 5, cap: "当真实频率跨过奈奎斯特频率……", from: { f: 3, fs: 12 }, to: { f: 7, fs: 10 } },
+    { at: 17, dur: 5, cap: "同一组样本讲出了另一个故事：看起来在慢慢倒转。", from: { f: 7, fs: 10 }, to: { f: 7, fs: 10 } },
+    { at: 22, dur: 4, cap: "真实仍在旋转，画面却完全静止。", from: { f: 7, fs: 10 }, to: { f: 10, fs: 10 } }
+  ];
+  const NARRATION_END = 26;
+
+  const auto = { on: false, t: 0 };
+
+  function startAutoplay() {
+    auto.on = true;
+    auto.t = 0;
+    ui.autoBtn.setAttribute("aria-pressed", "true");
+    ui.narration.classList.add("on");
+    ui.narration.textContent = NARRATION[0].cap;
+    resetClock();
+    setF(NARRATION[0].f, false);
+    setFs(NARRATION[0].fs, false);
+    state.paused = false;
+    ui.pauseBtn.setAttribute("aria-pressed", "false");
+    ui.pauseBtn.textContent = "暂停";
+  }
+
+  function stopAutoplay(msg) {
+    if (!auto.on) return;
+    auto.on = false;
+    state.hideSamplesNow = false;
+    ui.autoBtn.setAttribute("aria-pressed", "false");
+    ui.narration.textContent = msg || "已进入自由探索。";
+    setTimeout(function () {
+      if (!auto.on) ui.narration.classList.remove("on");
+    }, 2600);
+  }
+
+  function tickAutoplay(dt) {
+    if (!auto.on) return;
+    auto.t += dt;
+    if (auto.t >= NARRATION_END) {
+      stopAutoplay("讲解结束，参数已停在最后一个场景。");
+      return;
+    }
+    let seg = NARRATION[0];
+    for (let i = 0; i < NARRATION.length; i += 1) {
+      if (auto.t >= NARRATION[i].at) seg = NARRATION[i];
+    }
+    state.hideSamplesNow = !!seg.hideSamples;
+    ui.narration.textContent = seg.cap;
+
+    const p = clamp((auto.t - seg.at) / seg.dur, 0, 1);
+    setF(seg.from.f + (seg.to.f - seg.from.f) * p, false);
+    setFs(seg.from.fs + (seg.to.fs - seg.from.fs) * p, false);
+  }
+
+  /* =========================================================
+   * 事件绑定
+   * =======================================================*/
+  function bindUI() {
+    const el = function (id) { return document.getElementById(id); };
+    Object.assign(ui, {
+      status: el("status"), statusGlyph: el("statusGlyph"), statusTitle: el("statusTitle"),
+      statusNote: el("statusNote"), statusAlias: el("statusAlias"),
+      outFs: el("outFs"), outFn: el("outFn"), outF: el("outF"), outAlias: el("outAlias"),
+      rulerNyq: el("rulerNyq"), rulerMark: el("rulerMark"), rulerMax: el("rulerMax"),
+      fRange: el("fRange"), fsRange: el("fsRange"), phaseRange: el("phaseRange"), speedRange: el("speedRange"),
+      fOut: el("fOut"), fsOut: el("fsOut"), phaseOut: el("phaseOut"), speedOut: el("speedOut"),
+      pauseBtn: el("pauseBtn"), stepBtn: el("stepBtn"), autoBtn: el("autoBtn"), resetBtn: el("resetBtn"),
+      narration: el("narration"), liveSummary: el("liveSummary")
+    });
+
+    registerCanvas("wheel", "wheelCanvas");
+    registerCanvas("wave", "waveCanvas");
+    registerCanvas("fold", "foldCanvas");
+    registerCanvas("iconWheel", "iconWheel");
+    registerCanvas("iconAudio", "iconAudio");
+    registerCanvas("iconImage", "iconImage");
+
+    ui.fRange.addEventListener("input", function () { setF(Number(ui.fRange.value), true); });
+    ui.fsRange.addEventListener("input", function () { setFs(Number(ui.fsRange.value), true); });
+    ui.phaseRange.addEventListener("input", function () { setPhase(Number(ui.phaseRange.value), true); });
+    ui.speedRange.addEventListener("input", function () { setSpeed(Number(ui.speedRange.value), true); });
+
+    Array.prototype.forEach.call(document.querySelectorAll("[data-preset]"), function (btn) {
+      btn.addEventListener("click", function () {
+        const key = btn.getAttribute("data-preset");
+        stopAutoplay();
+        applyParams(PRESETS[key], 650);
+      });
+    });
+
+    ui.pauseBtn.addEventListener("click", function () {
+      state.paused = !state.paused;
+      ui.pauseBtn.setAttribute("aria-pressed", String(state.paused));
+      ui.pauseBtn.textContent = state.paused ? "继续" : "暂停";
+      stopAutoplay();
+    });
+
+    ui.stepBtn.addEventListener("click", function () {
+      stopAutoplay();
+      stepOnce();
+      updateReadouts();
+    });
+
+    ui.autoBtn.addEventListener("click", function () {
+      if (auto.on) stopAutoplay(); else startAutoplay();
+    });
+
+    ui.resetBtn.addEventListener("click", function () {
+      stopAutoplay();
+      setF(DEFAULTS.f, false);
+      setFs(DEFAULTS.fs, false);
+      setPhase(DEFAULTS.phaseDeg, false);
+      setSpeed(DEFAULTS.speed, false);
+      resetClock();
+      state.paused = false;
+      ui.pauseBtn.setAttribute("aria-pressed", "false");
+      ui.pauseBtn.textContent = "暂停";
+      updateReadouts();
+    });
+
+    const tg = function (id, key) {
+      const box = el(id);
+      box.addEventListener("change", function () { state[key] = box.checked; });
+    };
+    tg("tgContinuous", "showContinuous");
+    tg("tgHistory", "showHistory");
+    tg("tgAlias", "showAlias");
+    el("tgReduced").addEventListener("change", function () {
+      state.reducedMotion = el("tgReduced").checked;
+    });
+
+    // 波形：拖动改相位、悬停显示读数
+    const wave = canvases.wave.el;
+    wave.addEventListener("pointerdown", function (e) {
+      drag = { x: e.clientX };
+      wave.setPointerCapture(e.pointerId);
+      stopAutoplay();
+    });
+    wave.addEventListener("pointermove", function (e) {
+      const rect = wave.getBoundingClientRect();
+      pointer.canvas = "wave";
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
+      pointer.inside = true;
+      if (drag) {
+        const dx = e.clientX - drag.x;
+        drag.x = e.clientX;
+        setPhase((state.phase * 180 / Math.PI) + dx * 0.9, true);
+      }
+    });
+    wave.addEventListener("pointerup", function () { drag = null; });
+    wave.addEventListener("pointerleave", function () { pointer.inside = false; });
+
+    // 键盘
+    document.addEventListener("keydown", function (e) {
+      const tag = (e.target && e.target.tagName ? e.target.tagName : "").toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+
+      const key = e.key;
+      if (key === " " || key === "Spacebar") { ui.pauseBtn.click(); e.preventDefault(); return; }
+      if (key === "ArrowLeft") { stopAutoplay(); setF(state.f - 0.1, true); e.preventDefault(); return; }
+      if (key === "ArrowRight") { stopAutoplay(); setF(state.f + 0.1, true); e.preventDefault(); return; }
+      if (key === "ArrowUp") { stopAutoplay(); setFs(state.fs + 0.5, true); e.preventDefault(); return; }
+      if (key === "ArrowDown") { stopAutoplay(); setFs(state.fs - 0.5, true); e.preventDefault(); return; }
+      if (key === ".") { ui.stepBtn.click(); e.preventDefault(); return; }
+
+      const lower = key.toLowerCase();
+      const order = ["safe", "critical", "reverse", "slow", "still"];
+      if (lower >= "1" && lower <= "5") {
+        stopAutoplay();
+        applyParams(PRESETS[order[Number(lower) - 1]], 650);
+        e.preventDefault();
+        return;
+      }
+      if (lower === "a") { if (auto.on) stopAutoplay(); else startAutoplay(); e.preventDefault(); return; }
+      if (lower === "r") { ui.resetBtn.click(); e.preventDefault(); return; }
+      if (lower === "h") {
+        document.querySelectorAll("details.more").forEach(function (d) { d.open = !d.open; });
+        e.preventDefault();
+      }
+    });
+
+    // 尺寸变化：只置脏标记，避免在每帧里反复读写布局。
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(function () { needsFit = true; });
+      Object.keys(canvases).forEach(function (k) { ro.observe(canvases[k].el); });
+    }
+    window.addEventListener("resize", function () { needsFit = true; });
+    window.addEventListener("orientationchange", function () { needsFit = true; });
+
+    // 页面不可见时停止计算，回到前台再续上。
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+      } else if (!rafId) {
+        lastTimestamp = 0;
+        rafId = requestAnimationFrame(frame);
+      }
+    });
+  }
+
+  /* =========================================================
+   * 主循环
+   * =======================================================*/
+  function frame(timestamp) {
+    rafId = requestAnimationFrame(frame);
+    if (needsFit) fitAll();
+
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    const dt = Math.min((timestamp - lastTimestamp) / 1000, 0.05);
+    lastTimestamp = timestamp;
+
+    tickEasing(timestamp);
+    tickAutoplay(dt);
+    if (!state.paused) advance(dt);
+
+    drawWheel();
+    drawWave();
+    if (canvases.fold.w > 2) drawFold();
+    updateReadouts();
+  }
+
+  /* =========================================================
+   * 启动
+   * =======================================================*/
+  function init() {
+    bindUI();
+
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    state.reducedMotion = mq.matches;
+    ui_speedReduced(mq.matches);
+    if (mq.addEventListener) {
+      mq.addEventListener("change", function (e) {
+        state.reducedMotion = e.matches;
+        ui_speedReduced(e.matches);
+      });
+    }
+
+    setF(DEFAULTS.f, false);
+    setFs(DEFAULTS.fs, false);
+    setPhase(DEFAULTS.phaseDeg, false);
+    setSpeed(DEFAULTS.speed, false);
+
+    fitAll();
+    drawIconWheel();
+    drawIconAudio();
+    drawIconImage();
+    updateReadouts();
+
+    rafId = requestAnimationFrame(frame);
+
+    // 供自动化测试与调试使用。
+    window.__nyquist = {
+      state: state,
+      autoplay: auto,
+      computeStatus: computeStatus,
+      set: function (o) {
+        if (o.f !== undefined) setF(o.f, false);
+        if (o.fs !== undefined) setFs(o.fs, false);
+        if (o.phaseDeg !== undefined) setPhase(o.phaseDeg, false);
+        resyncSampleClock();
+      },
+      aliasFrequency: aliasFrequency,
+      signedAliasFrequency: signedAliasFrequency
+    };
+  }
+
+  function ui_speedReduced(on) {
+    const box = document.getElementById("tgReduced");
+    if (box) box.checked = on;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
