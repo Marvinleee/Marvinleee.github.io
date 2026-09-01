@@ -322,6 +322,7 @@ Homebrew RF Circuit Design Ideas 的主要价值，是把大量分散的射频�
 ## 来源与说明
 
 - 原始资料库：[Homebrew RF Circuit Design Ideas](https://www.qsl.net/va3iul/Homebrew_RF_Circuit_Design_Ideas/Homebrew_RF_Circuit_Design_Ideas.htm)
+- 服务器目录列表：[Homebrew_RF_Circuit_Design_Ideas/](https://www.qsl.net/v/va3iul//Homebrew_RF_Circuit_Design_Ideas/)（上文的 6142 个 GIF 与约 464 MB 容量以此为准；索引页当前挂出的不重复条目为 6026 个，两者存在少量差异）
 - 维护者主页：[YO3DAC / VA3IUL - Iulian Rosu](https://www.qsl.net/va3iul/)
 - 本文中的文件数量、分类和服务器时间统计于 2026 年 9 月 1 日，原站后续更新可能改变这些数字。
 - 本文仅做资料导航与工程教育，不保证任何第三方电路的正确性、可复现性或安全性。
