@@ -1,0 +1,516 @@
+---
+layout: null
+permalink: /assets/complex-series-jellyfish/
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>复几何级数水母 · Complex Series Jellyfish</title>
+<meta name="description" content="用复几何级数 a+ar+ar²+… 与复函数 f(z)=a/(1−z) 驱动的交互式水母：partial sums 生成触手，模长曲面生成伞体，可连续观察收敛、临界与发散三种数学状态。">
+<meta name="theme-color" content="#020306">
+<meta property="og:type" content="website">
+<meta property="og:title" content="复几何级数水母 · Complex Series Jellyfish">
+<meta property="og:description" content="复数乘法 → 旋转加缩放 → 几何级数 → partial sums → 收敛：一个由数学本身驱动的 WebGL 水母。">
+<meta property="og:url" content="https://marvinlee.cn/assets/complex-series-jellyfish/">
+<style>
+  :root {
+    color-scheme: dark;
+    --panel-bg: rgba(5, 10, 18, .52);
+    --panel-border: rgba(170, 210, 255, .14);
+    --text: rgba(235, 245, 255, .90);
+    --muted: rgba(225, 240, 255, .62);
+    --accent: #7bdcff;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #020306;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  canvas { display: block; }
+
+  .ui { transition: opacity .25s ease; }
+  body.ui-hidden .ui { opacity: 0; pointer-events: none; }
+
+  #title {
+    position: fixed; left: 22px; top: 20px;
+    color: var(--text); font-size: 12px; letter-spacing: .28em; z-index: 10;
+  }
+  #formula {
+    position: fixed; left: 22px; bottom: 20px;
+    color: var(--muted); z-index: 10;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px; line-height: 1.6;
+  }
+  #home {
+    position: fixed; left: 22px; bottom: 92px; z-index: 10;
+    color: rgba(150, 200, 235, .55); text-decoration: none;
+    font-size: 12px; letter-spacing: .06em;
+  }
+  #home:hover { color: var(--accent); }
+
+  #panel {
+    position: fixed; right: 18px; top: 18px; width: 232px; padding: 14px;
+    color: rgba(230, 242, 255, .86);
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 20; font-size: 12px;
+  }
+  .row { margin: 10px 0; }
+  .row label { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .val { font-family: ui-monospace, Menlo, Consolas, monospace; color: var(--accent); }
+
+  #modeBadge {
+    margin-top: 12px; padding: 8px 10px; text-align: center;
+    border-radius: 9px; font-family: ui-monospace, Menlo, Consolas, monospace;
+    letter-spacing: .14em; font-size: 11px;
+    border: 1px solid rgba(180, 220, 255, .18);
+    background: rgba(90, 160, 220, .08);
+    transition: color .4s ease, border-color .4s ease, background .4s ease;
+  }
+  #limitReadout {
+    margin-top: 8px; text-align: center; font-size: 11px; color: var(--muted);
+    font-family: ui-monospace, Menlo, Consolas, monospace; min-height: 15px;
+  }
+  #buttons { display: flex; gap: 6px; margin-top: 12px; }
+  #buttons button {
+    flex: 1; padding: 7px 4px; cursor: pointer;
+    font-size: 10px; letter-spacing: .1em;
+    color: var(--text);
+    background: rgba(120, 180, 230, .10);
+    border: 1px solid rgba(170, 210, 255, .16);
+    border-radius: 8px;
+  }
+  #buttons button:hover { background: rgba(120, 180, 230, .20); color: #fff; }
+
+  #loading {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: rgba(200, 225, 245, .6); font-size: 12px; letter-spacing: .2em; z-index: 30;
+    background: #020306;
+  }
+
+  @media (max-width: 640px) {
+    #panel { width: 178px; right: 10px; top: 10px; padding: 11px; font-size: 11px; }
+    #title { left: 14px; top: 14px; font-size: 10px; }
+    #formula { left: 14px; bottom: 14px; font-size: 11px; }
+    #home { left: 14px; bottom: 74px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading" class="ui">LOADING THREE.JS …</div>
+
+<div id="title" class="ui">COMPLEX SERIES JELLYFISH</div>
+<a id="home" class="ui" href="https://marvinlee.cn/">← 返回 marvinlee.cn</a>
+<div id="formula" class="ui">
+f(z) = a / (1 − z)<br>
+a + ar + ar² + … = a / (1 − r)<br>
+|r| &lt; 1
+</div>
+
+<div id="panel" class="ui">
+  <div class="row"><label><span>|a|</span><span class="val" id="aval"></span></label>
+    <input id="a" type="range" min="0.2" max="2" step="0.02" value="1"></div>
+  <div class="row"><label><span>|r|</span><span class="val" id="rval"></span></label>
+    <input id="rho" type="range" min="0.10" max="1.18" step="0.005" value="0.82"></div>
+  <div class="row"><label><span>arg(r)</span><span class="val" id="thetaval"></span></label>
+    <input id="theta" type="range" min="0.1" max="2.8" step="0.02" value="0.82"></div>
+  <div class="row"><label><span>breathing</span><span class="val" id="breathval"></span></label>
+    <input id="breathing" type="range" min="0" max="0.8" step="0.01" value="0.25"></div>
+  <div class="row"><label><span>speed</span><span class="val" id="speedval"></span></label>
+    <input id="speed" type="range" min="0.2" max="2.5" step="0.05" value="1"></div>
+  <div id="modeBadge">CONVERGENT  |r| &lt; 1</div>
+  <div id="limitReadout"></div>
+  <div id="buttons">
+    <button id="btn-full" type="button">FULLSCREEN</button>
+    <button id="btn-hide" type="button">HIDE UI</button>
+    <button id="btn-reset" type="button">RESET</button>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+/* ============================================================
+   0. 设备自适应：移动端降低网格分辨率 / 触手条数 / 项数
+   ============================================================ */
+const isMobile  = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const N         = isMobile ? 64  : 110;  // 曲面网格分辨率
+const TENTACLES = isMobile ? 8   : 18;   // 触手条数（每条 = 一条 partial sum 轨迹）
+const TERMS     = isMobile ? 45  : 85;   // 每条触手的级数项数
+
+/* ============================================================
+   1. 场景 / 相机 / 渲染器
+   ============================================================ */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x020306);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.05, 100);
+camera.position.set(5.9, 4.6, 8.2);
+
+const renderer = new THREE.WebGLRenderer({ antialias: !isMobile });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.25;
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 3.5;
+controls.maxDistance = 22;
+controls.target.set(0, 0.6, 0);
+
+/* 复平面躺在世界 XZ 平面上：把 group 绕 X 轴转 −90°，
+   让几何体的 z（曲面高度）变成世界 Y（竖直方向）。 */
+const world = new THREE.Group();
+world.rotation.x = -Math.PI / 2;
+scene.add(world);
+
+const params = { a: 1, rho: 0.82, theta: 0.82, breathing: 0.25, speed: 1 };
+const DEFAULTS = Object.assign({}, params);
+
+/* ============================================================
+   2. 复数运算：加法、乘法、除法
+   ============================================================ */
+function cadd(a, b) { return { re: a.re + b.re, im: a.im + b.im }; }
+function cmul(a, b) { return { re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re }; }
+function cdiv(a, b) {
+  const d = b.re * b.re + b.im * b.im;
+  return {
+    re: (a.re * b.re + a.im * b.im) / d,
+    im: (a.im * b.re - a.re * b.im) / d
+  };
+}
+
+/* ============================================================
+   3. 三种数学状态：|r|<1 / |r|≈1 / |r|>1
+   ============================================================ */
+function getSeriesMode(rho) {
+  const eps = 0.015;
+  /* 分支写成单调三段而非两段 abs 比较：
+     直接用 Math.abs(rho-1) <= eps 时，rho = 0.985 会因浮点误差
+     得到 0.015000000000000013 > eps 而漏进 divergent（数学上明显错误）。 */
+  if (rho < 1 - eps) return "convergent";
+  if (rho <= 1 + eps) return "critical";
+  return "divergent";
+}
+
+const MODE_COLOR = {
+  convergent: new THREE.Color(0x79d9ff),
+  critical:   new THREE.Color(0xffe4c1),
+  divergent:  new THREE.Color(0xff6948)
+};
+function modeColor(mode) { return MODE_COLOR[mode] || MODE_COLOR.convergent; }
+
+function modeBreathingMultiplier(mode) {
+  if (mode === "convergent") return 1.0;
+  if (mode === "critical")   return 1.65;
+  return 2.4;
+}
+
+/* 显示层软压缩：数学值保持真实，只把渲染坐标映射进有限区间，
+   避免 |r|>1 时坐标指数增长撑爆 GPU。 */
+function visualCompress(v, limit = 4.6) {
+  return Math.tanh(v / limit) * limit;
+}
+
+/* ============================================================
+   4. 伞体：|f(z)| = |a| / |1 − z| 的模长曲面 + 呼吸项
+   ============================================================ */
+function surfaceHeight(x, y, t) {
+  const dx = 1 - x, dy = -y;
+  const d = Math.sqrt(dx * dx + dy * dy + 0.018);   // ε 防止 z=1 处数值爆炸
+  const raw = params.a / d;
+  const base = Math.tanh(raw * 0.48) * 2.35;        // softclip
+  const rr = Math.sqrt(x * x + y * y);
+  const amp = params.breathing * modeBreathingMultiplier(getSeriesMode(params.rho));
+  const wave = amp * Math.exp(-rr * rr / 7) * Math.sin(3.1 * rr - 1.7 * t);
+  return base * 0.75 + wave;
+}
+
+const geometry = new THREE.PlaneGeometry(6.4, 6.4, N, N);
+const membrane = new THREE.Mesh(geometry, new THREE.MeshPhysicalMaterial({
+  color: 0x7593a4, roughness: 0.54, metalness: 0,
+  transparent: true, opacity: 0.38, side: THREE.DoubleSide, depthWrite: false
+}));
+world.add(membrane);
+
+const wire = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+  color: 0x9ec7d9, wireframe: true, transparent: true, opacity: 0.06
+}));
+world.add(wire);
+
+function updateSurface(t) {
+  const pos = geometry.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    pos.setZ(i, surfaceHeight(pos.getX(i), pos.getY(i), t));
+  }
+  pos.needsUpdate = true;
+  geometry.computeVertexNormals();
+}
+
+/* z = 1 处的奇点尖峰 */
+const singularity = new THREE.Mesh(
+  new THREE.SphereGeometry(0.07, 16, 16),
+  new THREE.MeshBasicMaterial({ color: 0xff8d56 })
+);
+world.add(singularity);
+
+/* |r| = 1 收敛边界 */
+const ring = new THREE.Mesh(
+  new THREE.RingGeometry(0.98, 1.02, 128),
+  new THREE.MeshBasicMaterial({
+    color: 0x91c7a5, transparent: true, opacity: 0.20, side: THREE.DoubleSide
+  })
+);
+ring.position.z = 0.015;
+world.add(ring);
+
+/* ============================================================
+   5. 触手：partial sum S_n = a + ar + … + ar^n
+   ============================================================ */
+class SeriesTentacle {
+  constructor(phi, color) {
+    this.phi = phi;
+    this.geometry = new THREE.BufferGeometry();
+    this.material = new THREE.LineBasicMaterial({
+      color, transparent: true, opacity: 0.62,
+      blending: THREE.AdditiveBlending, depthWrite: false
+    });
+    this.line = new THREE.Line(this.geometry, this.material);
+    world.add(this.line);
+  }
+
+  update(t) {
+    const mode = getSeriesMode(params.rho);
+
+    /* 时间扰动允许存在，但不再把 rho 强行压回 1 以下 */
+    const rho = Math.max(0.05, params.rho + 0.012 * Math.sin(t * 0.9 + this.phi));
+    const theta = params.theta + 0.16 * Math.sin(t * 0.65 + this.phi);
+    const r = { re: rho * Math.cos(theta), im: rho * Math.sin(theta) };
+    const a = {
+      re: params.a * Math.cos(this.phi),
+      im: params.a * Math.sin(this.phi)
+    };
+
+    let term = { re: a.re, im: a.im };
+    let sum  = { re: 0, im: 0 };
+    const pts = [];
+
+    /* 发散模式增长极快，不需要那么多项 */
+    const terms = mode === "divergent" ? Math.min(48, TERMS) : TERMS;
+    const activity = mode === "convergent" ? 0.025 : (mode === "critical" ? 0.055 : 0.095);
+
+    for (let n = 0; n < terms; n++) {
+      sum = cadd(sum, term);
+
+      /* 数学值是真实 sum，这里只压缩到渲染空间 */
+      const x = visualCompress(sum.re * 0.84);
+      const y = visualCompress(sum.im * 0.84);
+      const z = surfaceHeight(x, y, t) + 0.06
+              + activity * Math.sin(n * 0.33 - t * 2.0 + this.phi);
+
+      pts.push(new THREE.Vector3(x, y, z));
+      term = cmul(term, r);
+
+      /* 防止 JS Number 溢出：数值远超可视范围后停止（不改变动力学，只停止绘制） */
+      if (Math.abs(term.re) > 1e7 || Math.abs(term.im) > 1e7) break;
+    }
+
+    this.geometry.setFromPoints(pts);
+    this.material.color.lerp(modeColor(mode), 0.07);
+    this.material.opacity = mode === "convergent" ? 0.55 : (mode === "critical" ? 0.72 : 0.88);
+  }
+}
+
+const colors = [0x7bdcff, 0x9ecbff, 0xffa36b, 0xff795a, 0xd9f4ff, 0x87baff];
+const tentacles = [];
+for (let i = 0; i < TENTACLES; i++) {
+  tentacles.push(new SeriesTentacle(i / TENTACLES * Math.PI * 2, colors[i % colors.length]));
+}
+
+/* ============================================================
+   6. 极限点：L = a / (1 − r)，只在 |r| < 1 时存在
+   ============================================================ */
+const limitPoint = new THREE.Mesh(
+  new THREE.SphereGeometry(0.075, 18, 18),
+  new THREE.MeshBasicMaterial({ color: 0xe9fbff })
+);
+world.add(limitPoint);
+
+let lastLimit = null;
+
+function updateLimitPoint(t) {
+  const mode = getSeriesMode(params.rho);
+  if (mode !== "convergent") {
+    limitPoint.visible = false;
+    lastLimit = null;
+    return;
+  }
+  limitPoint.visible = true;
+
+  const r = {
+    re: params.rho * Math.cos(params.theta),
+    im: params.rho * Math.sin(params.theta)
+  };
+  const oneMinusR = { re: 1 - r.re, im: -r.im };
+  const a = { re: params.a, im: 0 };
+
+  const L = cdiv(a, oneMinusR);          // L = a / (1 − r)
+  lastLimit = L;
+
+  const x = visualCompress(L.re * 0.84);
+  const y = visualCompress(L.im * 0.84);
+  const z = surfaceHeight(x, y, t) + 0.12;
+
+  limitPoint.position.set(x, y, z);
+}
+
+/* ============================================================
+   7. 灯光
+   ============================================================ */
+scene.add(new THREE.AmbientLight(0x8ab5d8, 0.65));
+const blue = new THREE.PointLight(0x5abfff, 17, 20);
+blue.position.set(-4, 3.2, 5);
+scene.add(blue);
+const warm = new THREE.PointLight(0xff7d43, 22, 22);
+warm.position.set(3.6, 2.6, 5);
+scene.add(warm);
+const under = new THREE.PointLight(0x2f6f9e, 12, 18);
+under.position.set(0, -3.2, 2);
+scene.add(under);
+
+/* ============================================================
+   8. UI
+   ============================================================ */
+const badge = document.getElementById("modeBadge");
+const readout = document.getElementById("limitReadout");
+
+function bind(id, key, outId) {
+  const el = document.getElementById(id);
+  const out = document.getElementById(outId);
+  function sync() {
+    params[key] = Number(el.value);
+    out.textContent = Number(el.value).toFixed(id === "rho" ? 3 : 2);
+  }
+  el.addEventListener("input", sync);
+  sync();
+}
+bind("a", "a", "aval");
+bind("rho", "rho", "rval");
+bind("theta", "theta", "thetaval");
+bind("breathing", "breathing", "breathval");
+bind("speed", "speed", "speedval");
+
+const BADGE_TEXT = {
+  convergent: ["CONVERGENT  |r| < 1", "#79d9ff", "rgba(90,160,220,.10)",  "rgba(121,217,255,.35)"],
+  critical:   ["CRITICAL  |r| ≈ 1",   "#ffe4c1", "rgba(255,210,150,.12)", "rgba(255,228,193,.38)"],
+  divergent:  ["DIVERGENT  |r| > 1",  "#ff6948", "rgba(255,110,70,.14)",  "rgba(255,105,72,.40)"]
+};
+
+function updateModeUI() {
+  const mode = getSeriesMode(params.rho);
+  const conf = BADGE_TEXT[mode];
+  badge.textContent = conf[0];
+  badge.style.color = conf[1];
+  badge.style.background = conf[2];
+  badge.style.borderColor = conf[3];
+
+  if (mode === "convergent" && lastLimit) {
+    readout.textContent = "L = " + lastLimit.re.toFixed(3)
+      + (lastLimit.im >= 0 ? " + " : " − ") + Math.abs(lastLimit.im).toFixed(3) + "i";
+  } else if (mode === "critical") {
+    readout.textContent = "LIMIT 不存在（临界）";
+  } else {
+    readout.textContent = "极限不存在：|r|ⁿ → ∞";
+  }
+}
+
+document.getElementById("btn-full").addEventListener("click", () => {
+  const el = document.documentElement;
+  if (!document.fullscreenElement) {
+    if (el.requestFullscreen) el.requestFullscreen();
+  } else if (document.exitFullscreen) {
+    document.exitFullscreen();
+  }
+});
+document.getElementById("btn-hide").addEventListener("click", () => {
+  document.body.classList.toggle("ui-hidden");
+});
+document.getElementById("btn-reset").addEventListener("click", () => {
+  const map = { a: "a", rho: "rho", theta: "theta", breathing: "breathing", speed: "speed" };
+  for (const k in map) {
+    const el = document.getElementById(map[k]);
+    el.value = DEFAULTS[k];
+    el.dispatchEvent(new Event("input"));
+  }
+  controls.target.set(0, 0.6, 0);
+  camera.position.set(5.9, 4.6, 8.2);
+});
+
+addEventListener("keydown", e => {
+  if (e.key && e.key.toLowerCase() === "h") {
+    document.body.classList.toggle("ui-hidden");
+  }
+});
+
+/* ============================================================
+   9. 主循环
+   ============================================================ */
+const clock = new THREE.Clock();
+let t = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  t += Math.min(clock.getDelta(), 0.033) * params.speed;
+
+  updateSurface(t);
+
+  singularity.position.set(1, 0, surfaceHeight(1, 0, t) + 0.08);
+
+  for (const tentacle of tentacles) tentacle.update(t);
+
+  updateLimitPoint(t);
+  updateModeUI();
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+document.getElementById("loading").remove();
+animate();
+</script>
+</body>
+</html>
