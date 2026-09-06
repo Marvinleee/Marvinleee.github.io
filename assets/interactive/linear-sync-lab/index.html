@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="一个在浏览器中运行的 Linear Sync Engine 互动教学沙盘。">
+  <title>同步引擎实验室｜从一次修改看懂本地优先</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">LSE</span>
+        <div>
+          <p class="eyebrow">INTERACTIVE SYSTEMS LAB</p>
+          <h1>同步引擎实验室</h1>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="save-state"><i></i>本地模拟</span>
+        <button class="ghost-button" id="resetButton" type="button" title="快捷键 R">重置实验</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="lesson-strip" aria-label="课程进度">
+        <button class="lesson-arrow" id="prevLesson" type="button" aria-label="上一课">←</button>
+        <div class="lesson-progress">
+          <div class="lesson-meta">
+            <span id="lessonNumber">01 / 08</span>
+            <span id="lessonDuration">约 2 分钟</span>
+          </div>
+          <div class="progress-track"><span id="progressFill"></span></div>
+        </div>
+        <div class="lesson-copy">
+          <p id="lessonKicker">先建立直觉</p>
+          <h2 id="lessonTitle">一次修改，为什么要走这么远？</h2>
+          <p id="lessonBody">在本地优先应用里，界面先响应，网络随后追赶。跟着一条标题修改，观察它如何从内存穿过服务器，再抵达另一台设备。</p>
+        </div>
+        <button class="primary-button" id="lessonAction" type="button">播放这一课</button>
+        <button class="lesson-arrow" id="nextLesson" type="button" aria-label="下一课">→</button>
+      </section>
+
+      <section class="workspace" aria-label="同步系统沙盘">
+        <article class="node client-node" id="clientA">
+          <div class="node-head">
+            <div>
+              <span class="node-index">01</span>
+              <h3>客户端 A</h3>
+            </div>
+            <button class="connection online" data-client="a" type="button" aria-pressed="false"><i></i><span>在线</span></button>
+          </div>
+          <div class="issue-card">
+            <div class="issue-top"><span class="issue-id">ENG-42</span><span class="pill" id="aStatus">Todo</span></div>
+            <label for="aTitle">任务标题</label>
+            <input id="aTitle" value="发布同步引擎教程" autocomplete="off">
+            <label for="aAssignee">负责人</label>
+            <select id="aAssignee"><option>Alice</option><option>Bob</option><option>Carol</option></select>
+            <button class="commit-button" data-commit="a" type="button">在 A 保存修改</button>
+          </div>
+          <div class="state-grid">
+            <div><span>内存</span><strong id="aMemory">已同步</strong></div>
+            <div><span>IndexedDB</span><strong id="aDb">v1042</strong></div>
+            <div><span>待发事务</span><strong id="aQueue">0</strong></div>
+          </div>
+        </article>
+
+        <div class="packet-lane lane-a" aria-hidden="true"><span class="packet" id="packetA">TX</span></div>
+
+        <article class="node server-node" id="serverNode">
+          <div class="node-head">
+            <div>
+              <span class="node-index">02</span>
+              <h3>权威服务器</h3>
+            </div>
+            <span class="server-light"><i></i>AUTHORITATIVE</span>
+          </div>
+          <div class="sync-orbit">
+            <div class="orbit-ring"></div>
+            <div class="sync-core">
+              <span>sync ID</span>
+              <strong id="serverSyncId">1042</strong>
+            </div>
+          </div>
+          <div class="server-record">
+            <span>当前权威值</span>
+            <strong id="serverTitle">发布同步引擎教程</strong>
+            <small id="serverAssignee">负责人 · Alice</small>
+          </div>
+          <div class="server-stats">
+            <div><span>已处理</span><strong id="processedCount">0</strong></div>
+            <div><span>历史记录</span><strong id="historyCount">0</strong></div>
+          </div>
+        </article>
+
+        <div class="packet-lane lane-b" aria-hidden="true"><span class="packet" id="packetB">Δ</span></div>
+
+        <article class="node client-node" id="clientB">
+          <div class="node-head">
+            <div>
+              <span class="node-index">03</span>
+              <h3>客户端 B</h3>
+            </div>
+            <button class="connection online" data-client="b" type="button" aria-pressed="false"><i></i><span>在线</span></button>
+          </div>
+          <div class="issue-card">
+            <div class="issue-top"><span class="issue-id">ENG-42</span><span class="pill" id="bStatus">Todo</span></div>
+            <label for="bTitle">任务标题</label>
+            <input id="bTitle" value="发布同步引擎教程" autocomplete="off">
+            <label for="bAssignee">负责人</label>
+            <select id="bAssignee"><option>Alice</option><option>Bob</option><option>Carol</option></select>
+            <button class="commit-button" data-commit="b" type="button">在 B 保存修改</button>
+          </div>
+          <div class="state-grid">
+            <div><span>内存</span><strong id="bMemory">已同步</strong></div>
+            <div><span>IndexedDB</span><strong id="bDb">v1042</strong></div>
+            <div><span>待发事务</span><strong id="bQueue">0</strong></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="lower-grid">
+        <article class="panel inspector-panel">
+          <div class="panel-head">
+            <div><p class="eyebrow">STATE INSPECTOR</p><h3>状态剖面</h3></div>
+            <div class="tabs" role="tablist">
+              <button class="tab active" data-tab="memory" type="button">内存</button>
+              <button class="tab" data-tab="database" type="button">数据库</button>
+              <button class="tab" data-tab="queue" type="button">队列</button>
+            </div>
+          </div>
+          <pre id="inspectorOutput" aria-live="polite"></pre>
+        </article>
+
+        <article class="panel controls-panel">
+          <div class="panel-head">
+            <div><p class="eyebrow">EXPERIMENTS</p><h3>故障注入</h3></div>
+          </div>
+          <div class="experiment-buttons">
+            <button id="offlineScenario" type="button"><span>01</span><strong>离线后重连</strong><small>事务会不会丢？</small></button>
+            <button id="conflictScenario" type="button"><span>02</span><strong>并发冲突</strong><small>谁是最后写入者？</small></button>
+            <button id="undoScenario" type="button"><span>03</span><strong>撤销不是倒带</strong><small>观察反向事务</small></button>
+          </div>
+          <div class="toggles">
+            <label><input id="slowNetwork" type="checkbox"><span>慢速网络</span></label>
+            <label><input id="dropNext" type="checkbox"><span>丢弃下一包</span></label>
+          </div>
+        </article>
+
+        <article class="panel log-panel">
+          <div class="panel-head">
+            <div><p class="eyebrow">EVENT STREAM</p><h3>事件流</h3></div>
+            <button id="clearLog" class="text-button" type="button">清空</button>
+          </div>
+          <ol id="eventLog" aria-live="polite"></ol>
+        </article>
+      </section>
+
+      <section class="concept-map">
+        <div><span>MODEL</span><p>业务对象及其元数据</p></div>
+        <i>→</i><div><span>TRANSACTION</span><p>可持久化的用户意图</p></div>
+        <i>→</i><div><span>SERVER</span><p>执行规则与确定顺序</p></div>
+        <i>→</i><div><span>DELTA</span><p>广播后的权威变化</p></div>
+        <i>→</i><div><span>REBASE</span><p>在新基线重放本地意图</p></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>教学模型基于 Wenzhao Hu 对 Linear Sync Engine 的逆向研究重新设计。它用于解释机制，不代表 Linear 当前或完整的内部实现。</p>
+      <p><a href="https://github.com/wzhudev/reverse-linear-sync-engine" target="_blank" rel="noopener">原始研究</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a> · 页面不连接 Linear、不发送数据</p>
+    </footer>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
