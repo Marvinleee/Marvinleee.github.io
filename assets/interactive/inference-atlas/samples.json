@@ -1,0 +1,944 @@
+{
+  "model": "Qwen/Qwen3-8B",
+  "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "tokenizers": "0.20.3",
+  "jinja2": "3.1.5",
+  "source_sha256": {
+    "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+    "tokenizer_config.json": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101",
+    "config.json": "f7c4eadfbbf522470667b797a3c89be2524832d2d599797248dc304fff447c30"
+  },
+  "config": {
+    "architectures": [
+      "Qwen3ForCausalLM"
+    ],
+    "attention_bias": false,
+    "attention_dropout": 0,
+    "bos_token_id": 151643,
+    "eos_token_id": 151645,
+    "head_dim": 128,
+    "hidden_act": "silu",
+    "hidden_size": 4096,
+    "initializer_range": 0.02,
+    "intermediate_size": 12288,
+    "max_position_embeddings": 40960,
+    "max_window_layers": 36,
+    "model_type": "qwen3",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 36,
+    "num_key_value_heads": 8,
+    "rms_norm_eps": 0.000001,
+    "rope_scaling": null,
+    "rope_theta": 1000000,
+    "sliding_window": null,
+    "tie_word_embeddings": false,
+    "torch_dtype": "bfloat16",
+    "transformers_version": "4.51.0",
+    "use_cache": true,
+    "use_sliding_window": false,
+    "vocab_size": 151936
+  },
+  "template_mode": {
+    "add_generation_prompt": true,
+    "enable_thinking": false
+  },
+  "validation": "All raw and chat encodings decode to NFC-normalized input; all IDs fit embedding rows.",
+  "samples": [
+    {
+      "label": "中文与缩写",
+      "raw": {
+        "text": "你好，GPU！",
+        "normalized": "你好，GPU！",
+        "ids": [
+          108386,
+          3837,
+          49891,
+          6313
+        ],
+        "tokens": [
+          "ä½łå¥½",
+          "ï¼Į",
+          "GPU",
+          "ï¼ģ"
+        ],
+        "display": [
+          "你好",
+          "，",
+          "GPU",
+          "！"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\n你好，GPU！<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\n你好，GPU！<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          108386,
+          3837,
+          49891,
+          6313,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "ä½łå¥½",
+          "ï¼Į",
+          "GPU",
+          "ï¼ģ",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "你好",
+          "，",
+          "GPU",
+          "！",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "英文",
+      "raw": {
+        "text": "Hello, GPU!",
+        "normalized": "Hello, GPU!",
+        "ids": [
+          9707,
+          11,
+          22670,
+          0
+        ],
+        "tokens": [
+          "Hello",
+          ",",
+          "ĠGPU",
+          "!"
+        ],
+        "display": [
+          "Hello",
+          ",",
+          " GPU",
+          "!"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\nHello, GPU!<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\nHello, GPU!<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          9707,
+          11,
+          22670,
+          0,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "Hello",
+          ",",
+          "ĠGPU",
+          "!",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "Hello",
+          ",",
+          " GPU",
+          "!",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "开头没有空格",
+      "raw": {
+        "text": "hello",
+        "normalized": "hello",
+        "ids": [
+          14990
+        ],
+        "tokens": [
+          "hello"
+        ],
+        "display": [
+          "hello"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\nhello<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\nhello<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          14990,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "hello",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "hello",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "开头有空格",
+      "raw": {
+        "text": " hello",
+        "normalized": " hello",
+        "ids": [
+          23811
+        ],
+        "tokens": [
+          "Ġhello"
+        ],
+        "display": [
+          " hello"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\n hello<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\n hello<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          23811,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "Ġhello",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          " hello",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "预组合字符 é",
+      "raw": {
+        "text": "café",
+        "normalized": "café",
+        "ids": [
+          924,
+          58858
+        ],
+        "tokens": [
+          "ca",
+          "fÃ©"
+        ],
+        "display": [
+          "ca",
+          "fé"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\ncafé<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\ncafé<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          924,
+          58858,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "ca",
+          "fÃ©",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "ca",
+          "fé",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "组合字符 e + ◌́",
+      "raw": {
+        "text": "café",
+        "normalized": "café",
+        "ids": [
+          924,
+          58858
+        ],
+        "tokens": [
+          "ca",
+          "fÃ©"
+        ],
+        "display": [
+          "ca",
+          "fé"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\ncafé<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\ncafé<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          924,
+          58858,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "ca",
+          "fÃ©",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "ca",
+          "fé",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "数字与小数",
+      "raw": {
+        "text": "2026 3.1415926",
+        "normalized": "2026 3.1415926",
+        "ids": [
+          17,
+          15,
+          17,
+          21,
+          220,
+          18,
+          13,
+          16,
+          19,
+          16,
+          20,
+          24,
+          17,
+          21
+        ],
+        "tokens": [
+          "2",
+          "0",
+          "2",
+          "6",
+          "Ġ",
+          "3",
+          ".",
+          "1",
+          "4",
+          "1",
+          "5",
+          "9",
+          "2",
+          "6"
+        ],
+        "display": [
+          "2",
+          "0",
+          "2",
+          "6",
+          " ",
+          "3",
+          ".",
+          "1",
+          "4",
+          "1",
+          "5",
+          "9",
+          "2",
+          "6"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\n2026 3.1415926<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\n2026 3.1415926<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          17,
+          15,
+          17,
+          21,
+          220,
+          18,
+          13,
+          16,
+          19,
+          16,
+          20,
+          24,
+          17,
+          21,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "2",
+          "0",
+          "2",
+          "6",
+          "Ġ",
+          "3",
+          ".",
+          "1",
+          "4",
+          "1",
+          "5",
+          "9",
+          "2",
+          "6",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "2",
+          "0",
+          "2",
+          "6",
+          " ",
+          "3",
+          ".",
+          "1",
+          "4",
+          "1",
+          "5",
+          "9",
+          "2",
+          "6",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "代码与缩进",
+      "raw": {
+        "text": "def add(a, b):\n    return a + b",
+        "normalized": "def add(a, b):\n    return a + b",
+        "ids": [
+          750,
+          912,
+          2877,
+          11,
+          293,
+          982,
+          262,
+          470,
+          264,
+          488,
+          293
+        ],
+        "tokens": [
+          "def",
+          "Ġadd",
+          "(a",
+          ",",
+          "Ġb",
+          "):Ċ",
+          "ĠĠĠ",
+          "Ġreturn",
+          "Ġa",
+          "Ġ+",
+          "Ġb"
+        ],
+        "display": [
+          "def",
+          " add",
+          "(a",
+          ",",
+          " b",
+          "):\n",
+          "   ",
+          " return",
+          " a",
+          " +",
+          " b"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\ndef add(a, b):\n    return a + b<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\ndef add(a, b):\n    return a + b<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          750,
+          912,
+          2877,
+          11,
+          293,
+          982,
+          262,
+          470,
+          264,
+          488,
+          293,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "def",
+          "Ġadd",
+          "(a",
+          ",",
+          "Ġb",
+          "):Ċ",
+          "ĠĠĠ",
+          "Ġreturn",
+          "Ġa",
+          "Ġ+",
+          "Ġb",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "def",
+          " add",
+          "(a",
+          ",",
+          " b",
+          "):\n",
+          "   ",
+          " return",
+          " a",
+          " +",
+          " b",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "Emoji",
+      "raw": {
+        "text": "👩‍💻正在学习",
+        "normalized": "👩‍💻正在学习",
+        "ids": [
+          145233,
+          378,
+          235,
+          145851,
+          96555,
+          100134
+        ],
+        "tokens": [
+          "ðŁĳ©",
+          "âĢ",
+          "į",
+          "ðŁĴ»",
+          "æŃ£åľ¨",
+          "åŃ¦ä¹ł"
+        ],
+        "display": [
+          "👩",
+          "�",
+          "�",
+          "💻",
+          "正在",
+          "学习"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\n👩‍💻正在学习<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\n👩‍💻正在学习<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          145233,
+          378,
+          235,
+          145851,
+          96555,
+          100134,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "ðŁĳ©",
+          "âĢ",
+          "į",
+          "ðŁĴ»",
+          "æŃ£åľ¨",
+          "åŃ¦ä¹ł",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "👩",
+          "�",
+          "�",
+          "💻",
+          "正在",
+          "学习",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    },
+    {
+      "label": "一次提问",
+      "raw": {
+        "text": "解释一下矩阵乘法。",
+        "normalized": "解释一下矩阵乘法。",
+        "ids": [
+          104136,
+          100158,
+          115000,
+          100252,
+          24339,
+          1773
+        ],
+        "tokens": [
+          "è§£éĩĬ",
+          "ä¸Ģä¸ĭ",
+          "çŁ©éĺµ",
+          "ä¹ĺ",
+          "æ³ķ",
+          "ãĢĤ"
+        ],
+        "display": [
+          "解释",
+          "一下",
+          "矩阵",
+          "乘",
+          "法",
+          "。"
+        ]
+      },
+      "chat": {
+        "text": "<|im_start|>user\n解释一下矩阵乘法。<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "normalized": "<|im_start|>user\n解释一下矩阵乘法。<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+        "ids": [
+          151644,
+          872,
+          198,
+          104136,
+          100158,
+          115000,
+          100252,
+          24339,
+          1773,
+          151645,
+          198,
+          151644,
+          77091,
+          198,
+          151667,
+          271,
+          151668,
+          271
+        ],
+        "tokens": [
+          "<|im_start|>",
+          "user",
+          "Ċ",
+          "è§£éĩĬ",
+          "ä¸Ģä¸ĭ",
+          "çŁ©éĺµ",
+          "ä¹ĺ",
+          "æ³ķ",
+          "ãĢĤ",
+          "<|im_end|>",
+          "Ċ",
+          "<|im_start|>",
+          "assistant",
+          "Ċ",
+          "<think>",
+          "ĊĊ",
+          "</think>",
+          "ĊĊ"
+        ],
+        "display": [
+          "<|im_start|>",
+          "user",
+          "\n",
+          "解释",
+          "一下",
+          "矩阵",
+          "乘",
+          "法",
+          "。",
+          "<|im_end|>",
+          "\n",
+          "<|im_start|>",
+          "assistant",
+          "\n",
+          "<think>",
+          "\n\n",
+          "</think>",
+          "\n\n"
+        ]
+      }
+    }
+  ]
+}
