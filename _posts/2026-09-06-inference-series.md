@@ -4,7 +4,7 @@ title: "从文本到芯片：大模型推理交互技术系列"
 date: 2026-09-06 23:00:00 +0800
 categories: [人工智能, 推理系统]
 tags: [Qwen, vLLM, GPU, NPU, 交互教学]
-description: "以 Qwen3-8B 为主线，沿文本、Token、张量、调度、算子与硬件执行展开的十五章技术路线。首批发布全链路与真实分词两章。"
+description: "以 Qwen3-8B 为主线，沿文本、Token、张量、调度、算子与硬件执行展开的十五章技术路线。已发布全链路、真实分词与 Transformer 层计算三章。"
 toc: true
 ---
 
@@ -17,6 +17,8 @@ toc: true
 1. [第 1 章：一条请求如何抵达硬件，又变成回答](/posts/inference-01-request-to-hardware/)——区分数据流和控制流，建立 Prefill、Decode、缓存与执行器的全景。
 2. [第 2 章：从 Unicode、聊天模板到 Token 与嵌入张量](/posts/inference-02-text-to-tensor/)——用真实分词样本检查字节、ID、模板和查表之间的关系。
 
+3. [第 3 章：逐项算清一个真实 Qwen3 Transformer 层](/posts/inference-03-transformer-layer/)——推导 QK Norm、RoPE、GQA、残差与门控 MLP，用数值实验验证因果性。
+
 [全屏打开推理链路实验室](/assets/interactive/inference-atlas/)
 
 ## 十五章路线
@@ -27,7 +29,7 @@ toc: true
 |:--|:--|:--|
 | 输入与模型 | 01 请求全链路（已发布） | 定位数据、组件和执行阶段 |
 | 输入与模型 | 02 文本到张量（已发布） | 真实 Token ID、模板与嵌入查表 |
-| 输入与模型 | 03 一个 Transformer 层 | RMSNorm、Q/K/V、QK Norm、RoPE、GQA、残差与门控 MLP |
+| 输入与模型 | 03 一个 Transformer 层（已发布） | RMSNorm、Q/K/V、QK Norm、RoPE、GQA、残差与门控 MLP |
 | 输入与模型 | 04 从 logits 到下一个 Token | 稳定 softmax、温度、概率筛选、采样与停止 |
 | 时间与内存 | 05 Prefill 和 Decode | 矩阵形状、依赖关系、缓存复用、计算与访存 |
 | 时间与内存 | 06 内存究竟用在哪里 | 权重、KV、激活、临时空间、分页及分片 |

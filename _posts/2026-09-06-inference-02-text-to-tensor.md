@@ -9,7 +9,7 @@ math: true
 toc: true
 ---
 
-[系列目录](/posts/inference-series/) · [上一章：请求全链路](/posts/inference-01-request-to-hardware/)
+[系列目录](/posts/inference-series/) · [上一章：请求全链路](/posts/inference-01-request-to-hardware/) · [下一章：Transformer 层](/posts/inference-03-transformer-layer/)
 
 在把“文字变向量”当作一个简单步骤之前，先看两个容易混淆的例子：`hello` 与 ` hello` 只差一个空格，但在本章固定的 Qwen 分词器中，它们分别得到 ID 14990 与 23811；`café` 与用字母 e 加组合重音构成的 `café` 字节不同，却得到同样的 ID 序列 [924,58858]。
 
