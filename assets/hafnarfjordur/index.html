@@ -1,0 +1,380 @@
+---
+layout: null
+permalink: /assets/hafnarfjordur/
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>哈布纳菲厄泽 3D 微缩城市 · 数据诚实版</title>
+<style>
+  :root{
+    --fg:#e6edf3; --fg2:#9aa7b4; --bg:#0a0e14; --panel:rgba(14,20,28,.82);
+    --line:rgba(255,255,255,.12); --acc:#5DCAA5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Arial,sans-serif;
+    color:var(--fg);-webkit-font-smoothing:antialiased}
+  canvas{display:block;width:100%;height:100%;touch-action:none}
+  .pane{position:absolute;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:12px 14px;backdrop-filter:blur(12px);font-size:12px;line-height:1.6}
+  #hud{top:14px;left:14px;max-width:270px}
+  #hud h1{font-size:15px;font-weight:500;letter-spacing:.2px}
+  #hud .sub{color:var(--fg2);font-size:11px;margin-top:3px}
+  #stats{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+  #stats .row{display:flex;justify-content:space-between;gap:10px}
+  #stats .row span:last-child{font-variant-numeric:tabular-nums;color:var(--fg)}
+  #stats .row span:first-child{color:var(--fg2)}
+  #ctl{top:14px;right:14px;width:210px}
+  #ctl .grp{margin-bottom:11px}
+  #ctl .grp:last-child{margin-bottom:0}
+  #ctl .lbl{color:var(--fg2);font-size:11px;margin-bottom:5px;display:flex;justify-content:space-between}
+  #ctl .lbl b{color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+  .btns{display:flex;gap:5px}
+  button{flex:1;background:transparent;border:1px solid var(--line);color:var(--fg2);
+    border-radius:7px;padding:6px 4px;font-size:11px;cursor:pointer;font-family:inherit;
+    transition:.15s}
+  button:hover{border-color:rgba(255,255,255,.3);color:var(--fg)}
+  button.on{background:var(--acc);border-color:var(--acc);color:#06231a}
+  input[type=range]{width:100%;accent-color:var(--acc);height:18px;cursor:pointer}
+  #legend{bottom:14px;left:14px;max-width:270px}
+  #legend .title{color:var(--fg2);font-size:11px;margin-bottom:7px}
+  #legend .item{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:11px}
+  #legend .sw{width:11px;height:11px;border-radius:2px;flex:0 0 auto}
+  #legend .bar{height:9px;border-radius:2px;margin:2px 0 4px;
+    background:linear-gradient(90deg,#8d99a6,#d9c4a9,#6d94b0)}
+  #attr{bottom:14px;right:14px;max-width:210px;color:var(--fg2);font-size:10px;line-height:1.55}
+  #attr a{color:var(--fg2)}
+  #info{position:absolute;inset:0;background:rgba(6,10,16,.93);z-index:20;
+    overflow-y:auto;padding:28px 22px;display:none}
+  #info.show{display:block}
+  #info .wrap{max-width:660px;margin:0 auto;font-size:13px;line-height:1.85}
+  #info h2{font-size:17px;font-weight:500;margin-bottom:4px}
+  #info h3{font-size:13px;font-weight:500;margin:20px 0 6px;color:var(--acc)}
+  #info p{color:#c6d0da;margin-bottom:9px}
+  #info .big{font-size:26px;font-weight:500;color:var(--acc);font-variant-numeric:tabular-nums}
+  #info code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-size:12px}
+  #info ul{margin:0 0 9px 18px;color:#c6d0da}
+  #info li{margin-bottom:4px}
+  #close{position:absolute;top:18px;right:18px;width:auto;padding:7px 13px;font-size:12px}
+  #load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    background:var(--bg);z-index:30;color:var(--fg2);font-size:13px}
+  @media(max-width:680px){
+    #hud{max-width:calc(100% - 28px)}
+    #ctl{top:auto;bottom:118px;right:14px;width:170px}
+    #legend{display:none}
+    #attr{display:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="pane" id="hud">
+  <h1>哈布纳菲厄泽 · 3D 微缩城市</h1>
+  <div class="sub">冰岛 Hafnarfjörður · 2.12 km² 核心区</div>
+  <div id="stats"></div>
+</div>
+
+<div class="pane" id="ctl">
+  <div class="grp">
+    <div class="lbl">配色依据</div>
+    <div class="btns">
+      <button id="mH" class="on">高度</button>
+      <button id="mS">数据来源</button>
+    </div>
+  </div>
+  <div class="grp">
+    <div class="lbl">光照</div>
+    <div class="btns">
+      <button id="tD" class="on">日间</button>
+      <button id="tS">黄昏</button>
+      <button id="tN">夜间</button>
+    </div>
+  </div>
+  <div class="grp">
+    <div class="lbl"><span>高度夸张</span><b id="exV">4.0×</b></div>
+    <input type="range" id="ex" min="1" max="12" step="0.5" value="4">
+  </div>
+  <div class="grp">
+    <div class="btns">
+      <button id="fly">自动巡游</button>
+      <button id="about">数据说明</button>
+    </div>
+  </div>
+</div>
+
+<div class="pane" id="legend">
+  <div class="title" id="legT">按高度着色</div>
+  <div id="legH">
+    <div class="bar"></div>
+    <div class="item" style="justify-content:space-between;color:var(--fg2)">
+      <span>低</span><span>高</span></div>
+  </div>
+  <div id="legS" style="display:none">
+    <div class="item"><i class="sw" style="background:#4ade80"></i>实测 height（<b id="c0">0</b> 栋）</div>
+    <div class="item"><i class="sw" style="background:#fbbf24"></i>由楼层数推算（<b id="c1">0</b> 栋）</div>
+    <div class="item"><i class="sw" style="background:#5a6b7d"></i>按类型/面积估算（<b id="c2">0</b> 栋）</div>
+  </div>
+</div>
+
+<div class="pane" id="attr">
+  建筑几何 © OpenStreetMap 贡献者（ODbL）<br>
+  渲染 Three.js · 数据快照 2026-09-06<br>
+  高度多为推算值，非测绘成果
+</div>
+
+<div id="info">
+  <button id="close">关闭</button>
+  <div class="wrap">
+    <h2>这座城市里，只有 0 栋楼的高度是被测量过的</h2>
+    <p class="sub" style="color:var(--fg2);font-size:12px">一个关于开放地理数据「看起来很精确，其实大量推算」的现场演示</p>
+
+    <h3>先看数字</h3>
+    <p>屏幕上共 <b id="iN">—</b> 栋建筑。其中高度来自 OpenStreetMap 的 <code>height</code> 标签的：
+      <span class="big" id="iPct">—</span> 栋。</p>
+    <p>也就是说，你看到的几乎整个城市天际线——
+      <b id="iEst">—</b> 栋楼的高度——都是<b>推算出来的</b>。</p>
+
+    <h3>高度是怎么来的</h3>
+    <p>开放数据里一栋楼的高度有三个来源，可靠性依次递减：</p>
+    <ul>
+      <li><b>实测</b>（<code>height</code>）：有人真的量过或查过图纸。本区 0 栋。</li>
+      <li><b>楼层数推算</b>（<code>building:levels</code>）：知道有几层，按每层约 3.2 米折算。本区 <b id="iLv">—</b> 栋。</li>
+      <li><b>类型与面积估算</b>：既无高度也无层数，只能按建筑用途和占地大小猜。本区 <b id="iEs2">—</b> 栋。</li>
+    </ul>
+    <p>最后一档的规则示例：车库 3 米；独栋住宅按占地分档 6–9 米；公寓楼按占地开方推层数（约 2–6 层）再乘 3.2 米；教堂 16 米、厂房 9 米。</p>
+
+    <h3>为什么这里几乎没有数据</h3>
+    <p>众包地理数据的完整度与「当地有多少人愿意录入」强相关。首尔市中心约 10% 的建筑带高度标签；
+      而这座三万多人的冰岛港口城市，几乎无人标注高度——全城 2891 栋里只有 <b>1 栋</b>。</p>
+    <p>把配色切到「数据来源」，整片城区会变成灰蓝色：那就是被推算的部分。</p>
+
+    <h3>但「低平」本身是真实的</h3>
+    <p>值得注意的是，本区已知层数的建筑集中在 1–2 层（71 栋）与 4 层（25 栋），
+      footprint 中位数仅 142 m²。这是一座真实的低层小城，
+      所以把大量建筑估成 6–7 米，误差远小于在摩天楼城市里做同样的估算。
+      <b>平坦的天际线不是数据缺陷造成的假象，它就是这座城市的样子。</b></p>
+
+    <h3>另外两处诚实声明</h3>
+    <ul>
+      <li><b>高度被夸张了</b>：默认 4×。因为 6 米的房子放在 1.5 公里的场景里几乎是平的。滑块可以调回 1× 看真实比例。</li>
+      <li><b>轮廓是简化过的</b>：只保留 footprint 外轮廓，屋顶结构、女儿墙、附属物一概没有。</li>
+    </ul>
+
+    <h3>数据链路</h3>
+    <p>Overpass API 取 OSM <code>building</code> 要素 → 坐标相对原点量化为分米整数 →
+      高度分档赋值并标记来源 → 打包后 gzip 约 <b id="iKb">—</b> →
+      浏览器端还原轮廓、挤出体块、合并为单个几何体渲染。</p>
+    <p style="color:var(--fg2);font-size:12px;margin-top:18px">
+      数据来源：© OpenStreetMap 贡献者，ODbL 1.0。本页面为数据可视化演示，非测绘成果，不可用于工程或导航用途。</p>
+  </div>
+</div>
+
+<div id="load">正在载入城市数据…</div>
+
+<script src="data.js"></script>
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const D = window.HAF_DATA;
+if (!D) { document.getElementById('load').textContent = '数据载入失败'; throw new Error('no data'); }
+const N = D.n, G = D.g, H = D.h, S = D.s;
+
+/* ---------- 统计 ---------- */
+const cSrc = [0,0,0];
+for (let i=0;i<N;i++) cSrc[S[i]] = (cSrc[S[i]]||0) + 1;
+const hs = H.map(v=>v/10).sort((a,b)=>a-b);
+const med = hs[Math.floor(hs.length/2)], p90 = hs[Math.floor(hs.length*0.9)], mx = hs[hs.length-1];
+
+let minX=1e9,maxX=-1e9,minZ=1e9,maxZ=-1e9, nv=0;
+for (const g of G) {
+  nv += g.length/2;
+  for (let k=0;k<g.length;k+=2){
+    const x=g[k]/10, z=-g[k+1]/10;
+    if(x<minX)minX=x; if(x>maxX)maxX=x;
+    if(z<minZ)minZ=z; if(z>maxZ)maxZ=z;
+  }
+}
+const CX=(minX+maxX)/2, CZ=(minZ+maxZ)/2;
+const spanX=maxX-minX, spanZ=maxZ-minZ;
+const areaKm2 = (spanX/1000)*(spanZ/1000);
+
+document.getElementById('stats').innerHTML =
+  '<div class="row"><span>建筑</span><span>'+N.toLocaleString()+' 栋</span></div>'+
+  '<div class="row"><span>覆盖</span><span>'+areaKm2.toFixed(2)+' km²</span></div>'+
+  '<div class="row"><span>密度</span><span>'+Math.round(N/areaKm2)+' 栋/km²</span></div>'+
+  '<div class="row"><span>高度中位</span><span>'+med.toFixed(1)+' m</span></div>'+
+  '<div class="row"><span>最高</span><span>'+mx.toFixed(1)+' m</span></div>'+
+  '<div class="row"><span>实测高度</span><span style="color:#4ade80">'+cSrc[0]+' 栋</span></div>';
+document.getElementById('c0').textContent = cSrc[0];
+document.getElementById('c1').textContent = cSrc[1];
+document.getElementById('c2').textContent = cSrc[2];
+document.getElementById('iN').textContent = N.toLocaleString();
+document.getElementById('iPct').textContent = cSrc[0];
+document.getElementById('iEst').textContent = (cSrc[1]+cSrc[2]).toLocaleString();
+document.getElementById('iLv').textContent = cSrc[1];
+document.getElementById('iEs2').textContent = cSrc[2];
+document.getElementById('iKb').textContent = '59 KB';
+
+/* ---------- 场景 ---------- */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, 1, 1, 20000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.06;
+controls.maxPolarAngle = Math.PI*0.495;
+controls.minDistance = 120; controls.maxDistance = 6000;
+
+const hemi = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+scene.add(sun);
+
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(spanX*3, spanZ*3),
+  new THREE.MeshLambertMaterial({color:0x1b2430})
+);
+ground.rotation.x = -Math.PI/2;
+ground.position.set(CX, -0.5, CZ);
+scene.add(ground);
+
+/* ---------- 配色 ---------- */
+const C_LOW  = new THREE.Color(0x8d99a6);
+const C_MID  = new THREE.Color(0xd9c4a9);
+const C_HIGH = new THREE.Color(0x6d94b0);
+const C_SRC  = [new THREE.Color(0x4ade80), new THREE.Color(0xfbbf24), new THREE.Color(0x5a6b7d)];
+const tmp = new THREE.Color();
+
+function colorOf(i, mode, out) {
+  if (mode === 'src') { out.copy(C_SRC[S[i]] || C_SRC[2]); return out; }
+  const t = Math.min(1, (H[i]/10) / 20);
+  if (t < 0.45) out.copy(C_LOW).lerp(C_MID, t/0.45);
+  else out.copy(C_MID).lerp(C_HIGH, (t-0.45)/0.55);
+  return out;
+}
+
+/* ---------- 构建城市 ---------- */
+let mesh = null;
+function buildCity(exag, mode) {
+  const pos = [], col = [];
+  for (let i=0;i<N;i++) {
+    const g = G[i], n = g.length/2;
+    if (n < 3) continue;
+    const xs = new Float64Array(n), zs = new Float64Array(n);
+    for (let k=0;k<n;k++){ xs[k]=g[2*k]/10; zs[k]=-g[2*k+1]/10; }
+    let area = 0;
+    for (let k=0;k<n;k++){ const k2=(k+1)%n; area += xs[k]*zs[k2]-xs[k2]*zs[k]; }
+    if (area > 0) { xs.reverse(); zs.reverse(); }
+    const h = (H[i]/10) * exag;
+    colorOf(i, mode, tmp);
+    const r=tmp.r, gg=tmp.g, b=tmp.b;
+    const rr=Math.min(1,r*1.18), rg=Math.min(1,gg*1.18), rb=Math.min(1,b*1.18);
+    for (let k=0;k<n;k++){
+      const k2=(k+1)%n;
+      const ax=xs[k], az=zs[k], bx=xs[k2], bz=zs[k2];
+      if (Math.abs(bx-ax)<1e-4 && Math.abs(bz-az)<1e-4) continue;
+      pos.push(ax,0,az, bx,0,bz, bx,h,bz);
+      for(let t=0;t<3;t++) col.push(r,gg,b);
+      pos.push(ax,0,az, bx,h,bz, ax,h,az);
+      for(let t=0;t<3;t++) col.push(r,gg,b);
+    }
+    for (let k=1;k<n-1;k++){
+      const x0=xs[0], z0=zs[0], x1=xs[k], z1=zs[k], x2=xs[k+1], z2=zs[k+1];
+      const cr=(x1-x0)*(z2-z0)-(z1-z0)*(x2-x0);
+      if (Math.abs(cr)<1e-4) continue;
+      if (cr<0) pos.push(x0,h,z0, x1,h,z1, x2,h,z2);
+      else      pos.push(x0,h,z0, x2,h,z2, x1,h,z1);
+      for(let t=0;t<3;t++) col.push(rr,rg,rb);
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  geo.computeVertexNormals();
+  if (mesh) { mesh.geometry.dispose(); scene.remove(mesh); }
+  mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({vertexColors:true, flatShading:true, side:THREE.DoubleSide}));
+  scene.add(mesh);
+}
+
+/* ---------- 光照模式 ---------- */
+const MODES = {
+  day:    {bg:0xa8c8e0, sun:0xfff6e0, si:1.7, hemiS:0xbcd8f0, hemiG:0x6b7a5a, hi:0.75, dir:[0.4,0.9,0.3]},
+  sunset: {bg:0xe0a070, sun:0xff9a4d, si:1.5, hemiS:0xf0b080, hemiG:0x5a4a3a, hi:0.55, dir:[-0.9,0.25,0.4]},
+  night:  {bg:0x0b1020, sun:0x6a86c8, si:0.4, hemiS:0x20304f, hemiG:0x101018, hi:0.28, dir:[0.3,0.5,-0.8]}
+};
+function setTime(m) {
+  const c = MODES[m];
+  scene.background = new THREE.Color(c.bg);
+  scene.fog = new THREE.Fog(c.bg, spanX*1.2, spanX*4.5);
+  sun.color.setHex(c.sun); sun.intensity = c.si;
+  const d = new THREE.Vector3(c.dir[0], c.dir[1], c.dir[2]).normalize();
+  sun.position.set(CX + d.x*spanX, d.y*spanX, CZ + d.z*spanX);
+  hemi.color.setHex(c.hemiS); hemi.groundColor.setHex(c.hemiG); hemi.intensity = c.hi;
+  ground.material.color.setHex(m==='night' ? 0x0d1420 : (m==='sunset' ? 0x3a2e26 : 0x1b2430));
+}
+
+/* ---------- 状态 ---------- */
+let exag = 4, mode = 'height', flying = false;
+buildCity(exag, mode); setTime('day');
+
+const R = Math.max(spanX, spanZ) * 0.95;
+camera.position.set(CX + R*0.75, R*0.55, CZ + R*0.75);
+controls.target.set(CX, 0, CZ);
+controls.update();
+
+/* ---------- 交互 ---------- */
+const $ = id => document.getElementById(id);
+$('mH').onclick = () => { mode='height'; $('mH').classList.add('on'); $('mS').classList.remove('on');
+  $('legT').textContent='按高度着色'; $('legH').style.display=''; $('legS').style.display='none'; buildCity(exag, mode); };
+$('mS').onclick = () => { mode='src'; $('mS').classList.add('on'); $('mH').classList.remove('on');
+  $('legT').textContent='按高度数据来源着色'; $('legH').style.display='none'; $('legS').style.display=''; buildCity(exag, mode); };
+const tbtn = {day:$('tD'), sunset:$('tS'), night:$('tN')};
+for (const k in tbtn) tbtn[k].onclick = () => {
+  for (const j in tbtn) tbtn[j].classList.remove('on');
+  tbtn[k].classList.add('on'); setTime(k);
+};
+let pending = null;
+$('ex').oninput = e => {
+  exag = parseFloat(e.target.value); $('exV').textContent = exag.toFixed(1)+'×';
+  if (pending) cancelAnimationFrame(pending);
+  pending = requestAnimationFrame(() => { buildCity(exag, mode); pending = null; });
+};
+$('fly').onclick = e => { flying = !flying; e.target.classList.toggle('on', flying); };
+$('about').onclick = () => $('info').classList.add('show');
+$('close').onclick = () => $('info').classList.remove('show');
+
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w/h; camera.updateProjectionMatrix();
+}
+addEventListener('resize', resize); resize();
+
+let ang = 0;
+function loop() {
+  requestAnimationFrame(loop);
+  if (flying) {
+    ang += 0.0016;
+    camera.position.set(CX + Math.cos(ang)*R*1.05, R*0.5, CZ + Math.sin(ang)*R*1.05);
+    controls.target.set(CX, 0, CZ);
+  }
+  controls.update();
+  renderer.render(scene, camera);
+}
+$('load').style.display = 'none';
+loop();
+</script>
+</body>
+</html>
