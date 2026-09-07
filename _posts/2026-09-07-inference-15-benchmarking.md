@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "推理系统 15：用真实测量解释延迟、吞吐与成本"
-date: 2026-09-07 21:11:00 +0800
+date: 2026-09-07 21:10:00 +0800
 categories: [人工智能, 推理系统]
 tags: [Benchmark, TTFT, TPOT, Throughput, Goodput, Observability]
 description: "建立可复现推理基准：固定软件与请求分布，区分 TTFT、TPOT、ITL、E2EL、吞吐、goodput 与百分位，并避免常见误导。"
