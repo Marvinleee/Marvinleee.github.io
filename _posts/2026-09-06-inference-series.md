@@ -4,7 +4,7 @@ title: "从文本到芯片：大模型推理交互技术系列"
 date: 2026-09-06 23:00:00 +0800
 categories: [人工智能, 推理系统]
 tags: [Qwen, vLLM, GPU, NPU, 交互教学]
-description: "以 Qwen3-8B 为主线，沿文本、Token、张量、调度、算子与硬件执行展开的十五章技术路线。已发布全链路、真实分词与 Transformer 层计算三章。"
+description: "完整十五章交互技术系列：从文本、Token 与 Transformer 数学，到 vLLM 调度、GPU/NPU 架构、多卡并行与性能测量。"
 toc: true
 ---
 
@@ -18,30 +18,42 @@ toc: true
 2. [第 2 章：从 Unicode、聊天模板到 Token 与嵌入张量](/posts/inference-02-text-to-tensor/)——用真实分词样本检查字节、ID、模板和查表之间的关系。
 
 3. [第 3 章：逐项算清一个真实 Qwen3 Transformer 层](/posts/inference-03-transformer-layer/)——推导 QK Norm、RoPE、GQA、残差与门控 MLP，用数值实验验证因果性。
+4. [第 4 章：从 logits 到下一个 Token](/posts/inference-04-logits-sampling/)
+5. [第 5 章：Prefill 与 Decode](/posts/inference-05-prefill-decode/)
+6. [第 6 章：推理内存](/posts/inference-06-memory/)
+7. [第 7 章：量化](/posts/inference-07-quantization/)
+8. [第 8 章：请求进入 vLLM V1](/posts/inference-08-vllm-engine/)
+9. [第 9 章：连续批处理与 Token 调度](/posts/inference-09-scheduling/)
+10. [第 10 章：PagedAttention 与前缀缓存](/posts/inference-10-paged-cache/)
+11. [第 11 章：张量公式到设备程序](/posts/inference-11-operators-kernels/)
+12. [第 12 章：NVIDIA Rubin 与 Blackwell Ultra](/posts/inference-12-nvidia-gpu/)
+13. [第 13 章：Ascend NPU 与 vLLM Ascend](/posts/inference-13-ascend-npu/)
+14. [第 14 章：多卡与 MoE 并行](/posts/inference-14-parallelism/)
+15. [第 15 章：真实性能测量](/posts/inference-15-benchmarking/)
 
 [全屏打开推理链路实验室](/assets/interactive/inference-atlas/)
 
 ## 十五章路线
 
-后续章节下列为规划，尚未发布。没有链接的章节不代表已经完成。
+全系列已经发布。表格概括每章的推导与实验目标。
 
 | 单元 | 章节 | 推导与实验目标 |
 |:--|:--|:--|
 | 输入与模型 | 01 请求全链路（已发布） | 定位数据、组件和执行阶段 |
 | 输入与模型 | 02 文本到张量（已发布） | 真实 Token ID、模板与嵌入查表 |
 | 输入与模型 | 03 一个 Transformer 层（已发布） | RMSNorm、Q/K/V、QK Norm、RoPE、GQA、残差与门控 MLP |
-| 输入与模型 | 04 从 logits 到下一个 Token | 稳定 softmax、温度、概率筛选、采样与停止 |
-| 时间与内存 | 05 Prefill 和 Decode | 矩阵形状、依赖关系、缓存复用、计算与访存 |
-| 时间与内存 | 06 内存究竟用在哪里 | 权重、KV、激活、临时空间、分页及分片 |
-| 时间与内存 | 07 量化 | 表示范围、缩放、误差、分组与实际内核支持 |
-| vLLM | 08 请求进入引擎 | 固定源码版本，追踪服务入口与 V1 引擎 |
-| vLLM | 09 连续批处理 | Token 预算、排队、分块 Prefill、抢占与延迟 |
-| vLLM | 10 分页与前缀缓存 | 逻辑块到物理块、复用、回收及命中边界 |
-| 硬件执行 | 11 算子到设备程序 | 分发、编译、融合、内核启动、执行图与驱动 |
-| 硬件执行 | 12 NVIDIA GPU 架构 | 以届时核验的最新且有充分官方资料的具体产品，研究 SM、Tensor Core、HBM 与互连 |
-| 硬件执行 | 13 一个具体 NPU 平台 | 对照矩阵、向量、片上存储、数据搬运和适配栈 |
-| 系统与验证 | 14 多卡与 MoE | TP、PP、DP、EP 以及 collective 通信代价 |
-| 系统与验证 | 15 性能测量 | TTFT、TPOT、吞吐、尾延迟及可复现基准 |
+| 输入与模型 | 04 [从 logits 到 Token](/posts/inference-04-logits-sampling/) | 稳定 softmax、温度、概率筛选、采样与停止 |
+| 时间与内存 | 05 [Prefill 和 Decode](/posts/inference-05-prefill-decode/) | 矩阵形状、依赖关系、缓存复用、计算与访存 |
+| 时间与内存 | 06 [内存预算](/posts/inference-06-memory/) | 权重、KV、激活、临时空间、分页及分片 |
+| 时间与内存 | 07 [量化](/posts/inference-07-quantization/) | 表示范围、缩放、误差、分组与实际内核支持 |
+| vLLM | 08 [请求进入引擎](/posts/inference-08-vllm-engine/) | 固定源码版本，追踪服务入口与 V1 引擎 |
+| vLLM | 09 [连续批处理](/posts/inference-09-scheduling/) | Token 预算、排队、分块 Prefill、抢占与延迟 |
+| vLLM | 10 [分页与前缀缓存](/posts/inference-10-paged-cache/) | 逻辑块到物理块、复用、回收及命中边界 |
+| 硬件执行 | 11 [算子到设备程序](/posts/inference-11-operators-kernels/) | 分发、编译、融合、内核启动、执行图与驱动 |
+| 硬件执行 | 12 [NVIDIA GPU](/posts/inference-12-nvidia-gpu/) | Rubin 平台、CUDA SM、Tensor Core、HBM 与互连 |
+| 硬件执行 | 13 [Ascend NPU](/posts/inference-13-ascend-npu/) | Cube/Vector/Scalar、CANN、TorchNPU 与插件栈 |
+| 系统与验证 | 14 [多卡与 MoE](/posts/inference-14-parallelism/) | TP、PP、DP、EP 以及 collective 通信代价 |
+| 系统与验证 | 15 [性能测量](/posts/inference-15-benchmarking/) | TTFT、TPOT、吞吐、尾延迟及可复现基准 |
 
 GPU/NPU 章节会区分芯片、板卡、服务器和整机柜，并明确产品资料日期。NPU 不是单一统一架构，不能把一种设备的软件支持外推到全部设备。
 
