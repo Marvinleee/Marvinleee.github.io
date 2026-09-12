@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="color-scheme" content="dark">
+    <meta name="description" content="交互探索 NPO 光电链路中的 SerDes、调制器、WDM、光纤、眼图与误码。">
+    <meta name="robots" content="noindex,follow">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <link rel="canonical" href="https://marvinlee.cn/posts/npo-optical-electrical-link-lab/">
+    <link rel="stylesheet" href="style.css">
+    <title>NPO 光电链路实验室</title>
+  </head>
+  <body>
+    <main class="lab" id="lab">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">NEAR-PACKAGE OPTICS · LINK LAB</p>
+          <h1>NPO 光电链路实验室</h1>
+        </div>
+        <div class="top-actions">
+          <button type="button" id="motion-toggle" aria-pressed="true">暂停信号</button>
+          <button type="button" id="reset-view">恢复默认</button>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="NPO 光电链路交互实验">
+        <aside class="controls" aria-label="链路参数">
+          <div class="preset-row" role="group" aria-label="场景预设">
+            <button type="button" data-preset="nominal" class="active">标称链路</button>
+            <button type="button" data-preset="detune">波长失谐</button>
+            <button type="button" data-preset="loss">电损耗</button>
+            <button type="button" data-preset="noise">抖动噪声</button>
+          </div>
+
+          <fieldset>
+            <legend>光信号</legend>
+            <label>
+              <span>中心波长 <output id="wavelength-value">1311 nm</output></span>
+              <input id="wavelength" aria-label="中心波长（纳米）" type="range" min="1260" max="1360" step="1" value="1311">
+            </label>
+            <label>
+              <span>WDM 通道 <output id="channels-value">4 λ</output></span>
+              <select id="channels" aria-label="WDM 通道数">
+                <option value="1">1 λ</option>
+                <option value="4" selected>4 λ</option>
+                <option value="8">8 λ</option>
+                <option value="16">16 λ</option>
+              </select>
+            </label>
+            <label>
+              <span>通道间隔 <output id="spacing-value">800 GHz</output></span>
+              <select id="spacing" aria-label="WDM 通道间隔">
+                <option value="400">400 GHz</option>
+                <option value="800" selected>800 GHz</option>
+                <option value="1600">1600 GHz</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>电信号</legend>
+            <label>
+              <span>调制格式</span>
+              <select id="modulation">
+                <option value="NRZ">NRZ · 1 bit/symbol</option>
+                <option value="PAM4" selected>PAM4 · 2 bit/symbol</option>
+              </select>
+            </label>
+            <label>
+              <span>测试码型</span>
+              <select id="pattern">
+                <option value="prbs7">PRBS7</option>
+                <option value="prbs15" selected>PRBS15</option>
+                <option value="prbs31">PRBS31</option>
+                <option value="clock">1010 时钟码</option>
+              </select>
+            </label>
+            <label>
+              <span>符号率 <output id="baud-value">53.1 GBd</output></span>
+              <input id="baud" aria-label="符号率（GBd）" type="range" min="25" max="112" step="0.125" value="53.125">
+            </label>
+          </fieldset>
+
+          <details>
+            <summary>链路非理想参数</summary>
+            <div class="advanced">
+              <label>
+                <span>电通道插损 <output id="electrical-loss-value">6.0 dB</output></span>
+                <input id="electrical-loss" aria-label="电通道插损（分贝）" type="range" min="2" max="18" step="0.5" value="6">
+              </label>
+              <label>
+                <span>随机抖动 <output id="jitter-value">0.40 ps RMS</output></span>
+                <input id="jitter" aria-label="随机抖动（皮秒 RMS）" type="range" min="0.1" max="3" step="0.1" value="0.4">
+              </label>
+              <label>
+                <span>PIC 温度 <output id="temperature-value">35 °C</output></span>
+                <input id="temperature" aria-label="PIC 温度（摄氏度）" type="range" min="20" max="75" step="1" value="35">
+              </label>
+              <label>
+                <span>光链路损耗 <output id="optical-loss-value">4.0 dB</output></span>
+                <input id="optical-loss" aria-label="光链路损耗（分贝）" type="range" min="1" max="15" step="0.5" value="4">
+              </label>
+              <label>
+                <span>单通道发射功率 <output id="launch-power-value">2.0 dBm</output></span>
+                <input id="launch-power" aria-label="单通道发射功率（dBm）" type="range" min="-2" max="6" step="0.5" value="2">
+              </label>
+            </div>
+          </details>
+        </aside>
+
+        <section class="stage">
+          <div class="metrics" aria-label="实时链路指标">
+            <div><span>总原始带宽</span><strong id="throughput">425 Gb/s</strong></div>
+            <div><span>接收光功率 / 通道</span><strong id="rx-power">−2.0 dBm</strong></div>
+            <div><span>眼图开度估算</span><strong id="eye-opening">65%</strong></div>
+            <div><span>原始 BER 估算</span><strong id="ber">1.0e−9</strong></div>
+          </div>
+
+          <div class="scene-wrap">
+            <canvas id="link-scene" aria-label="从交换 ASIC 经 NPO 光引擎到光纤接收端的链路动画"></canvas>
+            <div class="scene-legend" aria-hidden="true">
+              <span><i class="electrical"></i>电符号</span>
+              <span><i class="optical"></i>光包络（伪彩色）</span>
+            </div>
+          </div>
+
+          <div class="instruments">
+            <figure>
+              <figcaption>电发送波形与 NPO 输入</figcaption>
+              <canvas id="waveform" aria-label="发送端与经过电通道后的电信号波形"></canvas>
+            </figure>
+            <figure>
+              <figcaption>接收眼图</figcaption>
+              <canvas id="eye" aria-label="根据当前链路参数估算的接收眼图"></canvas>
+            </figure>
+            <figure>
+              <figcaption>WDM 光谱（伪彩色）</figcaption>
+              <canvas id="spectrum" aria-label="当前 WDM 波长通道的光谱分布"></canvas>
+            </figure>
+          </div>
+
+          <div class="causal" id="causal" role="status" aria-live="polite"></div>
+          <p class="model-note">教学估算模型：展示参数之间的方向性因果，不替代器件模型、S 参数、示波器或合规性测试。</p>
+        </section>
+      </section>
+
+      <section class="text-summary" aria-labelledby="summary-title">
+        <h2 id="summary-title">当前链路文本摘要</h2>
+        <p id="accessible-summary"></p>
+      </section>
+    </main>
+    <script src="app.js" defer></script>
+  </body>
+</html>
