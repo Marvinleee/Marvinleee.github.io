@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "从 SerDes 到光纤：可交互的 NPO 光电链路实验室"
-date: 2026-09-12 17:20:00 +0800
+date: 2026-09-12 17:00:00 +0800
 categories: [光通信, 交互可视化]
 tags: [NPO, 硅光, SerDes, PAM4, WDM, 眼图, BER]
 description: "调节波长、WDM 通道、NRZ/PAM4、PRBS、符号率、损耗、抖动与温度，观察 NPO 链路如何从电波形影响到光谱、眼图和误码。"
