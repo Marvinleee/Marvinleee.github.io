@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Recurrent Looped Transformer（RLT）原创交互式架构解读：连续状态、双重记忆、时间深度与精确回放。">
+  <title>RLT 状态回路实验室</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="/posts/recurrent-looped-transformer-visual-guide/" target="_top">← 返回文章</a>
+    <span>RLT / ORIGINAL TEACHING RECONSTRUCTION</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">RECURRENT LOOPED TRANSFORMER</p>
+        <h1>状态回路实验室</h1>
+        <p class="lead">沿 Token 时间轴追踪三条不同的“记忆”：全局编码器记忆、局部 Decoder KV，以及跨 Token 延续的隐藏状态。</p>
+      </div>
+      <div class="evidence"><span>证据等级</span><strong>架构定义 + 解析计数</strong><small>不是模型输出或性能实测</small></div>
+    </section>
+
+    <section class="control-panel" aria-label="可视化参数">
+      <label>已处理 Token <input id="tokenCount" type="range" min="3" max="12" value="8"><output id="tokenCountOut">8</output></label>
+      <label>Prompt 结束位置 <input id="split" type="range" min="1" max="7" value="5"><output id="splitOut">5</output></label>
+      <label><span>Decoder 层数 L<sub>D</sub></span><input id="layers" type="range" min="2" max="48" step="2" value="48"><output id="layersOut">48</output></label>
+      <label>SWA 窗口 W <input id="window" type="range" min="1" max="6" value="4"><output id="windowOut">4</output></label>
+      <button id="play" type="button">▶ 逐 Token 播放</button>
+    </section>
+
+    <nav class="tabs" aria-label="观察视角">
+      <button class="active" data-view="path" aria-pressed="true">01 状态如何连续</button>
+      <button data-view="memory" aria-pressed="false">02 三种记忆</button>
+      <button data-view="replay" aria-pressed="false">03 为什么必须回放</button>
+    </nav>
+
+    <section id="pathView" class="view active-view">
+      <div class="section-head"><div><p class="eyebrow">COMPLETE-STATE RECURRENCE</p><h2>Prompt 与 Response 共用同一个状态转移</h2></div><p>点选任一 Token，查看它读取了什么、写回了什么。移动边界只改变标签，不改变计算。</p></div>
+      <div id="timeline" class="timeline" aria-label="Token 状态转移图"></div>
+      <article class="inspector" aria-live="polite">
+        <div><span>当前步骤</span><strong id="stepLabel">x₁</strong></div>
+        <div><span>合并输入</span><strong>e<sub>t</sub> + s<sub>t−1</sub></strong></div>
+        <div><span>Decoder 读取</span><strong>M<sub>≤t</sub> + C<sup>D</sup><sub>t−1</sub></strong></div>
+        <div><span>完整写回</span><strong>H<sub>t</sub> = (s<sub>t</sub>, C<sup>D</sup><sub>t</sub>)</strong></div>
+      </article>
+      <div class="metrics">
+        <div><span>当前状态路径</span><strong id="pathDepth">384</strong><small>t × L<sub>D</sub> 个 Decoder block</small></div>
+        <div><span>每 Token 逻辑层数</span><strong id="perToken">96</strong><small>L<sub>E</sub> + L<sub>D</sub>；此处 L<sub>E</sub>=L<sub>D</sub></small></div>
+        <div><span>边界重置次数</span><strong>0</strong><small>Prompt / Response 之间不清空状态</small></div>
+      </div>
+    </section>
+
+    <section id="memoryView" class="view" hidden>
+      <div class="section-head"><div><p class="eyebrow">THREE MEMORY ROLES</p><h2>“有 KV Cache”并不意味着只有一种缓存</h2></div><p>下面显示被选 Token 更新完成后的概念容量；格子代表位置，不代表字节数。</p></div>
+      <div class="memory-grid">
+        <article><div class="memory-title"><span class="dot blue"></span><div><h3>全局 Encoder Memory</h3><p>M<sub>≤t</sub>，随前缀增长</p></div><strong id="globalCount">8</strong></div><div id="globalCells" class="cells"></div><p>由 Encoder 表征投影出的 K/V，供 Decoder cross-attention 读取。</p></article>
+        <article><div class="memory-title"><span class="dot orange"></span><div><h3>局部 Decoder SWA KV</h3><p>C<sup>D</sup><sub>t</sub>，每层独立</p></div><strong id="localCount">3</strong></div><div id="localCells" class="cells"></div><p>最多保留 W−1 个历史位置；旧位置被逐出后仍可能已写入状态。</p></article>
+        <article><div class="memory-title"><span class="dot green"></span><div><h3>循环隐藏状态</h3><p>s<sub>t</sub>，固定一个向量</p></div><strong>1</strong></div><div class="state-orb"><span>s<sub>t</sub></span></div><p>它不是历史 Token 列表，而是压缩后的连续中间状态。</p></article>
+      </div>
+      <div class="callout"><strong>关键区别</strong><p>Encoder Memory 提供全局上下文，Decoder SWA KV 提供最近的 Decoder 激活，s<sub>t</sub> 延续跨 Token 的隐状态。三者不可互相替代。</p></div>
+    </section>
+
+    <section id="replayView" class="view" hidden>
+      <div class="section-head"><div><p class="eyebrow">CURRENT-POLICY REPLAY</p><h2>参数更新后，旧隐藏状态为什么“过期”</h2></div><p>这是论文定义的训练一致性要求，不是性能对比。</p></div>
+      <div class="replay-flow">
+        <article class="sampler"><span>① SAMPLER / 旧参数</span><h3>采样一条回复</h3><p>保存 Token 与真实行为概率 log μ；隐藏状态和 KV 只对应当时的参数。</p></article>
+        <div class="arrow">→</div>
+        <article class="update"><span>② OPTIMIZER</span><h3>参数发生更新</h3><p>同一段文本，在新参数下通常会产生不同的 Encoder KV、s<sub>t</sub> 与 Decoder KV。</p></article>
+        <div class="arrow">→</div>
+        <article class="trainer"><span>③ TRAINER / 当前参数</span><h3>从序列起点重建</h3><p>保留旧 log μ 作分母；用当前参数完整回放 Prompt 与已采样 Response，得到 log p<sub>Θ</sub>。</p></article>
+      </div>
+      <button id="toggleStale" class="demo-button" type="button">尝试复用旧状态</button>
+      <div id="replayResult" class="replay-result" aria-live="polite"><strong>等待实验</strong><p>点击按钮查看证据链。</p></div>
+      <div class="formula">r<sub>i</sub>(Θ) = exp[ log p<sub>Θ</sub>(y<sub>i</sub>|c,y&lt;i) − log μ(y<sub>i</sub>|c,y&lt;i) ]</div>
+    </section>
+
+    <section class="reading-key">
+      <h2>先把四类陈述分开</h2>
+      <div><span class="badge defined">论文定义</span><p>状态转移、缓存语义、因果性与回放流程。</p></div>
+      <div><span class="badge derived">解析推导</span><p>tL<sub>D</sub> 路径深度、每 Token 逻辑 block 数和缓存阶数。</p></div>
+      <div><span class="badge goal">研究目标</span><p>更强推理、更好硬件利用率、可靠 RL 扩展；尚待实验验证。</p></div>
+      <div><span class="badge simulation">本站模拟</span><p>本页动画与格子图为原创教学重绘，不运行 RLT 模型。</p></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>依据 Yifan Zhang, <em>Recurrent Looped Transformer</em>, 2026-09-12，仓库修订 <code>1bee93a</code>。原仓库未提供许可证，故本站未复制其图像或 PDF 内容，页面结构、文字与代码均为独立教学重绘。</p>
+    <p><a href="https://github.com/yifanzhang-pro/recurrent-looped-tranformer/tree/1bee93a9b01c21bea0c7a50ce3f6619f24731e19" target="_blank" rel="noopener">固定版本仓库</a> · <a href="https://github.com/yifanzhang-pro/recurrent-looped-tranformer/blob/1bee93a9b01c21bea0c7a50ce3f6619f24731e19/Recurrent_Looped_Transformer.pdf" target="_blank" rel="noopener">技术报告 PDF</a></p>
+  </footer>
+  <script src="./app.js"></script>
+</body>
+</html>
