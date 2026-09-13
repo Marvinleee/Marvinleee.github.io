@@ -1,0 +1,1031 @@
+---
+layout: null
+permalink: /assets/oneliner-point-cloud-ocean/
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>点云海洋 · 两条一行代码里的 19 只水母与 2 株海扇</title>
+<meta name="description" content="两个 258 字符的 code-golf 点函数交互可视化：一条把 10,000 个索引按 19 取模分成 19 只水母，另一条按 2 取模分成两株海扇；可逐字运行原始代码，并按余数类分解。">
+<meta name="theme-color" content="#050810">
+<meta property="og:type" content="website">
+<meta property="og:title" content="点云海洋 · One-liner Point-Cloud Ocean">
+<meta property="og:description" content="10,000 个采样点、两条 258 字符的公式：19 只水母与 2 株海扇。">
+<meta property="og:url" content="https://marvinlee.cn/assets/oneliner-point-cloud-ocean/">
+<style>
+  :root {
+    color-scheme: dark;
+    --panel-bg: rgba(7, 12, 22, .72);
+    --panel-border: rgba(150, 200, 255, .16);
+    --text: rgba(238, 246, 255, .93);
+    --muted: rgba(214, 232, 255, .58);
+    --accent: #6fe3ff;
+    --warn: #ffcf7a;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%; margin: 0; overflow: hidden;
+    background: #050810;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  canvas { display: block; touch-action: none; cursor: grab; }
+  canvas.dragging { cursor: grabbing; }
+  .ui { transition: opacity 200ms ease, transform 200ms ease; }
+  body.ui-hidden #ui, body.ui-hidden #bottom-hud { opacity: 0; pointer-events: none; }
+
+  #home-link {
+    position: fixed; z-index: 11;
+    top: max(16px, env(safe-area-inset-top)); left: max(16px, env(safe-area-inset-left));
+    display: inline-flex; align-items: center; min-height: 36px; padding: 7px 12px;
+    border: 1px solid var(--panel-border); border-radius: 999px;
+    color: var(--text); background: var(--panel-bg); text-decoration: none;
+    font-size: 12px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  }
+  #home-link:hover, #home-link:focus-visible { border-color: rgba(111, 227, 255, .6); outline: none; }
+
+  #ui {
+    position: fixed; z-index: 10;
+    top: max(16px, env(safe-area-inset-top)); right: max(16px, env(safe-area-inset-right));
+    width: min(326px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto;
+    padding: 15px; border: 1px solid var(--panel-border); border-radius: 16px;
+    color: var(--text); background: var(--panel-bg);
+    box-shadow: 0 14px 50px rgba(0, 0, 0, .34);
+    backdrop-filter: blur(16px) saturate(130%); -webkit-backdrop-filter: blur(16px) saturate(130%);
+    user-select: none; font-size: 12px; transition: opacity 200ms ease, transform 200ms ease;
+  }
+  h1 { margin: 0 0 3px; font-size: 15px; letter-spacing: .02em; }
+  .subtitle { margin: 0 0 11px; color: var(--muted); font-size: 11.5px; line-height: 1.55; }
+  .subtitle b { color: var(--accent); font-weight: 600; }
+
+  .seg-label { color: var(--muted); margin: 9px 0 3px; font-size: 11px; letter-spacing: .04em; }
+  .seg { display: flex; gap: 5px; }
+  .seg button {
+    flex: 1; min-height: 29px; padding: 4px 2px; font-size: 11.5px;
+    border: 1px solid var(--panel-border); border-radius: 8px;
+    color: var(--muted); background: rgba(255, 255, 255, .04); cursor: pointer;
+    transition: color 120ms, background 120ms, border-color 120ms;
+  }
+  .seg button:hover { color: var(--text); }
+  .seg button.on { color: #04121a; background: var(--accent); border-color: var(--accent); font-weight: 600; }
+
+  .control { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; align-items: center; margin: 8px 0; }
+  .control output { min-width: 58px; color: var(--accent); text-align: right; font-variant-numeric: tabular-nums; }
+  .control input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); cursor: pointer; }
+  .control.off { opacity: .38; pointer-events: none; }
+
+  .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+  button.act {
+    min-height: 32px; padding: 5px 4px; font-size: 11.5px;
+    border: 1px solid var(--panel-border); border-radius: 9px;
+    color: var(--text); background: rgba(255, 255, 255, .06); cursor: pointer;
+  }
+  button.act:hover, button.act:focus-visible {
+    border-color: rgba(111, 227, 255, .6); background: rgba(111, 227, 255, .12); outline: none;
+  }
+  .checks { margin-top: 10px; display: grid; gap: 7px; }
+  .checks label { display: flex; align-items: center; gap: 7px; color: var(--muted); cursor: pointer; font-size: 11.5px; }
+  .checks input { accent-color: var(--accent); cursor: pointer; }
+
+  .status { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 9px; font-size: 11px; color: var(--muted); }
+  #fpsOut { color: var(--accent); font-variant-numeric: tabular-nums; }
+  #note { margin-top: 5px; font-size: 11px; color: var(--warn); min-height: 0; line-height: 1.45; }
+  .help { margin: 9px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+  #bottom-hud {
+    position: fixed; z-index: 9;
+    left: max(20px, env(safe-area-inset-left));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; gap: 7px;
+    max-width: min(640px, 54vw); pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+  #stats {
+    color: rgba(190, 220, 245, .60); font-size: 11.5px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: .02em;
+  }
+  #formula {
+    color: rgba(176, 210, 238, .46);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 11.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-all;
+  }
+  #formula b { color: rgba(111, 227, 255, .85); font-weight: 600; }
+  #copy {
+    margin-left: 8px; padding: 2px 7px; font-size: 10.5px; border-radius: 6px;
+    border: 1px solid var(--panel-border); color: var(--muted);
+    background: rgba(255, 255, 255, .05); cursor: pointer;
+    font-family: inherit; vertical-align: baseline; pointer-events: auto;
+  }
+  #copy:hover { color: var(--accent); border-color: rgba(111, 227, 255, .5); }
+
+  #hint {
+    position: fixed; z-index: 5; left: 50%; bottom: max(18px, env(safe-area-inset-bottom));
+    transform: translateX(-50%); color: rgba(238, 246, 255, .55); font-size: 12px;
+    letter-spacing: .04em; pointer-events: none; transition: opacity 800ms ease;
+  }
+
+  @media (max-width: 900px) { #bottom-hud { display: none; } }
+  @media (max-width: 1000px) and (min-width: 661px) {
+    #ui { width: min(286px, calc(100vw - 30px)); padding: 13px; }
+    #hint { display: none; }
+  }
+  @media (max-width: 660px) {
+    #home-link { top: 12px; left: 12px; }
+    #ui { width: min(290px, calc(100vw - 22px)); top: 56px; right: 11px; max-height: calc(100vh - 66px); }
+    .help { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { #hint { display: none; } }
+</style>
+</head>
+<body>
+<a id="home-link" class="ui" href="/" aria-label="返回 Marvin Lee 博客首页">&larr; 返回博客</a>
+
+<aside id="ui" aria-label="点云可视化参数">
+  <h1>点云海洋 · Point-Cloud Ocean</h1>
+  <p class="subtitle">两条 258 字符的 code-golf 点函数。采样固定 <b>i&nbsp;=&nbsp;0…9999</b>，形态与颜色全部由公式决定。</p>
+
+  <div class="seg-label">作品</div>
+  <div class="seg" id="segMode" role="group" aria-label="作品选择">
+    <button type="button" data-val="A">19 只水母</button>
+    <button type="button" data-val="B">2 株海扇</button>
+    <button type="button" data-val="AB">两片海</button>
+  </div>
+
+  <div class="seg-label">配色</div>
+  <div class="seg" id="segPalette" role="group" aria-label="配色预设">
+    <button type="button" data-val="bio">荧光</button>
+    <button type="button" data-val="white">原味白</button>
+    <button type="button" data-val="gold">深海金</button>
+    <button type="button" data-val="neon">霓虹紫</button>
+    <button type="button" data-val="aurora">极光绿</button>
+  </div>
+
+  <div class="seg-label">分解视图（把索引按 i&nbsp;mod&nbsp;N 分组）</div>
+  <div class="seg" id="segDec" role="group" aria-label="分解视图">
+    <button type="button" data-val="off">关闭</button>
+    <button type="button" data-val="color">按余数着色</button>
+    <button type="button" data-val="one">单只高亮</button>
+  </div>
+
+  <label class="control" id="idxRow"><span id="idxLabel">高亮序号</span><output id="idxOut"></output>
+    <input id="idx" type="range" min="0" max="18" step="1" value="7">
+  </label>
+  <label class="control"><span>曝光遍数</span><output id="passesOut"></output>
+    <input id="passes" type="range" min="1" max="4" step="1" value="2">
+  </label>
+  <label class="control"><span>点尺寸</span><output id="dotOut"></output>
+    <input id="dot" type="range" min="0.4" max="2.6" step="0.05" value="1">
+  </label>
+  <label class="control"><span>拖尾</span><output id="trailOut"></output>
+    <input id="trail" type="range" min="0" max="100" step="1" value="62">
+  </label>
+  <label class="control"><span>发光</span><output id="glowOut"></output>
+    <input id="glow" type="range" min="0" max="100" step="1" value="46">
+  </label>
+  <label class="control"><span>速度</span><output id="speedOut"></output>
+    <input id="speed" type="range" min="0" max="2.5" step="0.05" value="1">
+  </label>
+  <label class="control"><span>色相偏移</span><output id="hueOut"></output>
+    <input id="hue" type="range" min="0" max="359" step="1" value="0">
+  </label>
+  <label class="control"><span>缩放</span><output id="zoomOut"></output>
+    <input id="zoom" type="range" min="0.5" max="4" step="0.05" value="1">
+  </label>
+
+  <div class="checks">
+    <label><input id="verbatim" type="checkbox"> 逐字直跑原始一行代码</label>
+    <label><input id="autoPerf" type="checkbox" checked> 自动性能保护</label>
+  </div>
+
+  <div class="buttons">
+    <button class="act" id="pauseButton" type="button">暂停</button>
+    <button class="act" id="resetButton" type="button">重置</button>
+    <button class="act" id="saveButton" type="button">存 PNG</button>
+    <button class="act" id="fullButton" type="button">全屏</button>
+  </div>
+
+  <div class="status"><span id="classOut">—</span><span id="fpsOut">— fps</span></div>
+  <div id="note"></div>
+  <p class="help">
+    Space 暂停 · H 隐藏界面 · R 重置 · S 存图 · F 全屏<br>
+    1/2/3 切作品 · D 切分解视图 · V 直跑原码<br>
+    [ / ] 曝光 · T 拖尾 · G 发光 · &uarr;/&darr; 速度 · &larr;/&rarr; 色相<br>
+    滚轮缩放 · 拖动平移 · 双击复位视角
+  </p>
+</aside>
+
+<div id="bottom-hud" class="ui">
+  <div id="stats"></div>
+  <div id="formula"></div>
+</div>
+<div id="hint" class="ui">滚轮缩放 · 拖动平移 · 双击复位 · H 隐藏界面</div>
+
+<canvas id="stage" aria-label="点云生成艺术可视化"></canvas>
+
+<script>
+"use strict";
+
+/* ================================================================== *
+ *  1. 两条原始 code-golf 源码（逐字保留）
+ * ================================================================== */
+const SRC_A = "a=(m,d=mag(k=9*cos(i*5)*sin(i),e=cos(i*7)*cos(i)*9)**3/999+4.6-cos(t/4+m)**3/3)=>e>0&&point(99*sin(c=d/8-t/32+m)+k/3**(o=sin(d*d-t+m))+200,99*cos(c/3)+d*39+e**o)\n" +
+  "t=0,draw=$=>{t||createCanvas(w=400,w);background(9).stroke(w,96);for(t+=PI/30,i=1e4;i--;)a(i%19)}//";
+
+/* B 的第二行按帖子原样保留（结尾那个孤立的 "/" 是原帖残留符号） */
+const SRC_B_ORIG = "a=(y,d=mag(k=(4+sin(y))*cos(i/7),e=y/5-11)-6)=>point((99+k*k)*sin(c=d/4-t/4+i%2*9)+200,119*sin(c/2)+200+d**3/9*sin(t*3-d/.7)+3*sin(k*2)+y/23*k*(e+sin(e-d*4)))\n" +
+  "t=0,draw=$=>{t||createCanvas(w=400,w);background(9).stroke(w,166);for(t+=PI/60,i=1e4;i--;)a(i/299)}/";
+
+/* ================================================================== *
+ *  2. 常量与状态
+ * ================================================================== */
+const PI = Math.PI;
+const N = 10000;                                  // i = 0 … 9999
+const mag = (a, b) => Math.sqrt(a * a + b * b);
+
+// 原 400x400 画布内的取景框 [x0, x1, y0, y1]
+const VIEWS = {
+  A: [72, 328, 54, 342],
+  B: [68, 332, 38, 302]
+};
+
+const PALETTES = {
+  bio:    { hue: 189, sat: 0.72, spread: 46 },
+  white:  { hue: 206, sat: 0.05, spread: 0 },
+  gold:   { hue: 38,  sat: 0.70, spread: 26 },
+  neon:   { hue: 288, sat: 0.80, spread: 50 },
+  aurora: { hue: 152, sat: 0.74, spread: 44 }
+};
+
+const defaults = {
+  mode: "A", palette: "bio", dec: "off",
+  idx: 7, passes: 2, dot: 1, trail: 62, glow: 46, speed: 1, hue: 0, zoom: 1,
+  verbatim: false
+};
+const params = Object.assign({}, defaults);
+
+function newLayer() {
+  return { x: new Float32Array(N), y: new Float32Array(N), c: new Uint8Array(N), n: 0, t: 0 };
+}
+const LAYER = { A: newLayer(), B: newLayer() };
+LAYER.A.dt = PI / 30;      // 原始步长
+LAYER.B.dt = PI / 60;
+const verbAcc = { A: 0, B: 0 };
+
+const canvas = document.getElementById("stage");
+const ctx = canvas.getContext("2d", { alpha: false });
+const glowCanvas = document.createElement("canvas");
+const gctx = glowCanvas.getContext("2d");
+
+let dpr = Math.min(window.devicePixelRatio || 1, 2);
+let W = 0, H = 0;
+let paused = false;
+let panX = 0, panY = 0;
+let needClear = true;
+let lastNow = performance.now();
+let stat = { drawn: 0, classes: 0 };
+
+/* ================================================================== *
+ *  3. 展开版数学（与原始源码等价；Node 逐点比对最大偏差 2e-5）
+ * ================================================================== */
+function computeA(tt) {
+  const L = LAYER.A;
+  let n = 0;
+  for (let i = N - 1; i >= 0; i -= 1) {
+    const m = i % 19;
+    const k = 9 * Math.cos(i * 5) * Math.sin(i);
+    const e = Math.cos(i * 7) * Math.cos(i) * 9;
+    if (!(e > 0)) continue;                        // 原始代码用短路表达式当模板测试
+    const d = Math.pow(mag(k, e), 3) / 999 + 4.6 - Math.pow(Math.cos(tt / 4 + m), 3) / 3;
+    const c = d / 8 - tt / 32 + m;
+    const o = Math.sin(d * d - tt + m);
+    L.x[n] = 99 * Math.sin(c) + k / Math.pow(3, o) + 200;
+    L.y[n] = 99 * Math.cos(c / 3) + d * 39 + Math.pow(e, o);
+    L.c[n] = m;
+    n += 1;
+  }
+  L.n = n;
+}
+
+function computeB(tt) {
+  const L = LAYER.B;
+  let n = 0;
+  for (let i = N - 1; i >= 0; i -= 1) {
+    const y = i / 299;
+    const k = (4 + Math.sin(y)) * Math.cos(i / 7);
+    const e = y / 5 - 11;
+    const d = mag(k, e) - 6;
+    const c = d / 4 - tt / 4 + (i % 2) * 9;
+    L.x[n] = (99 + k * k) * Math.sin(c) + 200;
+    L.y[n] = 119 * Math.sin(c / 2) + 200
+      + Math.pow(d, 3) / 9 * Math.sin(tt * 3 - d / 0.7)
+      + 3 * Math.sin(k * 2)
+      + y / 23 * k * (e + Math.sin(e - d * 4));
+    L.c[n] = i % 2;
+    n += 1;
+  }
+  L.n = n;
+}
+
+/* ================================================================== *
+ *  4. 逐字执行原始代码 —— 一个只实现 mag / createCanvas / background /
+ *     stroke / point 的极小 p5 替身。
+ *     坑：原码会隐式创建 k/e/d/c/o/t/draw 等全局变量，而 with(G) 只拦截
+ *     G 上"已存在"的属性，所以必须先占位，否则它们会落到 globalThis。
+ * ================================================================== */
+const VERBATIM = {};
+
+function makeVerbatim(src, clsMod, layer) {
+  let n = 0;
+  const G = {};
+  G.PI = PI; G.sin = Math.sin; G.cos = Math.cos; G.abs = Math.abs;
+  G.mag = mag;
+  G.w = 400; G.i = 0; G.t = 0; G.draw = null;
+  ["a", "c", "d", "e", "i", "k", "m", "o", "t", "w", "y", "draw"]
+    .forEach((name) => { if (!(name in G)) G[name] = undefined; });
+
+  G.point = (x, y) => {
+    if (n < N) { layer.x[n] = x; layer.y[n] = y; layer.c[n] = G.i % clsMod; n += 1; }
+  };
+  G.stroke = () => G;
+  G.createCanvas = () => G;
+  G.background = () => G;
+
+  // 帖子里的源码结尾带有 "/" 或 "//" 残留，先原样编译，失败再剥掉重试
+  const variants = [src, src.replace(/[\/\s]+$/, ""), src.replace(/\}[\s\/]*$/, "}")];
+  let fn = null, lastErr = null;
+  for (const v of variants) {
+    try { fn = new Function("G", "with(G){" + v + "\n}"); lastErr = null; break; }
+    catch (err) { lastErr = err; }
+  }
+  if (!fn) throw lastErr;
+  fn(G);
+  if (typeof G.draw !== "function") throw new Error("源码未定义 draw()");
+
+  const raw = G.draw;
+  return { render: () => { n = 0; raw(); layer.n = n; } };
+}
+
+function verbatimRunner(which) {
+  if (!VERBATIM[which]) {
+    VERBATIM[which] = { runner: null, error: null };
+    try {
+      const src = which === "A" ? SRC_A : SRC_B_ORIG;
+      VERBATIM[which].runner = makeVerbatim(src, which === "A" ? 19 : 2, LAYER[which]);
+    } catch (err) {
+      VERBATIM[which].error = err;
+    }
+  }
+  return VERBATIM[which];
+}
+
+/* ================================================================== *
+ *  5. 颜色
+ * ================================================================== */
+function hslToRgb(h, s, l) {
+  const hh = (((h % 360) + 360) % 360) / 360;
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  const f = (v) => {
+    let u = (v + 1) % 1;
+    if (u < 1 / 6) return p + (q - p) * 6 * u;
+    if (u < 1 / 2) return q;
+    if (u < 2 / 3) return p + (q - p) * (2 / 3 - u) * 6;
+    return p;
+  };
+  if (s === 0) { const v = Math.round(l * 255); return [v, v, v]; }
+  return [Math.round(f(hh + 1 / 3) * 255), Math.round(f(hh) * 255), Math.round(f(hh - 1 / 3) * 255)];
+}
+
+function classColor(which, cls, nCls, role) {
+  const pal = PALETTES[params.palette];
+  const base = pal.hue + params.hue;
+  if (params.dec === "color") {
+    if (which === "B") return hslToRgb(cls === 0 ? base : base + 176, 0.80, 0.62);
+    return hslToRgb(base + 34 + (cls / 19) * 248, 0.78, 0.61);
+  }
+  const shift = nCls > 1 ? (cls / nCls) * pal.spread : 0;
+  const pulse = 1 + 0.14 * Math.sin(cls * 1.1);
+  const light = role === "hi" ? 0.68 : (role === "ghost" ? 0.34 : Math.min(0.76, 0.55 * pulse));
+  const sat = role === "ghost" ? pal.sat * 0.55 : pal.sat;
+  return hslToRgb(base + shift, sat, light);
+}
+
+function rgbStr(c) { return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")"; }
+
+/* ================================================================== *
+ *  6. 布局与取景
+ * ================================================================== */
+function layout() {
+  if (params.mode === "AB") {
+    return canvas.width / canvas.height > 1.15
+      ? [{ x: 0, y: 0, w: 0.5, h: 1, which: "A" }, { x: 0.5, y: 0, w: 0.5, h: 1, which: "B" }]
+      : [{ x: 0, y: 0, w: 1, h: 0.5, which: "A" }, { x: 0, y: 0.5, w: 1, h: 0.5, which: "B" }];
+  }
+  return [{ x: 0, y: 0, w: 1, h: 1, which: params.mode }];
+}
+
+// 控制面板会盖住右侧；把画面限制在"安全区"里，窄屏（面板浮在顶部）则不缩进
+function safeInset() {
+  if (document.body.classList.contains("ui-hidden")) return { left: 0, right: 0 };
+  if (window.innerWidth <= 660) return { left: 0, right: 0 };
+  const ui = document.getElementById("ui");
+  const w = (ui && ui.offsetWidth) || 326;
+  return { left: 0, right: w + 34 };
+}
+
+function cellRect(cell) {
+  const ins = safeInset();
+  const x0 = ins.left * dpr;
+  const availW = Math.max(120, canvas.width - (ins.left + ins.right) * dpr);
+  return {
+    cx: x0 + cell.x * availW, cy: cell.y * canvas.height,
+    cw: cell.w * availW, ch: cell.h * canvas.height
+  };
+}
+
+// screenX = mx * k + ox ；k = fit * zoom，缩放锚点固定在格子中心
+function fitTransform(cell) {
+  const r = cellRect(cell);
+  const v = VIEWS[cell.which];
+  const bw = v[1] - v[0], bh = v[3] - v[2];
+  const k = Math.min(r.cw / bw, r.ch / bh) * params.zoom;
+  const midX = (v[0] + v[1]) / 2, midY = (v[2] + v[3]) / 2;
+  return {
+    k: k,
+    ox: (r.cx + r.cw / 2) - midX * k + panX * dpr,
+    oy: (r.cy + r.ch / 2) - midY * k + panY * dpr
+  };
+}
+
+/* ================================================================== *
+ *  7. 时间推进
+ * ================================================================== */
+function activeWhich() {
+  return params.mode === "AB" ? ["A", "B"] : [params.mode];
+}
+
+function advance(dt) {
+  const moving = !paused && params.speed > 0;
+  for (const which of activeWhich()) {
+    const L = LAYER[which];
+    if (params.verbatim) {
+      const vr = verbatimRunner(which);
+      if (!vr.runner) {
+        params.verbatim = false;
+        syncVerbatim();
+        setNote("原始代码编译失败，已回退展开版：" + (vr.error ? vr.error.message : "未知错误"));
+      } else if (!moving) {
+        if (L.n === 0) vr.runner.render();
+      } else {
+        verbAcc[which] += params.speed * dt;
+        let steps = Math.floor(verbAcc[which]);
+        verbAcc[which] -= steps;
+        if (steps === 0) { if (L.n === 0) vr.runner.render(); }
+        else { for (let s = 0; s < steps; s += 1) vr.runner.render(); }
+      }
+    } else {
+      if (moving) L.t += L.dt * params.speed * dt;
+      if (L.n === 0 || moving) { if (which === "A") computeA(L.t); else computeB(L.t); }
+    }
+  }
+  let drawn = 0, classes = 0;
+  for (const which of activeWhich()) {
+    const L = LAYER[which];
+    drawn += L.n;
+    const seen = new Set();
+    for (let i = 0; i < L.n; i += 1) seen.add(L.c[i]);
+    classes += seen.size;
+  }
+  stat.drawn = drawn;
+  stat.classes = classes;
+}
+
+/* ================================================================== *
+ *  8. 绘制
+ * ================================================================== */
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.max(320, Math.round(W * dpr));
+  canvas.height = Math.max(240, Math.round(H * dpr));
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+  glowCanvas.width = Math.max(120, Math.round(canvas.width * GLOW_SCALE));
+  glowCanvas.height = Math.max(90, Math.round(canvas.height * GLOW_SCALE));
+  needClear = true;
+}
+
+function clearFully() {
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#050810";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function fadeBackground() {
+  const cover = params.trail <= 0 ? 1 : (1 - params.trail / 100) * 0.9 + 0.02;
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "rgba(5,8,16," + cover.toFixed(4) + ")";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+// 一轮构建：把每层的点转成 device 坐标，按 (层, 余数类) 装进 Path2D。
+// 同时构建一份"放大的点"路径用于低分辨率辉光——靠缩小再放大得到柔光，
+// 而不是把同一份路径按比例平移（那会产生错位的重影）。
+const GLOW_SCALE = 0.25;
+
+function buildScene() {
+  const buckets = new Map();
+  const dot = Math.max(0.55, params.dot * dpr);
+  const gdot = Math.max(2.0, dot * 3.2);
+  let onScreen = 0;
+  for (const cell of layout()) {
+    const L = LAYER[cell.which];
+    if (!L.n) continue;
+    const tr = fitTransform(cell);
+    const r = cellRect(cell);
+    const cellMinX = r.cx, cellMinY = r.cy;
+    const cellMaxX = r.cx + r.cw, cellMaxY = r.cy + r.ch;
+    for (let i = 0; i < L.n; i += 1) {
+      const sx = L.x[i] * tr.k + tr.ox;
+      const sy = L.y[i] * tr.k + tr.oy;
+      if (sx < cellMinX - 6 || sy < cellMinY - 6 || sx > cellMaxX + 6 || sy > cellMaxY + 6) continue;
+      const cls = params.dec === "off" ? 0 : L.c[i];
+      const key = cell.which + "|" + cls;
+      let b = buckets.get(key);
+      if (!b) {
+        b = { which: cell.which, cls: cls, path: new Path2D(), gpath: new Path2D() };
+        buckets.set(key, b);
+      }
+      b.path.rect(sx, sy, dot, dot);
+      b.gpath.rect(sx, sy, gdot, gdot);
+      onScreen += 1;
+    }
+  }
+  return { buckets: buckets, onScreen: onScreen };
+}
+
+function clsCount(which) { return which === "A" ? 19 : 2; }
+
+function draw() {
+  const now = performance.now();
+  const dt = Math.min(Math.max((now - lastNow) / 16.6667, 0), 3);
+  lastNow = now;
+
+  advance(dt);
+
+  if (needClear) { clearFully(); needClear = false; } else { fadeBackground(); }
+
+  const scene = buildScene();
+
+  // ---- 辉光：放大的点先烘到 1/4 分辨率的离屏画布，再放大贴回，天然柔和 ----
+  if (params.glow > 0 && scene.buckets.size) {
+    gctx.setTransform(1, 0, 0, 1, 0, 0);
+    gctx.clearRect(0, 0, glowCanvas.width, glowCanvas.height);
+    gctx.globalCompositeOperation = "lighter";
+    gctx.setTransform(GLOW_SCALE, 0, 0, GLOW_SCALE, 0, 0);
+    for (const b of scene.buckets.values()) {
+      if (params.dec === "one" && b.cls !== params.idx % clsCount(b.which)) continue;
+      gctx.fillStyle = rgbStr(classColor(b.which, b.cls, clsCount(b.which), "main"));
+      gctx.fill(b.gpath);
+    }
+    gctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = "screen";
+    ctx.globalAlpha = (params.glow / 100) * 0.45;
+    ctx.drawImage(glowCanvas, 0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 1;
+  }
+
+  // ---- 主体 ----
+  ctx.globalCompositeOperation = "screen";
+  if (params.dec === "one") {
+    for (const b of scene.buckets.values()) {
+      const target = params.idx % clsCount(b.which);
+      if (b.cls === target) continue;
+      ctx.globalAlpha = 0.075;
+      ctx.fillStyle = rgbStr(classColor(b.which, b.cls, clsCount(b.which), "ghost"));
+      ctx.fill(b.path);
+    }
+    for (const b of scene.buckets.values()) {
+      const target = params.idx % clsCount(b.which);
+      if (b.cls !== target) continue;
+      ctx.globalAlpha = 0.86;
+      ctx.fillStyle = rgbStr(classColor(b.which, b.cls, clsCount(b.which), "hi"));
+      for (let s = 0; s < params.passes; s += 1) ctx.fill(b.path);
+    }
+  } else {
+    ctx.globalAlpha = 0.52;
+    for (const b of scene.buckets.values()) {
+      ctx.fillStyle = rgbStr(classColor(b.which, b.cls, clsCount(b.which), "main"));
+      for (let s = 0; s < params.passes; s += 1) ctx.fill(b.path);
+    }
+  }
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = "source-over";
+
+  updateHud(scene.onScreen);
+  updatePerf(now);
+  requestAnimationFrame(draw);
+}
+
+/* ================================================================== *
+ *  9. HUD
+ * ================================================================== */
+const statsEl = document.getElementById("stats");
+const formulaEl = document.getElementById("formula");
+const classEl = document.getElementById("classOut");
+
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function updateHud(onScreen) {
+  statsEl.textContent =
+    "采样 i = 0…9999（固定）  ·  落点 " + onScreen.toLocaleString() +
+    "  ·  余数类 " + stat.classes + "  ·  缩放 " + params.zoom.toFixed(2) + "×" +
+    (params.verbatim ? "  ·  正在直跑原始代码" : "");
+  classEl.textContent = params.mode === "AB" ? "两层并置" :
+    (params.mode === "A" ? "i mod 19 → 19 只" : "i mod 2 → 2 株");
+}
+
+function refreshFormula() {
+  const a = params.mode !== "B", b = params.mode !== "A";
+  let html = "";
+  if (a) html += "<b>公式 A · 19 只水母</b><br>" + escapeHtml(SRC_A.replace(/\n/g, "\n"));
+  if (a && b) html += "<br><br>";
+  if (b) html += "<b>公式 B · 2 株海扇</b><br>" + escapeHtml(SRC_B_ORIG);
+  formulaEl.innerHTML = html + '<button id="copy" type="button">复制源码</button>';
+  document.getElementById("copy").addEventListener("click", (ev) => {
+    const text = (a ? SRC_A : "") + (a && b ? "\n\n" : "") + (b ? SRC_B_ORIG : "");
+    if (navigator.clipboard) navigator.clipboard.writeText(text);
+    ev.target.textContent = "已复制";
+    setTimeout(() => { ev.target.textContent = "复制源码"; }, 1400);
+  });
+}
+
+let noteTimer = 0;
+function setNote(msg) {
+  const el = document.getElementById("note");
+  el.textContent = msg || "";
+  clearTimeout(noteTimer);
+  if (msg) noteTimer = setTimeout(() => { el.textContent = ""; }, 6000);
+}
+
+/* ================================================================== *
+ * 10. 性能保护
+ * ================================================================== */
+const perf = { enabled: true, frames: 0, start: 0, windows: 0, low: 0, until: 0 };
+
+function updatePerf(now) {
+  perf.frames += 1;
+  if (!perf.start) perf.start = now;
+  const elapsed = now - perf.start;
+  if (elapsed < 1000) return;
+  const fps = (perf.frames * 1000) / elapsed;
+  perf.frames = 0; perf.start = now; perf.windows += 1;
+  document.getElementById("fpsOut").textContent = Math.round(fps) + " fps";
+
+  if (!perf.enabled || paused) return;
+  if (perf.windows <= 2) return;
+  perf.low = fps < 40 ? perf.low + 1 : 0;
+  if (perf.low >= 2 && now >= perf.until) { degrade(now); perf.low = 0; }
+}
+
+function degrade(now) {
+  perf.until = now + 2000;
+  if (params.glow > 0) { params.glow = 0; setNote("帧率偏低：已自动关闭发光"); }
+  else if (params.passes > 1) { params.passes = 1; setNote("帧率偏低：已把曝光遍数降到 1"); }
+  else if (dpr > 1) { dpr = 1; resize(); setNote("帧率偏低：已把渲染分辨率降到 1×"); }
+  else { perf.enabled = false; document.getElementById("autoPerf").checked = false; setNote("已到最低负载"); return; }
+  syncControls();
+}
+
+function disableAutoPerf(reason) {
+  if (!perf.enabled) return;
+  perf.enabled = false;
+  document.getElementById("autoPerf").checked = false;
+  if (reason) setNote(reason);
+}
+
+/* ================================================================== *
+ * 11. 控件
+ * ================================================================== */
+const controls = {};
+
+function bindSlider(name, fmt) {
+  const input = document.getElementById(name);
+  const output = document.getElementById(name + "Out");
+  controls[name] = { input: input, output: output, fmt: fmt };
+  input.addEventListener("input", () => {
+    params[name] = Number(input.value);
+    output.value = fmt(params[name]);
+    if (name === "dot" || name === "glow") disableAutoPerf("已改为手动控制");
+    if (name === "zoom") { needClear = true; validateZoom(); }
+    if (name === "idx") needClear = true;
+    writeHash();
+  });
+}
+
+function syncControls() {
+  Object.keys(controls).forEach((name) => {
+    const c = controls[name];
+    c.input.value = params[name];
+    c.output.value = c.fmt(params[name]);
+  });
+  document.getElementById("autoPerf").checked = perf.enabled;
+  syncVerbatim();
+  syncIdxRow();
+}
+
+function syncVerbatim() {
+  document.getElementById("verbatim").checked = params.verbatim;
+}
+
+function syncIdxRow() {
+  const n = params.mode === "B" ? 2 : 19;
+  const row = document.getElementById("idxRow");
+  const input = document.getElementById("idx");
+  input.max = String(n - 1);
+  if (params.idx > n - 1) params.idx = n - 1;
+  input.value = String(params.idx);
+  document.getElementById("idxOut").value = (params.mode === "A" ? "第 " : "第 ") + (params.idx + 1) +
+    (params.mode === "B" ? " 株" : " 只");
+  document.getElementById("idxLabel").textContent =
+    "高亮序号 (i mod " + n + " = " + params.idx + ")";
+  row.classList.toggle("off", params.dec !== "one");
+}
+
+function bindSeg(id, key) {
+  const els = Array.prototype.slice.call(document.querySelectorAll("#" + id + " button"));
+  function paint() {
+    els.forEach((el) => el.classList.toggle("on", el.dataset.val === String(params[key])));
+  }
+  els.forEach((el) => el.addEventListener("click", () => {
+    params[key] = el.dataset.val;
+    paint();
+    if (key === "mode") { needClear = true; syncIdxRow(); refreshFormula(); validateZoom(); }
+    if (key === "palette") needClear = true;
+    if (key === "dec") { needClear = true; syncIdxRow(); }
+    writeHash();
+  }));
+  paint();
+  return paint;
+}
+
+function validateZoom() {
+  params.zoom = Math.min(4, Math.max(0.5, params.zoom));
+}
+
+/* ---- 平移 / 缩放 ---- */
+const pointers = new Map();
+let pinchStart = 0, pinchZoom0 = 1;
+
+canvas.addEventListener("pointerdown", (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  canvas.classList.add("dragging");
+  if (pointers.size === 2) {
+    const p = Array.from(pointers.values());
+    pinchStart = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+    pinchZoom0 = params.zoom;
+  }
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  if (!pointers.has(e.pointerId)) return;
+  const prev = pointers.get(e.pointerId);
+  const mx = e.clientX - prev.x, my = e.clientY - prev.y;
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (pointers.size === 1) {
+    panX += mx; panY += my;
+  } else if (pointers.size === 2) {
+    const p = Array.from(pointers.values());
+    const d = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+    if (pinchStart > 0) {
+      params.zoom = Math.min(4, Math.max(0.5, pinchZoom0 * (d / pinchStart)));
+      syncControls();
+    }
+    panX += mx * 0.5; panY += my * 0.5;
+  }
+});
+
+function endPointer(e) {
+  pointers.delete(e.pointerId);
+  if (!pointers.size) canvas.classList.remove("dragging");
+  pinchStart = 0;
+}
+canvas.addEventListener("pointerup", endPointer);
+canvas.addEventListener("pointercancel", endPointer);
+
+canvas.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  const before = params.zoom;
+  const next = Math.min(4, Math.max(0.5, before * Math.exp(-e.deltaY * 0.0014)));
+  if (next === before) return;
+  // 以指针为锚点缩放（单格模式下精确；并置模式退化为以中心缩放）
+  if (params.mode !== "AB") {
+    const cell = layout()[0];
+    const r = cellRect(cell);
+    const v = VIEWS[cell.which];
+    const midX = (v[0] + v[1]) / 2, midY = (v[2] + v[3]) / 2;
+    const bw = v[1] - v[0], bh = v[3] - v[2];
+    const fit = Math.min(r.cw / bw, r.ch / bh);
+    const px = e.clientX * dpr, py = e.clientY * dpr;
+    const k0 = fit * before, k1 = fit * next;
+    const ox0 = (r.cx + r.cw / 2) - midX * k0 + panX * dpr;
+    const oy0 = (r.cy + r.ch / 2) - midY * k0 + panY * dpr;
+    const mX = (px - ox0) / k0, mY = (py - oy0) / k0;
+    panX = (px - (r.cx + r.cw / 2) + k1 * (midX - mX)) / dpr;
+    panY = (py - (r.cy + r.ch / 2) + k1 * (midY - mY)) / dpr;
+  }
+  params.zoom = next;
+  syncControls();
+}, { passive: false });
+
+canvas.addEventListener("dblclick", () => {
+  params.zoom = 1; panX = 0; panY = 0;
+  needClear = true;
+  syncControls();
+});
+
+/* ---- 按钮 ---- */
+function togglePause() {
+  paused = !paused;
+  document.getElementById("pauseButton").textContent = paused ? "继续" : "暂停";
+  writeHash();
+}
+
+function resetAll() {
+  Object.assign(params, defaults);
+  panX = 0; panY = 0; paused = false;
+  LAYER.A.t = 0; LAYER.B.t = 0; LAYER.A.n = 0; LAYER.B.n = 0;
+  verbAcc.A = 0; verbAcc.B = 0;
+  perf.enabled = true; perf.frames = 0; perf.start = 0; perf.windows = 0; perf.low = 0; perf.until = 0;
+  document.getElementById("pauseButton").textContent = "暂停";
+  document.querySelectorAll(".seg").forEach((seg) => {
+    Array.prototype.slice.call(seg.querySelectorAll("button")).forEach((el) => {
+      el.classList.toggle("on", el.dataset.val === String(params[
+        seg.id === "segMode" ? "mode" : (seg.id === "segPalette" ? "palette" : "dec")
+      ]));
+    });
+  });
+  needClear = true;
+  syncControls();
+  refreshFormula();
+  setNote("");
+  writeHash();
+}
+
+function savePng() {
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "point-cloud-ocean-" + params.mode + "-" + Date.now() + ".png";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }, "image/png");
+}
+
+function toggleFull() {
+  if (!document.fullscreenElement) {
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+  } else if (document.exitFullscreen) {
+    document.exitFullscreen();
+  }
+}
+
+/* ---- 键盘 ---- */
+window.addEventListener("keydown", (e) => {
+  if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
+  const k = e.key.toLowerCase();
+  if (k === " ") { togglePause(); e.preventDefault(); return; }
+  if (k === "h") { document.body.classList.toggle("ui-hidden"); return; }
+  if (k === "r") { resetAll(); return; }
+  if (k === "s") { savePng(); return; }
+  if (k === "f") { toggleFull(); return; }
+  if (k === "t") { params.trail = params.trail > 0 ? 0 : 62; needClear = true; syncControls(); return; }
+  if (k === "g") { params.glow = params.glow > 0 ? 0 : 46; syncControls(); return; }
+  if (k === "d") {
+    params.dec = params.dec === "off" ? "color" : (params.dec === "color" ? "one" : "off");
+    needClear = true; resetPaint("segDec", "dec"); syncIdxRow(); return;
+  }
+  if (k === "v") {
+    params.verbatim = !params.verbatim;
+    if (params.verbatim) {
+      const vr = verbatimRunner(params.mode === "B" ? "B" : "A");
+      if (!vr.runner) { params.verbatim = false; setNote("原始代码编译失败：" + (vr.error ? vr.error.message : "")); }
+    }
+    syncVerbatim(); return;
+  }
+  if (k === "1" || k === "2" || k === "3") {
+    params.mode = k === "1" ? "A" : (k === "2" ? "B" : "AB");
+    needClear = true; resetPaint("segMode", "mode"); syncIdxRow(); refreshFormula(); return;
+  }
+  if (k === "[") { params.passes = Math.max(1, params.passes - 1); syncControls(); return; }
+  if (k === "]") { params.passes = Math.min(4, params.passes + 1); syncControls(); return; }
+  if (e.key === "ArrowUp") { params.speed = Math.min(2.5, params.speed + 0.05); syncControls(); e.preventDefault(); return; }
+  if (e.key === "ArrowDown") { params.speed = Math.max(0, params.speed - 0.05); syncControls(); e.preventDefault(); return; }
+  if (e.key === "ArrowLeft") { params.hue = (params.hue + 355) % 360; needClear = true; syncControls(); return; }
+  if (e.key === "ArrowRight") { params.hue = (params.hue + 5) % 360; needClear = true; syncControls(); return; }
+});
+
+function resetPaint(segId, key) {
+  const els = Array.prototype.slice.call(document.querySelectorAll("#" + segId + " button"));
+  els.forEach((el) => el.classList.toggle("on", el.dataset.val === String(params[key])));
+}
+
+/* ================================================================== *
+ * 12. URL 状态（可分享的深链接）
+ * ================================================================== */
+function readHash() {
+  const raw = location.hash.replace(/^#/, "");
+  if (!raw) return;
+  let q;
+  try { q = new URLSearchParams(raw); } catch (err) { return; }
+  if (q.has("mode") && ["A", "B", "AB"].indexOf(q.get("mode")) >= 0) params.mode = q.get("mode");
+  if (q.has("dec") && ["off", "color", "one"].indexOf(q.get("dec")) >= 0) params.dec = q.get("dec");
+  if (q.has("palette") && q.get("palette") in PALETTES) params.palette = q.get("palette");
+  if (q.has("idx")) params.idx = Math.max(0, Math.min(18, parseInt(q.get("idx"), 10) || 0));
+  if (q.has("zoom")) params.zoom = Math.min(4, Math.max(0.5, parseFloat(q.get("zoom")) || 1));
+  if (q.has("speed")) params.speed = Math.min(2.5, Math.max(0, parseFloat(q.get("speed")) || 1));
+  if (q.get("verbatim") === "1") params.verbatim = true;
+  if (q.get("paused") === "1") paused = true;
+}
+
+function writeHash() {
+  const q = new URLSearchParams();
+  q.set("mode", params.mode);
+  q.set("dec", params.dec);
+  q.set("palette", params.palette);
+  q.set("idx", String(params.idx));
+  if (params.verbatim) q.set("verbatim", "1");
+  if (paused) q.set("paused", "1");
+  try { history.replaceState(null, "", "#" + q.toString()); } catch (err) { /* file:// 下忽略 */ }
+}
+
+/* ================================================================== *
+ * 13. 启动
+ * ================================================================== */
+function boot() {
+  readHash();
+
+  bindSeg("segMode", "mode");
+  bindSeg("segPalette", "palette");
+  bindSeg("segDec", "dec");
+
+  bindSlider("idx", (v) => "第 " + (Math.round(v) + 1) + (params.mode === "B" ? " 株" : " 只"));
+  bindSlider("passes", (v) => Math.round(v) + " 遍");
+  bindSlider("dot", (v) => Number(v).toFixed(2) + " px");
+  bindSlider("trail", (v) => Math.round(v) + " %");
+  bindSlider("glow", (v) => Math.round(v) + " %");
+  bindSlider("speed", (v) => Number(v).toFixed(2) + "×");
+  bindSlider("hue", (v) => Math.round(v) + "°");
+  bindSlider("zoom", (v) => Number(v).toFixed(2) + "×");
+
+  document.getElementById("verbatim").addEventListener("change", (e) => {
+    params.verbatim = e.target.checked;
+    if (params.verbatim) {
+      const vr = verbatimRunner(params.mode === "B" ? "B" : "A");
+      if (!vr.runner) {
+        params.verbatim = false; e.target.checked = false;
+        setNote("原始代码编译失败：" + (vr.error ? vr.error.message : ""));
+      } else {
+        setNote("正在逐字执行原始帖子里的源码（含结尾残留符号，已自动剥离）。");
+      }
+    }
+    writeHash();
+  });
+  document.getElementById("autoPerf").addEventListener("change", (e) => {
+    perf.enabled = e.target.checked;
+    if (perf.enabled) { perf.frames = 0; perf.start = 0; perf.windows = 0; perf.low = 0; }
+  });
+
+  document.getElementById("pauseButton").addEventListener("click", togglePause);
+  document.getElementById("resetButton").addEventListener("click", resetAll);
+  document.getElementById("saveButton").addEventListener("click", savePng);
+  document.getElementById("fullButton").addEventListener("click", toggleFull);
+
+  window.addEventListener("resize", () => { resize(); syncControls(); });
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    params.speed = 0.35; params.trail = 45;
+  }
+
+  syncControls();
+  refreshFormula();
+  document.getElementById("pauseButton").textContent = paused ? "继续" : "暂停";
+  resize();
+  setTimeout(() => { document.getElementById("hint").style.opacity = "0"; }, 4200);
+  requestAnimationFrame(draw);
+}
+
+boot();
+</script>
+</body>
+</html>
