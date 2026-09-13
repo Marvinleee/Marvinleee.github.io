@@ -20,13 +20,18 @@ marvinlee-blog/
 ```
 
 ## 本地预览（可选）
-需要 **Ruby 3.4**（与 CI 一致，见 `.ruby-version`）。本机若为旧版 Ruby（如系统自带的 2.6）将无法构建 Chirpy，可跳过本地预览，直接依赖 GitHub Actions 构建。
+需要 **Ruby 3.4**（与 CI 一致，见 `.ruby-version`）。macOS 系统自带的 Ruby 2.6 无法构建当前 Chirpy；本站使用 Homebrew 的 `ruby@3.4`：
 
 ```bash
-bundle install
+brew install ruby@3.4
+tools/bootstrap.sh
 bundle exec jekyll serve
 ```
 然后访问 http://localhost:4000
+
+`tools/bootstrap.sh` 会自动接入 Homebrew `ruby@3.4`、锁定依赖并准备本地环境。若 macOS Command Line Tools 缺少 C++ 标准库头文件，它会校验并使用固定版本的 LLVM 官方头文件完成原生依赖编译；这些本地文件保存在已忽略的 `vendor/` 中。
+
+`deploy.sh` 会先调用上述引导脚本，再强制完成 Jekyll 构建与站内链接检查，不再跳过本地验证。
 
 ## 部署到 GitHub Pages
 本站通过 **GitHub Actions** 自动构建并部署（`Build and Deploy` 工作流，仅监听 `main` 分支）。

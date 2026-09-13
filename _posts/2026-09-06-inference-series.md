@@ -31,6 +31,8 @@ toc: true
 14. [第 14 章：多卡与 MoE 并行](/posts/inference-14-parallelism/)
 15. [第 15 章：真实性能测量](/posts/inference-15-benchmarking/)
 
+**数学番外：**[从 22 步矩阵计算到一条连续方程](/posts/inference-extra-transformer-continuous-math/)——把 Token、特征和网络深度写成 $u(x,y,t)$，从非局部积分、约束投影与算子拆分理解 Transformer；与第 3 章的离散推导互为补充。
+
 [全屏打开推理链路实验室](/assets/interactive/inference-atlas/)
 
 ## 十五章路线
@@ -42,6 +44,7 @@ toc: true
 | 输入与模型 | 01 请求全链路（已发布） | 定位数据、组件和执行阶段 |
 | 输入与模型 | 02 文本到张量（已发布） | 真实 Token ID、模板与嵌入查表 |
 | 输入与模型 | 03 一个 Transformer 层（已发布） | RMSNorm、Q/K/V、QK Norm、RoPE、GQA、残差与门控 MLP |
+| 数学番外 | [连续方程视角](/posts/inference-extra-transformer-continuous-math/) | Attention 的非局部积分、归一化投影、网络深度与算子拆分 |
 | 输入与模型 | 04 [从 logits 到 Token](/posts/inference-04-logits-sampling/) | 稳定 softmax、温度、概率筛选、采样与停止 |
 | 时间与内存 | 05 [Prefill 和 Decode](/posts/inference-05-prefill-decode/) | 矩阵形状、依赖关系、缓存复用、计算与访存 |
 | 时间与内存 | 06 [内存预算](/posts/inference-06-memory/) | 权重、KV、激活、临时空间、分页及分片 |

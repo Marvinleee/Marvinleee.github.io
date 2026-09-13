@@ -9,7 +9,7 @@ math: true
 toc: true
 ---
 
-[系列目录](/posts/inference-series/) · [上一章：文本到张量](/posts/inference-02-text-to-tensor/) · [下一章：logits 与采样](/posts/inference-04-logits-sampling/)
+[系列目录](/posts/inference-series/) · [上一章：文本到张量](/posts/inference-02-text-to-tensor/) · [下一章：logits 与采样](/posts/inference-04-logits-sampling/) · [数学番外：连续方程视角](/posts/inference-extra-transformer-continuous-math/)
 
 第 2 章把 Token ID 变成了隐藏向量。本章接住这个张量，沿一个 Transformer 层走到底。读完之后，你应当能给出每个主要张量的形状，说明哪个操作混合了位置、哪个操作只变换特征，以及为什么层的输入输出形状相同，数值却已经不同。
 

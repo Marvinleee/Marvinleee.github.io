@@ -1,1 +1,70 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Transformer 层 · 数值实验室</title><link rel="stylesheet" href="../inference-atlas/style.css"><style>.lab-grid{display:grid;grid-template-columns:220px 1fr;gap:20px}.steps{display:flex;flex-direction:column;gap:6px}.steps button{text-align:left}.matrix{overflow:auto}.matrix table{border-collapse:separate;border-spacing:5px;width:100%;font: .95rem ui-monospace,monospace}.matrix td{padding:12px;text-align:center;background:#183647;border:1px solid #355568;min-width:60px}.matrix td.masked{color:#839aaa;background:#0a1420}.matrix caption{text-align:left;margin-bottom:10px}.settings{display:flex;gap:20px;flex-wrap:wrap;padding:16px;background:#142b3c;margin:20px 0}.settings label{display:block}.pair{display:grid;grid-template-columns:1fr 1fr;gap:15px}#status{color:#ffcc80}pre{max-height:450px;overflow:auto}@media(max-width:700px){.lab-grid{grid-template-columns:1fr}.steps{display:grid;grid-template-columns:1fr 1fr}.pair{grid-template-columns:1fr}}</style></head><body><header><a href="/posts/inference-03-transformer-layer/" target="_top">← 第 3 章正文</a><span>NUMERICAL LAB / 03</span></header><main><h1>一个层，逐项算出来</h1><p>3 个位置、d=4、2 个 Q 头共享 1 个 KV 头、单头维度 2、MLP 维度 6。全部为固定人造权重，计算顺序对照 Qwen3；数值不是实际模型输出。</p><div class="settings"><label>最后位置 x₂[0] <input id="last" type="range" min="-3" max="3" step=".1" value="1"><output id="lastVal">1</output></label><label>所有位置平移 <input id="offset" type="range" min="0" max="10" value="0"><output id="offsetVal">0</output></label><label>Query 头 <select id="head"><option value="0">Q 头 0 → KV 头 0</option><option value="1">Q 头 1 → KV 头 0</option></select></label><label><input id="causal" type="checkbox" checked>因果掩码</label><label><input id="rotary" type="checkbox" checked>RoPE</label><label><input id="qknorm" type="checkbox" checked>Q/K RMSNorm</label><button id="reset">重置</button></div><p id="status" role="status"></p><div class="lab-grid"><nav class="steps" id="steps" aria-label="计算步骤"></nav><section aria-live="polite"><h2 id="title"></h2><p id="explain"></p><div class="matrix" id="matrix"></div><p id="actual" class="note"></p><div class="controls"><button id="prev">← 上一步</button><button id="next">下一步 →</button></div></section></div><h2>因果性检查</h2><p>拖动最后位置的输入。掩码开启时，前两个位置的最终输出相对基线应保持不变；关闭掩码会成为允许读取未来的反事实实验。</p><pre id="invariance"></pre><details><summary>查看本次数值与全部玩具权重</summary><pre id="dump"></pre></details><footer>JavaScript 双精度教学计算；gamma=1、epsilon=10⁻⁶、无 dropout。缩小模型保留运算关系，不模拟 BF16 误差或 GPU 性能。<a href="core.js">计算源码</a> · <a href="/posts/inference-series/" target="_top">系列目录</a></footer></main><script src="core.js"></script><script src="app.js"></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Transformer 层 · 数值与连续视角实验室</title>
+  <link rel="stylesheet" href="../inference-atlas/style.css">
+  <style>
+    .view-tabs{display:flex;gap:8px;margin:20px 0 26px;padding:5px;background:#091722;border:1px solid #344858;border-radius:8px;width:max-content;max-width:100%}
+    .view-tabs button{border-color:transparent;background:transparent}.view-tabs button[aria-selected=true]{background:#194d56;border-color:#7de0db}
+    .view-intro{max-width:900px;color:#c5d5df}.lab-grid{display:grid;grid-template-columns:220px 1fr;gap:20px}.steps{display:flex;flex-direction:column;gap:6px}.steps button{text-align:left}
+    .matrix{overflow:auto}.matrix table{border-collapse:separate;border-spacing:5px;width:100%;font:.95rem ui-monospace,monospace}.matrix td{padding:12px;text-align:center;background:#183647;border:1px solid #355568;min-width:60px}.matrix td.masked{color:#839aaa;background:#0a1420}.matrix caption{text-align:left;margin-bottom:10px}
+    .settings{display:flex;gap:20px;flex-wrap:wrap;padding:16px;background:#142b3c;margin:20px 0}.settings label{display:block}.pair{display:grid;grid-template-columns:1fr 1fr;gap:15px}#status{color:#ffcc80}pre{max-height:450px;overflow:auto}
+    .continuous-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.7fr);gap:20px;align-items:start}.viz-panel,.concept-card{background:#122638;border:1px solid #344858;border-radius:8px;padding:18px}.viz-panel{border-top:3px solid #71d4cb}.viz-panel h2,.concept-card h3{margin-top:0}
+    .viz-panel canvas{display:block;width:100%;height:360px;background:linear-gradient(180deg,#08121c,#0e2230);border:1px solid #284458;border-radius:6px}.continuous-controls{display:grid;gap:12px;margin:18px 0}.continuous-controls label{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center}
+    .operator-path{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:18px 0}.operator-path button{padding:10px 6px;font-size:.86rem}.operator-path button.active{background:#194d56;border-color:#7de0db;box-shadow:0 0 0 1px #7de0db inset}.axis-legend{display:flex;gap:16px;flex-wrap:wrap;color:#adc0ce;font-size:.86rem;margin-top:10px}.axis-legend b{color:#ffcc80}
+    .concept-stack{display:grid;gap:14px}.concept-card p{margin-bottom:0}.claim{border-left:3px solid #ffcc80;padding:10px 14px;background:#162b37;color:#f5dfb5}.kernel-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.55fr);gap:20px;align-items:center}.kernel-map{display:grid;grid-template-columns:repeat(3,minmax(62px,1fr));gap:8px}.kernel-cell{min-height:70px;display:flex;align-items:center;justify-content:center;border:1px solid #446276;border-radius:5px;font:1rem ui-monospace,monospace}
+    .kernel-bars{display:grid;gap:10px}.kernel-row{display:grid;grid-template-columns:64px 1fr 58px;gap:8px;align-items:center}.kernel-track{height:16px;background:#09121c;border-radius:99px;overflow:hidden}.kernel-fill{height:100%;background:linear-gradient(90deg,#2c8f91,#7de0db);border-radius:99px}.projection-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}.projection-chart{display:flex;align-items:center;justify-content:space-around;height:210px;border-bottom:1px solid #547184;padding:15px 8px 0}.feature-bar{width:17%;min-width:26px;align-self:center;position:relative;background:#e59b55;border-radius:4px 4px 0 0;transform-origin:bottom}.feature-bar.negative{background:#59c9c2;border-radius:0 0 4px 4px}.feature-bar span{position:absolute;width:100%;text-align:center;font:.76rem ui-monospace,monospace;top:-22px;color:#dce8f0}.feature-bar.negative span{top:auto;bottom:-22px}
+    .metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.metric{background:#091722;padding:9px;border-radius:5px;text-align:center;font-size:.82rem}.metric strong{display:block;color:#ffcc80;font-size:1rem}.continuous-section>section{margin-top:30px}.paper-note{font-size:.9rem;color:#adc0ce;border-top:1px solid #344858;padding-top:14px}
+    @media(max-width:820px){.continuous-grid,.kernel-layout{grid-template-columns:1fr}.viz-panel canvas{height:300px}.operator-path{grid-template-columns:1fr 1fr}.continuous-controls label{grid-template-columns:1fr}.projection-layout{grid-template-columns:1fr}}
+    @media(max-width:700px){.lab-grid{grid-template-columns:1fr}.steps{display:grid;grid-template-columns:1fr 1fr}.pair{grid-template-columns:1fr}.metrics-row{grid-template-columns:1fr 1fr}.view-tabs{width:100%}.view-tabs button{flex:1}}
+  </style>
+</head>
+<body>
+  <header><a href="/posts/inference-03-transformer-layer/" target="_top">← 第 3 章</a><a href="/posts/inference-extra-transformer-continuous-math/" target="_top">数学番外正文</a><span>NUMERICAL + CONTINUOUS LAB / 03</span></header>
+  <main>
+    <h1>一个层，两种数学视角</h1>
+    <p class="view-intro">先逐项核对离散矩阵，再把同一组状态看成沿网络深度演化的函数。连续视角来自算子拆分框架，是对经典 Transformer 的一种数学解释，不是模型在芯片上的实际连续运动。</p>
+    <nav class="view-tabs" role="tablist" aria-label="数学视角"><button id="tab-discrete" role="tab" aria-selected="true" aria-controls="view-discrete">离散计算 · 22 步</button><button id="tab-continuous" role="tab" aria-selected="false" aria-controls="view-continuous">连续视角 · 数学番外</button></nav>
+
+    <section id="view-discrete" role="tabpanel" aria-labelledby="tab-discrete">
+      <p>3 个位置、d=4、2 个 Q 头共享 1 个 KV 头、单头维度 2、MLP 维度 6。全部为固定人造权重，计算顺序对照 Qwen3；数值不是实际模型输出。</p>
+      <div class="settings"><label>最后位置 x₂[0] <input id="last" type="range" min="-3" max="3" step=".1" value="1"><output id="lastVal">1</output></label><label>所有位置平移 <input id="offset" type="range" min="0" max="10" value="0"><output id="offsetVal">0</output></label><label>Query 头 <select id="head"><option value="0">Q 头 0 → KV 头 0</option><option value="1">Q 头 1 → KV 头 0</option></select></label><label><input id="causal" type="checkbox" checked>因果掩码</label><label><input id="rotary" type="checkbox" checked>RoPE</label><label><input id="qknorm" type="checkbox" checked>Q/K RMSNorm</label><button id="reset">重置</button></div>
+      <p id="status" role="status"></p>
+      <div class="lab-grid"><nav class="steps" id="steps" aria-label="计算步骤"></nav><section aria-live="polite"><h2 id="title"></h2><p id="explain"></p><div class="matrix" id="matrix"></div><p id="actual" class="note"></p><div class="controls"><button id="prev">← 上一步</button><button id="next">下一步 →</button></div></section></div>
+      <h2>因果性检查</h2><p>拖动最后位置的输入。掩码开启时，前两个位置的最终输出相对基线应保持不变；关闭掩码会成为允许读取未来的反事实实验。</p><pre id="invariance"></pre><details><summary>查看本次数值与全部玩具权重</summary><pre id="dump"></pre></details>
+    </section>
+
+    <section id="view-continuous" class="continuous-section" role="tabpanel" aria-labelledby="tab-continuous" hidden>
+      <div class="claim"><strong>核心映射：</strong>Token 位置是 x，特征维度是 y，网络深度被建模为 t，隐藏状态写成 u(x,y,t)。一层网络可以视作连续演化的一次离散时间步。</div>
+      <section class="continuous-grid">
+        <div class="viz-panel">
+          <h2>状态如何沿“深度时间”演化</h2><p id="time-description">输入状态 u(x,y,0)。拖动滑块，观察同一组离散计算结果之间的连续插值。</p>
+          <canvas id="state-surface" width="820" height="420" aria-label="Token、特征与深度时间构成的隐藏状态曲面"></canvas>
+          <div class="axis-legend"><span><b>x</b> · Token 位置</span><span><b>y</b> · 特征维度</span><span><b>t</b> · 网络深度</span></div>
+          <div class="continuous-controls"><label for="depth-time"><span>深度时间 t</span><input id="depth-time" type="range" min="0" max="4" step=".01" value="0"><output id="depth-value">0.00</output></label><label for="surface-token"><span>突出 Token</span><input id="surface-token" type="range" min="0" max="2" step="1" value="2"><output id="surface-token-value">x₂</output></label></div>
+          <div class="operator-path" aria-label="算子拆分子步骤"><button data-time="0" class="active">输入</button><button data-time="1">归一化</button><button data-time="2">Attention + 残差</button><button data-time="3">FFN 输入</button><button data-time="4">FFN + 残差</button></div>
+          <p class="paper-note">曲面使用左侧数值实验的真实玩具张量，并在离散子步骤之间插值。平滑运动只帮助观察状态变化；实际 Transformer 按离散算子执行。</p>
+        </div>
+        <aside class="concept-stack"><div class="concept-card"><h3>非局部</h3><p>Attention 让位置 x 从多个位置 x̃ 读取信息；它改变 Token 之间的信息关系。</p></div><div class="concept-card"><h3>局部</h3><p>FFN 对每个 Token 独立变换特征 y；它不在这一步跨 Token 读取。</p></div><div class="concept-card"><h3>离散化</h3><p>层数对应深度方向的时间步数，Attention、归一化和 FFN 对应拆开的子算子。</p></div></aside>
+      </section>
+
+      <section class="viz-panel">
+        <h2>Attention：从离散求和到非局部积分</h2><p>离散模型对 Value 做加权求和；连续框架把 Token 轴上的求和推广为积分。两者表达的是同一种“从远处取回信息”的结构。</p>
+        <div class="continuous-controls"><label for="kernel-query"><span>查询 Token</span><input id="kernel-query" type="range" min="0" max="2" step="1" value="2"><output id="kernel-query-value">x₂</output></label></div>
+        <div class="kernel-layout"><div><h3>离散注意力矩阵 γ(x,x̃)</h3><div id="kernel-map" class="kernel-map" aria-label="注意力概率矩阵"></div></div><div><h3>当前查询的权重分布</h3><div id="kernel-bars" class="kernel-bars"></div><p id="kernel-formula" class="note"></p></div></div>
+      </section>
+
+      <section class="viz-panel">
+        <h2>归一化：投影视角与现代实现</h2><p>论文把经典 LayerNorm 解释为投影到具有指定均值与方差的约束集合；Qwen3 实际采用 RMSNorm，不减均值。下面用同一输入并排比较，避免把两者混为一谈。</p>
+        <div class="continuous-controls"><label for="projection-token"><span>选择 Token</span><input id="projection-token" type="range" min="0" max="2" step="1" value="0"><output id="projection-token-value">x₀</output></label></div>
+        <div class="projection-layout"><div class="concept-card"><h3>经典 LayerNorm · 约束投影</h3><div id="layernorm-chart" class="projection-chart"></div><div id="layernorm-metrics" class="metrics-row"></div></div><div class="concept-card"><h3>Qwen3 RMSNorm · 保留均值方向</h3><div id="rmsnorm-chart" class="projection-chart"></div><div id="rmsnorm-metrics" class="metrics-row"></div></div></div>
+      </section>
+      <details><summary>这一视角能解释什么，不能解释什么？</summary><p>它为经典 Transformer 的 Attention、LayerNorm、前馈层和层级组合提供统一的算子解释。它不是硬件执行模拟，也不自动覆盖 RoPE、GQA、SwiGLU、RMSNorm、MoE 或稀疏 KV 等现代机制。现代部分仍应以离散公式、模型配置和实际实现为准。</p></details>
+    </section>
+    <footer>离散实验使用 JavaScript 双精度教学计算；gamma=1、epsilon=10⁻⁶、无 dropout。连续视角参考《A Mathematical Explanation of Transformers》的 operator-splitting 解释。<a href="core.js">计算源码</a> · <a href="/posts/inference-extra-transformer-continuous-math/" target="_top">数学番外正文</a> · <a href="/posts/inference-series/" target="_top">系列目录</a></footer>
+  </main>
+  <script src="core.js"></script><script src="app.js"></script><script src="continuous.js?v=20260913"></script>
+</body>
+</html>

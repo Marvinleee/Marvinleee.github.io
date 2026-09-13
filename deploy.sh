@@ -14,7 +14,7 @@
 #     内容签名读取“暂存区 blob”(git cat-file :<file>) 而非工作区文件，避免“暂存后改工作区”绕过
 #   - 大文件（>5MB）告警
 #   - 无改动时正常退出（不再因 set -e + git commit 失败而中断）
-#   - 提交前可选本地构建/链接检查（Ruby >= 3.4 时启用，与 CI 一致）
+#   - 提交前强制本地构建/链接检查；自动使用 Homebrew ruby@3.4（与 CI 一致）
 #   - 推送前检查远端 main 是否有本地没有的新提交（fetch 失败则中止，除非 SKIP_REMOTE_CHECK=1）
 #   - 遍历暂存文件用 while read 逐行读取（正确处理含空格文件名；本站文件名不含换行，换行分隔足够；NUL 需 bash>=4）
 
@@ -36,8 +36,7 @@ fi
 #   - 指定了显式路径 → 只暂存这些路径，防止把 _posts/ 里预存在的未跟踪草稿一并扫入
 #   - 未指定         → 回退原行为，白名单暂存整个 _posts/ 与 assets/
 # 无论哪种方式，下方“安全守卫 0”都会再次校验暂存区只含允许的路径。
-# 允许目录：_posts（文章）、assets（图片/字体/自托管 JS 等）、_includes 与 _layouts
-# （Chirpy 主题扩展点，如 MathJax include、post 布局覆盖）、deploy.sh 自身。
+# 允许目录：文章与资源、主题扩展，以及可复现构建所需的文档、依赖锁和 tools 脚本。
 EXPLICIT=("${@:2}")
 if [ "${#EXPLICIT[@]}" -gt 0 ]; then
   echo "→ 仅暂存显式指定的 ${#EXPLICIT[@]} 个路径（防止误扫草稿）..."
@@ -92,7 +91,7 @@ fi
 NON_WHITELIST=""
 while IFS= read -r f; do
   case "$f" in
-    _posts/*|assets/*|_includes/*|_layouts/*|deploy.sh) ;; # 允许：文章、资源、主题扩展、部署脚本自身
+    _posts/*|assets/*|_includes/*|_layouts/*|tools/*|README.md|Gemfile|Gemfile.lock|deploy.sh) ;;
     *) NON_WHITELIST="${NON_WHITELIST}
   - ${f}";;
   esac
@@ -100,7 +99,7 @@ done < "$STAGE_LIST"
 if [ -n "$NON_WHITELIST" ]; then
   echo "❌ 暂存区含有白名单之外的文件，已中止提交："
   printf "%s\n" "$NON_WHITELIST"
-  echo "    本次部署只接受 _posts/ 与 assets/ 下的改动。"
+  echo "    本次部署只接受站点内容、主题扩展与构建工具链文件。"
   echo "    请先用 'git restore --staged <文件>' 取消暂存这些文件，再重试。"
   exit 1
 fi
@@ -183,22 +182,40 @@ if git diff --cached --quiet; then
   exit 0
 fi
 
-# ---------- 可选：提交前本地构建与链接检查（需 Ruby >= 3.4）----------
-# 本机 Ruby 多为 2.6（无法构建 Chirpy），此时跳过，正确性由 GitHub Actions 兜底。
-# 一旦升级到 Ruby 3.4+，本步会自动启用；构建/检查失败则中止提交，错误不会进入远端。
-if command -v ruby >/dev/null 2>&1; then
-  RV=$(ruby -e 'print RUBY_VERSION' 2>/dev/null || echo "unknown")
-  if ruby -e 'require "rubygems"; exit(Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4") ? 0 : 1)' 2>/dev/null; then
-    if [ -x tools/test.sh ]; then
-      echo "→ 运行本地构建与链接检查 (tools/test.sh)..."
-      if ! tools/test.sh; then
-        echo "❌ 本地构建/链接检查未通过，已中止提交。请修复后再部署。"
-        exit 1
-      fi
+# ---------- 本地 Ruby 与构建检查 ----------
+# macOS 系统 Ruby 停留在 2.6；Homebrew 的 ruby@3.4 是 keg-only，不一定在 PATH 中。
+# 当前 shell 版本过旧时自动接入 Homebrew Ruby，使一键部署与 CI 使用同一主版本。
+if ! ruby -e 'require "rubygems"; exit(Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4") ? 0 : 1)' 2>/dev/null; then
+  if command -v brew >/dev/null 2>&1; then
+    BREW_RUBY=$(brew --prefix ruby@3.4 2>/dev/null || true)
+    if [ -x "${BREW_RUBY}/bin/ruby" ]; then
+      export PATH="${BREW_RUBY}/bin:${PATH}"
     fi
-  else
-    echo "ℹ️  本地 Ruby 为 ${RV}（CI 使用 3.4），跳过本地构建检查；正确性由 GitHub Actions 兜底。"
   fi
+fi
+
+if ! ruby -e 'require "rubygems"; exit(Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("3.4") ? 0 : 1)' 2>/dev/null; then
+  RV=$(ruby -e 'print RUBY_VERSION' 2>/dev/null || echo "未找到")
+  echo "❌ 本地 Ruby 为 ${RV}，本站需要 Ruby 3.4。" >&2
+  echo "    macOS 可运行：brew install ruby@3.4" >&2
+  exit 1
+fi
+
+if [ ! -x tools/test.sh ]; then
+  echo "❌ 缺少 tools/test.sh，无法进行发布前检查。" >&2
+  exit 1
+fi
+
+echo "→ 校准 Ruby/Jekyll 依赖..."
+if ! tools/bootstrap.sh; then
+  echo "❌ Ruby/Jekyll 依赖准备失败，已中止提交。" >&2
+  exit 1
+fi
+
+echo "→ 使用 Ruby $(ruby -e 'print RUBY_VERSION') 运行本地构建与链接检查..."
+if ! tools/test.sh; then
+  echo "❌ 本地构建/链接检查未通过，已中止提交。请修复后再部署。"
+  exit 1
 fi
 
 # ---------- 提交信息 ----------
