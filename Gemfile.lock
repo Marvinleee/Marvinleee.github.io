@@ -27,6 +27,7 @@ GEM
       logger
     eventmachine (1.2.7)
     ffi (1.17.4-x86_64-darwin)
+    ffi (1.17.4-x86_64-linux-gnu)
     fiber-annotation (0.2.0)
     fiber-local (1.1.0)
       fiber-storage
@@ -100,6 +101,8 @@ GEM
     mercenary (0.4.0)
     nokogiri (1.19.4-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.19.4-x86_64-linux-gnu)
+      racc (~> 1.4)
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
     pdf-reader (2.16.0)
@@ -131,6 +134,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin
+  x86_64-linux
 
 DEPENDENCIES
   html-proofer (~> 5.0)
@@ -156,6 +160,7 @@ CHECKSUMS
   ethon (0.18.0) sha256=b598afc9f30448cb068b850714b7d6948e941476095d04f90a4ac65b8d6efcb2
   eventmachine (1.2.7) sha256=994016e42aa041477ba9cff45cbe50de2047f25dd418eba003e84f0d16560972
   ffi (1.17.4-x86_64-darwin) sha256=aa70390523cf3235096cf64962b709b4cfbd5c082a2cb2ae714eb0fe2ccda496
+  ffi (1.17.4-x86_64-linux-gnu) sha256=9d3db14c2eae074b382fa9c083fe95aec6e0a1451da249eab096c34002bc752d
   fiber-annotation (0.2.0) sha256=7abfadf1d119f508867d4103bf231c0354d019cc39a5738945dec2edadaf6c03
   fiber-local (1.1.0) sha256=c885f94f210fb9b05737de65d511136ea602e00c5105953748aa0f8793489f06
   fiber-storage (1.0.1) sha256=f48e5b6d8b0be96dac486332b55cee82240057065dc761c1ea692b2e719240e1
@@ -182,6 +187,7 @@ CHECKSUMS
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
   mercenary (0.4.0) sha256=b25a1e4a59adca88665e08e24acf0af30da5b5d859f7d8f38fba52c28f405138
   nokogiri (1.19.4-x86_64-darwin) sha256=7fd17057d3e1f00e9954a74b3cd76595d3d4a5ef233b7ed9599047c204f70551
+  nokogiri (1.19.4-x86_64-linux-gnu) sha256=379fae440b28915e3f19d752ce2dcf8465ed2b2fbefd2a7ca0dd497bc981a06a
   pathutil (0.16.2) sha256=e43b74365631cab4f6d5e4228f812927efc9cb2c71e62976edcb252ee948d589
   pdf-reader (2.16.0) sha256=bf1b5564c085264d8279bde3cf1467778b75841494d20c0fe7da3dad475f3732
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
