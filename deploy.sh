@@ -91,7 +91,10 @@ fi
 NON_WHITELIST=""
 while IFS= read -r f; do
   case "$f" in
-    _posts/*|assets/*|_includes/*|_layouts/*|tools/*|README.md|Gemfile|Gemfile.lock|deploy.sh) ;;
+    # ⚠️ 故意不含 Gemfile.lock：本机 macOS 解析出的锁会把 jekyll-sass-converter
+    #    钉在 2.2.0（LibSass），提交后 CI 会忠实照做，导致主题 CSS 塌缩成 ~1.2 KB、
+    #    全站样式丢失（2026-09-13、2026-09-14 已发生两次）。该文件已加入 .gitignore。
+    _posts/*|assets/*|_includes/*|_layouts/*|tools/*|README.md|Gemfile|deploy.sh) ;;
     *) NON_WHITELIST="${NON_WHITELIST}
   - ${f}";;
   esac

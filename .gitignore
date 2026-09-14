@@ -1,6 +1,13 @@
-# Bundler 本地安装缓存（Gemfile.lock 现纳入版本控制以保证可复现）
+# Bundler 本地安装缓存
+# ⚠️ Gemfile.lock 必须保持忽略（2026-09-13 / 2026-09-14 两次全站样式丢失的根因）：
+#    本机是 Intel macOS，为绕开 sass-embedded 崩溃而 vendored 了 libc++ 头文件，
+#    本地解析会把 jekyll-sass-converter 粘在 2.2.0（LibSass）。该锁一旦提交，
+#    CI（ubuntu）会忠实照做 → LibSass 不支持主题的 @use 语法 → 主题 CSS
+#    从 109,940 B 塌缩成 ~1.2 KB，全站样式丢失但构建照样"成功"。
+#    让 CI 自行解析，才能拿到 3.1.0 + sass-embedded（Dart Sass）。
 .bundle
 vendor
+Gemfile.lock
 
 # Jekyll cache
 .jekyll-cache

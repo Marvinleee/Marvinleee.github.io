@@ -49,6 +49,25 @@ jobs:
         env:
           JEKYLL_ENV: "production"
 
+      # 护栏：防止主题 CSS 静默塌缩后仍被部署上线
+      # 2026-09-13 / 2026-09-14 两次全站样式丢失，都是构建"成功"却产出 1.2 KB 的空壳 CSS。
+      - name: Guard theme CSS
+        run: |
+          CSS="_site${{ steps.pages.outputs.base_path }}/assets/css/jekyll-theme-chirpy.css"
+          if [ ! -f "$CSS" ]; then
+            echo "::error::未生成主题 CSS：$CSS"
+            exit 1
+          fi
+          SIZE=$(wc -c < "$CSS" | tr -d ' ')
+          echo "主题 CSS = ${SIZE} 字节（正常约 109940）"
+          if [ "$SIZE" -lt 50000 ]; then
+            echo "::error::主题 CSS 仅 ${SIZE} 字节，样式已塌缩，拒绝部署。"
+            echo "原因通常是 jekyll-sass-converter 被降到 2.2.0（LibSass）——"
+            echo "LibSass 不支持 Chirpy 主题的 @use 语法，会静默产出空壳样式。"
+            echo "请检查：① Gemfile 是否钉死 converter；② 仓库是否混入了 Gemfile.lock。"
+            exit 1
+          fi
+
       - name: Test site
         run: |
           bundle exec htmlproofer _site \
