@@ -36,7 +36,7 @@ toc: true
 
 > **来源**：Sub Protocol，`subprotocol/verlet-js`（README 声明采用 MIT License；截至 2026-10-02，仓库为 3792 stars）。
 > **原文件**：`examples/spiderweb.html`（本文第一部分的核心）与 `js/verlet-1.0.0.js`（Browserify 打包后的引擎，本文页面内联的就是这一份）。
-> **在线原版**：<http://subprotocol.com/verlet-js/examples/spiderweb.html>
+> **在线原版**：<https://subprotocol.com/verlet-js/examples/spiderweb.html>
 > **转载说明**：页面内联的引擎代码与示例原型逐行取自上述 MIT 授权仓库，版权归原作者，仅保留原版权声明；数值实验、仪表盘与本文解读为独立完成。
 
 ## 第一部分：这个示例在做什么
