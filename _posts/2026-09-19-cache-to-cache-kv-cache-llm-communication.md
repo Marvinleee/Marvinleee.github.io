@@ -1226,10 +1226,10 @@ C2C 的推理期开销是**双方的 prefill + 一次 cache 融合**。如果 Sh
 
 ## 九、与本站其他文章的联系
 
-- **[推理引擎系列：Paged KV-Cache](/posts/inference-10-paged-cache/)**——C2C 直接操作 KV-Cache 的内存布局与层级结构，理解分页管理的读者会更容易看懂「融合某一层意味着什么」。
-- **[Prefill 与 Decode 两阶段](/posts/inference-05-prefill-decode/)**——C2C 的全部收益都锚在「prefill 可以并行、decode 必须串行」这一结构差异上；这篇是本篇最好的前置读物。
+- **[推理引擎系列：Paged KV-Cache](/posts/inference-series/)**——C2C 直接操作 KV-Cache 的内存布局与层级结构，理解分页管理的读者会更容易看懂「融合某一层意味着什么」。
+- **[Prefill 与 Decode 两阶段](/posts/inference-series/)**——C2C 的全部收益都锚在「prefill 可以并行、decode 必须串行」这一结构差异上；这篇是本篇最好的前置读物。
 - **[循环/复用 Transformer 的可视化指南](/posts/recurrent-looped-transformer-visual-guide/)**——论文的 Identical 消融（同模型自融合也涨点）与 latent reasoning、looped transformer 系列工作在机理上同源。
-- **[并行策略综述](/posts/inference-14-parallelism/)** 与 **[vLLM 引擎](/posts/inference-08-vllm-engine/)**——若要把 C2C 落到生产推理栈，融合器如何与现有调度、并行切分共存是下一个问题。
+- **[并行策略综述](/posts/inference-series/)** 与 **[vLLM 引擎](/posts/inference-series/)**——若要把 C2C 落到生产推理栈，融合器如何与现有调度、并行切分共存是下一个问题。
 - **光互联 / CPO / NPO 系列**（如 [通往 CPO 之路](/posts/newphotonics-on-the-road-to-cpo-npo/)、[CPO 模块级测试](/posts/senko-advantest-viavi-cpo-module-level-testing/)）——本文提到的 cache 通信（论文引用了 Mooncake 这类以 KV-Cache 为中心的分离式架构）把「模型间的互联带宽」推成新的瓶颈。**KV-Cache 的中心化与多模型协作，是光互联需求的上游驱动力之一**：如果 cache 而非文本成为模型间通信的默认介质，单位请求要搬运的字节数会上升一个量级。
 
 ## 十、一句话结论

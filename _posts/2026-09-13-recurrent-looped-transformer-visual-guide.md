@@ -9,7 +9,7 @@ math: true
 toc: true
 ---
 
-[全屏打开状态回路实验室](/assets/interactive/rlt-lab/) · [回顾 Prefill / Decode](/posts/inference-05-prefill-decode/) · [回顾 KV Cache](/posts/inference-06-memory/)
+[全屏打开状态回路实验室](/assets/interactive/rlt-lab/) · [回顾 Prefill / Decode](/posts/inference-series/) · [回顾 KV Cache](/posts/inference-series/)
 
 最近发布的 [Recurrent Looped Transformer（RLT）项目](https://github.com/yifanzhang-pro/recurrent-looped-tranformer/tree/1bee93a9b01c21bea0c7a50ce3f6619f24731e19)提出了一个很适合可视化的问题：**如果 Transformer 不在每个 Token 上“从同样的起点重新算”，而是把上一 Token 的完整 Decoder 状态继续交给下一 Token，会发生什么？**
 

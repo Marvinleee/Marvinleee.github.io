@@ -291,7 +291,7 @@ Huatai 的预测是：2028 年国内市场 **Rmb 341.4bn（约 $50.2bn）**，�
 - **CPO 的系统级全景**：本文「电域先撞墙（~3 m）」与 [CPO 224Gbps+ 全栈综述](/posts/cpo-224gbps-all-in-one-overview/) 里「driver/TIA 常是带宽短板、瓶颈清单里几乎没有『光』」是同一个判断的两个视角。
 - **HBM 层**：[HBM5 互连的信号完整性](/posts/hbm5-interconnect-signal-integrity/) 讲的是 HBM 再往上走速率时传输线效应与 PSIJ 挤压抖动预算——正是本文「HBM 是最高风险层」的技术原因。
 - **互连与 LLM**：[Cache-to-Cache](/posts/cache-to-cache-kv-cache-llm-communication/) 讨论的是把 KV-Cache 在模型之间直连传输，属于同一个「互连带宽决定上层能力」的命题，并且同样卡在「跨节点传输成本未被评估」这件事上。
-- **推理系统侧**：超节点要解决的「多卡如何像一个域」与本站推理系列的 [并行策略](/posts/inference-14-parallelism/) 是同源问题；MFU 的定义与测量可参照 [推理性能基准](/posts/inference-15-benchmarking/)，国产加速器栈的背景见 [Ascend NPU](/posts/inference-13-ascend-npu/)。
+- **推理系统侧**：超节点要解决的「多卡如何像一个域」与本站推理系列的 [并行策略](/posts/inference-series/) 是同源问题；MFU 的定义与测量可参照 [推理性能基准](/posts/inference-series/)，国产加速器栈的背景见 [Ascend NPU](/posts/inference-series/)。
 
 ## 十五、一句话结论
 

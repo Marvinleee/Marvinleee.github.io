@@ -9,7 +9,7 @@ math: true
 toc: true
 ---
 
-[系列目录](/posts/inference-series/) · [离散视角：逐项算清一个 Qwen3 Transformer 层](/posts/inference-03-transformer-layer/) · [全屏打开双视角实验](/assets/interactive/transformer-layer/#view-continuous)
+[系列目录](/posts/inference-series/) · [离散视角：逐项算清一个 Qwen3 Transformer 层](/posts/inference-series/) · [全屏打开双视角实验](/assets/interactive/transformer-layer/#view-continuous)
 
 第 3 章把一个 Qwen3 Transformer 层拆成了 22 个可核对的矩阵步骤：RMSNorm、Q/K/V 投影、RoPE、GQA、因果掩码、两次残差和门控 MLP。那条路线回答的是：**一个现代大模型层究竟算了什么？**
 
@@ -200,8 +200,8 @@ $$
 
 如果第一次接触 Transformer，按下面顺序会更稳：
 
-1. 先读[第 2 章：文本到张量](/posts/inference-02-text-to-tensor/)，知道 $[T,d]$ 从哪里来；
-2. 再用[第 3 章的 22 步实验](/posts/inference-03-transformer-layer/)走完一次真实结构；
+1. 先读[第 2 章：文本到张量](/posts/inference-series/)，知道 $[T,d]$ 从哪里来；
+2. 再用[第 3 章的 22 步实验](/posts/inference-series/)走完一次真实结构；
 3. 回到本文，把矩阵、求和、层号分别提升为函数、积分与深度时间；
 4. 在交互实验中切换两种视角，用同一组数值检查概念；
 5. 最后阅读原论文的连续模型、算子拆分和局限部分。
@@ -213,6 +213,6 @@ $$
 - Xue-Cheng Tai, Hao Liu, Lingfeng Li, Raymond H. Chan, [A Mathematical Explanation of Transformers（arXiv v2，2026-04-12）](https://arxiv.org/abs/2510.03989)
 - [论文 HTML 全文](https://arxiv.org/html/2510.03989v2)
 - Vaswani 等，[Attention Is All You Need](https://arxiv.org/abs/1706.03762)
-- [推理系统 03：逐项算清一个真实 Qwen3 Transformer 层](/posts/inference-03-transformer-layer/)
+- [推理系统 03：逐项算清一个真实 Qwen3 Transformer 层](/posts/inference-series/)
 
 本文中的连续曲线是教学插值；离散矩阵来自站内玩具模型的 JavaScript 双精度计算，不是 Qwen3 权重输出或硬件性能实测。
